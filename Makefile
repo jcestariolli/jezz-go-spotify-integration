@@ -2,7 +2,7 @@
 
 APP_NAME=spotify-integration
 
-# Detect OS
+
 ifeq ($(OS),Windows_NT)
     EXE_EXT := .exe
     RUN_CMD := .\$(APP_NAME)$(EXE_EXT)
@@ -12,7 +12,7 @@ else
 endif
 
 build:
-	go build -o $(APP_NAME)$(EXE_EXT) ./app
+	go build -o ./$(APP_NAME)$(EXE_EXT) ./cmd/$(APP_NAME)
 
 run: build
 	$(RUN_CMD)
