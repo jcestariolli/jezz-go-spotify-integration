@@ -39,20 +39,10 @@ func (c *SpotifyClient) AuthenticateWithClientCredentials() (auth.AccessToken, e
 
 func (c *SpotifyClient) getClientCredentialsToken() (model.ClientCredentialsResponse, error) {
 
-	// Prepare form data or JSON payload
-	formData := url.Values{}
-	formData.Set("grant_type", "client_credentials")
-
-	// Create HTTP request
-	req, err := http.NewRequest("POST", c.url, strings.NewReader(formData.Encode()))
+	req, err := c.createClientCredentialsRequest()
 	if err != nil {
-		fmt.Println("Error creating request:", err)
 		return model.ClientCredentialsResponse{}, err
 	}
-
-	// Set headers
-	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-	req.Header.Set(c.clientCredentialsAuthorizationHeader.Key, c.clientCredentialsAuthorizationHeader.Value)
 
 	// Create HTTP c and do the request
 	httpClient := &http.Client{}
@@ -86,4 +76,22 @@ func (c *SpotifyClient) getClientCredentialsToken() (model.ClientCredentialsResp
 	err = json.Unmarshal(body, spotifyResponse)
 
 	return *spotifyResponse, nil
+}
+
+func (c *SpotifyClient) createClientCredentialsRequest() (*http.Request, error) {
+	// Prepare form data or JSON payload
+	formData := url.Values{}
+	formData.Set("grant_type", "client_credentials")
+
+	// Create HTTP request
+	req, err := http.NewRequest("POST", c.url, strings.NewReader(formData.Encode()))
+	if err != nil {
+		fmt.Println("Error creating request:", err)
+		return nil, err
+	}
+
+	// Set headers
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	req.Header.Set(c.clientCredentialsAuthorizationHeader.Key, c.clientCredentialsAuthorizationHeader.Value)
+	return req, err
 }
