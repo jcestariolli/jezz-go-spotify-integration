@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"jezz-go-spotify-integration/internal/auth"
 	"jezz-go-spotify-integration/internal/model"
 	"net/http"
 	"net/url"
@@ -16,25 +15,25 @@ const (
 	authTokenPath = "/api/token"
 )
 
-type SpotifyClient struct {
-	baseUrl                  string
-	accountUrl               string
-	cliCredentialsAuthHeader auth.AuthorizationHeader
+type CliCredentialsFlow struct {
+	baseUrl                   string
+	accountUrl                string
+	cliCredentialsAuthEncoded string
 }
 
-func NewSpotifyClient(
+func NewCliCredentialsFlow(
 	baseUrl string,
 	accountUrl string,
-	clientCredentials auth.ClientCredentials,
-) SpotifyClient {
-	return SpotifyClient{
-		baseUrl:                  baseUrl,
-		accountUrl:               accountUrl,
-		cliCredentialsAuthHeader: clientCredentials.ToAuthorizationHeader(),
+	clientCredentials model.CliCredentials,
+) CliCredentialsFlow {
+	return CliCredentialsFlow{
+		baseUrl:                   baseUrl,
+		accountUrl:                accountUrl,
+		cliCredentialsAuthEncoded: "Basic " + clientCredentials.Encode(),
 	}
 }
 
-func (c *SpotifyClient) AuthenticateWithClientCredentials() (*model.OAuthResponse, error) {
+func (c CliCredentialsFlow) Authenticate() (*model.OAuthResponse, error) {
 	req, err := c.getCliCredentialsOAuthRequest()
 	if err != nil {
 		return nil, fmt.Errorf("error while creating client credentials request: %w", err)
@@ -57,7 +56,7 @@ func (c *SpotifyClient) AuthenticateWithClientCredentials() (*model.OAuthRespons
 	return oAuthResp, nil
 }
 
-func (c *SpotifyClient) validateOAuthResponse(oAuthResp *model.OAuthResponse) error {
+func (c CliCredentialsFlow) validateOAuthResponse(oAuthResp *model.OAuthResponse) error {
 	if oAuthResp.StatusCode != 200 {
 		if errMsg, err := json.Marshal(oAuthResp); err != nil {
 			return errors.New("status " + oAuthResp.Status)
@@ -68,7 +67,7 @@ func (c *SpotifyClient) validateOAuthResponse(oAuthResp *model.OAuthResponse) er
 	return nil
 }
 
-func (c *SpotifyClient) parseOAuthResponse(resp *http.Response, err error) (*model.OAuthResponse, error) {
+func (c CliCredentialsFlow) parseOAuthResponse(resp *http.Response, err error) (*model.OAuthResponse, error) {
 	defer func(body io.ReadCloser) {
 		_ = body.Close()
 	}(resp.Body)
@@ -95,7 +94,7 @@ func (c *SpotifyClient) parseOAuthResponse(resp *http.Response, err error) (*mod
 	return oAuthResponse, nil
 }
 
-func (c *SpotifyClient) getCliCredentialsOAuthRequest() (*http.Request, error) {
+func (c CliCredentialsFlow) getCliCredentialsOAuthRequest() (*http.Request, error) {
 	formData := url.Values{}
 	formData.Set("grant_type", "client_credentials")
 	req, err := http.NewRequest("POST", c.accountUrl+authTokenPath, strings.NewReader(formData.Encode()))
@@ -103,6 +102,6 @@ func (c *SpotifyClient) getCliCredentialsOAuthRequest() (*http.Request, error) {
 		return nil, err
 	}
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-	req.Header.Set(c.cliCredentialsAuthHeader.Key, c.cliCredentialsAuthHeader.Value)
+	req.Header.Set("Authorization", c.cliCredentialsAuthEncoded)
 	return req, err
 }

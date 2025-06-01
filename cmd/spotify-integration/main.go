@@ -4,58 +4,62 @@ import (
 	_ "embed"
 	"encoding/json"
 	"fmt"
-	"jezz-go-spotify-integration/internal/app"
 	"jezz-go-spotify-integration/internal/client"
+	"jezz-go-spotify-integration/internal/config"
+	"jezz-go-spotify-integration/internal/service"
 )
 
 func main() {
-	var config app.Config
-	if loadConfig(&config) != true {
+	var spotifyConfig config.Config
+	if loadConfig(&spotifyConfig) != true {
 		return
 	}
-	spotifyClient := loadSpotifyClient(config)
-
-	if runApp(spotifyClient) != true {
-		return
-	}
+	authService := loadServices(spotifyConfig)
+	runApp(authService)
 }
 
-func loadConfig(configPtr *app.Config) bool {
-	fmt.Println("Loading app configs...")
-	config, err := app.Load()
+func loadConfig(configPtr *config.Config) bool {
+	fmt.Println("Loading spotifyConfig configs...")
+	spotifyConfig, err := config.Load()
 	if err != nil {
-		fmt.Println("Error loading app configs :(")
+		fmt.Println("Error loading spotifyConfig configs :(")
 		fmt.Printf("----> %s\n\n", err.Error())
 		return false
 	}
-	*configPtr = config
+	*configPtr = spotifyConfig
 	fmt.Println("Configs loaded with success! :)")
 	return true
 }
 
-func loadSpotifyClient(config app.Config) client.SpotifyClient {
-	fmt.Println("Loading spotify client...")
-	spotifyConfig := config.Clients.Spotify
-	spotifyClient := client.NewSpotifyClient(
-		spotifyConfig.BaseUrl,
-		spotifyConfig.AccountsUrl,
-		spotifyConfig.ClientCredentials,
-	)
-	fmt.Println("Client loaded! :)")
-	return spotifyClient
+func loadServices(config config.Config) service.AuthService {
+	fmt.Println("Loading spotify services...")
+	cliConfig := config.Client
+	authService := loadAuthService(cliConfig)
+	fmt.Println("Services loaded! :)")
+	return authService
 }
 
-func runApp(spotifyClient client.SpotifyClient) bool {
-	fmt.Println("Trying to authenticate with client credentials...")
-	oAuthResponse, err := spotifyClient.AuthenticateWithClientCredentials()
+func loadAuthService(cliConfig config.CliConfig) service.AuthService {
+	oAuthClient := client.NewCliCredentialsFlow(
+		cliConfig.BaseUrl,
+		cliConfig.AccountsUrl,
+		cliConfig.CliCredentials,
+	)
+	authService := service.NewAuthService(oAuthClient)
+	return authService
+}
+
+func runApp(authService service.AuthService) {
+	fmt.Println("Trying to authenticate application...")
+	oAuthResponse, err := authService.Authenticate()
 	if err != nil {
 		fmt.Println("Authentication failed :(")
 		fmt.Printf("----> %s\n\n", err.Error())
-		return false
+		return
 	}
 	fmt.Println("Authentication succeeded! :)")
 	if body, err3 := json.Marshal(oAuthResponse); err3 == nil && body != nil {
 		fmt.Printf("----> %s\n\n", string(body))
 	}
-	return true
+	return
 }
