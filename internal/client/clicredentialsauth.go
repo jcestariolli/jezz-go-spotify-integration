@@ -14,6 +14,10 @@ const (
 	cliCredentialsPath = "/api/token"
 )
 
+type AuthClient interface {
+	Authenticate() (model.AuthSession, error)
+}
+
 type CliCredentialsAuth struct {
 	endpoint                  string
 	accountUrl                string
