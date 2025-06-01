@@ -2,6 +2,7 @@ package main
 
 import (
 	_ "embed"
+	"encoding/json"
 	"fmt"
 	"jezz-go-spotify-integration/internal/app"
 	"jezz-go-spotify-integration/internal/client"
@@ -46,11 +47,14 @@ func loadSpotifyClient(config app.Config) client.SpotifyClient {
 
 func runApp(spotifyClient client.SpotifyClient) bool {
 	fmt.Println("Trying authenticate with client credentials...")
-	_, err := spotifyClient.AuthenticateWithClientCredentials()
+	oAuthResponse, err := spotifyClient.AuthenticateWithClientCredentials()
 	if err != nil {
 		fmt.Printf("Error authenticating: %s\n\n", err.Error())
 		return false
 	}
 	fmt.Println("Authentication succeeded!")
+	if body, err3 := json.Marshal(oAuthResponse); err3 == nil && body != nil {
+		fmt.Println(string(body))
+	}
 	return true
 }

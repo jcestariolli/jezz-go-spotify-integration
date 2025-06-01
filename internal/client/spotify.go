@@ -9,7 +9,6 @@ import (
 	"jezz-go-spotify-integration/internal/model"
 	"net/http"
 	"net/url"
-	"strconv"
 	"strings"
 )
 
@@ -35,42 +34,68 @@ func NewSpotifyClient(
 	}
 }
 
-func (c *SpotifyClient) AuthenticateWithClientCredentials() (model.ClientCredentialsResponse, error) {
-	var response model.ClientCredentialsResponse
-	req, err := c.createClientCredentialsRequest()
+func (c *SpotifyClient) AuthenticateWithClientCredentials() (*model.OAuthResponse, error) {
+	req, err := c.getCliCredentialsOAuthRequest()
 	if err != nil {
-		return response, fmt.Errorf("error while creating client credentials request: %w", err)
+		return nil, fmt.Errorf("error while creating client credentials request: %w", err)
 	}
 
-	httpClient := &http.Client{}
-	resp, err := httpClient.Do(req)
+	resp, err := (&http.Client{}).Do(req)
 	if err != nil {
-		return response, fmt.Errorf("error while authenticating with client credentials: %w", err)
+		return nil, fmt.Errorf("error while authenticating with client credentials: %w", err)
 	}
 
-	defer func(Body io.ReadCloser) {
-		_ = Body.Close()
-	}(resp.Body)
-
-	if resp.StatusCode != 200 {
-		body, _ := io.ReadAll(resp.Body)
-		err = errors.New("authentication failed - Status Code: " + strconv.Itoa(resp.StatusCode) + " | Body: " + string(body))
-		return model.ClientCredentialsResponse{}, err
-	}
-
-	body, err := io.ReadAll(resp.Body)
+	oAuthResp, err := c.parseOAuthResponse(resp, err)
 	if err != nil {
-		return response, fmt.Errorf("error reading response body: %w", err)
+		return nil, fmt.Errorf("error while parsing client credentials response: %w", err)
 	}
 
-	if json.Unmarshal(body, &response) != nil {
-		return response, fmt.Errorf("error unmarshalling response body to model: %w", err)
+	if err := c.validateOAuthResponse(oAuthResp); err != nil {
+		return nil, fmt.Errorf("authentication with client credentials failed: %w", err)
 	}
 
-	return *&response, nil
+	return oAuthResp, nil
 }
 
-func (c *SpotifyClient) createClientCredentialsRequest() (*http.Request, error) {
+func (c *SpotifyClient) validateOAuthResponse(oAuthResp *model.OAuthResponse) error {
+	if oAuthResp.StatusCode != 200 {
+		if errMsg, err := json.Marshal(oAuthResp); err != nil {
+			return errors.New("status " + oAuthResp.Status)
+		} else {
+			return errors.New(string(errMsg))
+		}
+	}
+	return nil
+}
+
+func (c *SpotifyClient) parseOAuthResponse(resp *http.Response, err error) (*model.OAuthResponse, error) {
+	defer func(body io.ReadCloser) {
+		_ = body.Close()
+	}(resp.Body)
+	oAuthResponse := &model.OAuthResponse{
+		Status:     resp.Status,
+		StatusCode: resp.StatusCode,
+	}
+	var oAuthBody model.OAuthResponseBody
+	var errorBody model.ErrorResponseBody
+	respBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+	if err4 := json.Unmarshal(respBody, &oAuthBody); err4 != nil || oAuthBody.AccessToken == "" {
+		oAuthResponse.SuccessBody = nil
+		if err2 := json.Unmarshal(respBody, &errorBody); err2 != nil || errorBody.Error == "" {
+			oAuthResponse.ErrorBody = nil
+		} else {
+			oAuthResponse.ErrorBody = &errorBody
+		}
+	} else {
+		oAuthResponse.SuccessBody = &oAuthBody
+	}
+	return oAuthResponse, nil
+}
+
+func (c *SpotifyClient) getCliCredentialsOAuthRequest() (*http.Request, error) {
 	formData := url.Values{}
 	formData.Set("grant_type", "client_credentials")
 	req, err := http.NewRequest("POST", c.accountUrl+authTokenPath, strings.NewReader(formData.Encode()))
