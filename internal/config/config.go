@@ -32,11 +32,15 @@ func Load() (Config, error) {
 	if err != nil {
 		return config, err
 	}
-	cliCredentials, err2 := loadSpotifyCliCredentials()
-	if err2 != nil {
-		return config, err2
+	cliCredentials, err := loadSpotifyCliCredentials()
+	if err != nil {
+		return config, err
 	}
 	config.Client.CliCredentials = cliCredentials
+	err = config.Validate()
+	if err != nil {
+		return Config{}, err
+	}
 	return config, nil
 }
 

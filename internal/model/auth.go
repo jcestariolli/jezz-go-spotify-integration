@@ -2,15 +2,17 @@ package model
 
 type AccessToken string
 
-type OAuthResponseBody struct {
+type Auth struct {
 	AccessToken AccessToken `json:"access_token"`
 	TokenType   string      `json:"token_type"`
 	ExpiresIn   int         `json:"expires_in"`
 }
 
-type OAuthResponse struct {
-	Status      string
-	StatusCode  int
-	SuccessBody *OAuthResponseBody
-	ErrorBody   *ErrorResponseBody
+type AuthSession struct {
+	Authenticated bool
+	Auth          *Auth
+}
+
+func (t AccessToken) String() string {
+	return string(t)
 }

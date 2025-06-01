@@ -6,15 +6,15 @@ import (
 )
 
 type AuthService struct {
-	oAuthClient client.OAuthFlow
+	authClient client.AuthClient
 }
 
-func NewAuthService(oAuthClient client.OAuthFlow) AuthService {
+func NewAuthService(authClient client.AuthClient) AuthService {
 	return AuthService{
-		oAuthClient: oAuthClient,
+		authClient: authClient,
 	}
 }
 
-func (s AuthService) Authenticate() (*model.OAuthResponse, error) {
-	return s.oAuthClient.Authenticate()
+func (s AuthService) AuthenticateApp() (model.AuthSession, error) {
+	return s.authClient.Authenticate()
 }
