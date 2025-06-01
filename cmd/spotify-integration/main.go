@@ -3,40 +3,54 @@ package main
 import (
 	_ "embed"
 	"fmt"
-	"jezz-go-spotify-integration/internal/auth"
+	"jezz-go-spotify-integration/internal/app"
 	"jezz-go-spotify-integration/internal/client"
-	"jezz-go-spotify-integration/internal/service"
 )
 
-//go:embed config/client_credentials.json
-var clientCredentialsConfig []byte
-
 func main() {
-	s := "gopher"
-	fmt.Printf("Hello and welcome, %s!\n", s)
-
-	fmt.Println("Loading credentials file....")
-	clientCredentials, err := auth.LoadClientCredentialsFromFile(clientCredentialsConfig)
-	if err != nil {
-		fmt.Println("Error loading client_credentials file. Ending program.")
+	var config app.Config
+	if loadConfig(&config) != true {
+		fmt.Println(" ----> Ending program.")
 		return
 	}
-	fmt.Print("Credentials file loaded with success!\n\n\n")
+	spotifyClient := loadSpotifyClient(config)
 
-	fmt.Println("Trying to authenticate to spotify....")
-	spotifyAuthApiUrl := "https://accounts.spotify.com/api/token"
-	spotifyService := service.NewSpotifyService(
-		client.NewSpotifyClient(
-			spotifyAuthApiUrl,
-			clientCredentials,
-		),
-	)
-
-	credentials, err := spotifyService.AuthenticateWithClientCredentials()
-	if err != nil {
-		fmt.Println("Error authenticating. Ending program.")
+	if runApp(spotifyClient) != true {
+		fmt.Println(" ----> Ending program.")
 		return
+	}
+}
+
+func loadConfig(configPtr *app.Config) bool {
+	fmt.Println("Loading app configs...")
+	config, err := app.Load()
+	if err != nil {
+		fmt.Printf("Error loading app configs: %s\n\n", err.Error())
+		fmt.Println(" ----> Ending program.")
+		return false
+	}
+	*configPtr = config
+	fmt.Print("App config loaded with success!\n\n\n")
+	return true
+}
+
+func loadSpotifyClient(config app.Config) client.SpotifyClient {
+	spotifyConfig := config.Clients.Spotify
+	spotifyClient := client.NewSpotifyClient(
+		spotifyConfig.BaseUrl,
+		spotifyConfig.AccountsUrl,
+		spotifyConfig.ClientCredentials,
+	)
+	return spotifyClient
+}
+
+func runApp(spotifyClient client.SpotifyClient) bool {
+	fmt.Println("Trying authenticate with client credentials...")
+	_, err := spotifyClient.AuthenticateWithClientCredentials()
+	if err != nil {
+		fmt.Printf("Error authenticating: %s\n\n", err.Error())
+		return false
 	}
 	fmt.Println("Authentication succeeded!")
-	fmt.Printf("- Token: %s\n\n\n", credentials.Value)
+	return true
 }
