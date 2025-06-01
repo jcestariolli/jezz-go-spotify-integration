@@ -1,0 +1,5 @@
+clients:
+  spotify:
+    base_url: https://api.spotify.com
+    accounts_url: https://accounts.spotify.com
+
