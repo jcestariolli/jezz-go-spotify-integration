@@ -22,3 +22,4 @@ cache/
 
 **/*.exe
 **/client_credentials.json
+**/*client_credentials.yml
