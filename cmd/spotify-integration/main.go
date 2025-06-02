@@ -4,9 +4,7 @@ import (
 	_ "embed"
 	"encoding/json"
 	"fmt"
-	"jezz-go-spotify-integration/internal/client"
 	"jezz-go-spotify-integration/internal/config"
-	"jezz-go-spotify-integration/internal/model"
 	"jezz-go-spotify-integration/internal/service"
 )
 
@@ -15,8 +13,11 @@ func main() {
 	if loadConfig(&spotifyConfig) != true {
 		return
 	}
-	authService, artistApi := loadServices(spotifyConfig)
-	runApp(authService, artistApi)
+	catalogService := loadServices(spotifyConfig)
+	if catalogService == nil {
+		return
+	}
+	runApp(*catalogService)
 }
 
 func loadConfig(configPtr *config.Config) bool {
@@ -32,44 +33,35 @@ func loadConfig(configPtr *config.Config) bool {
 	return true
 }
 
-func loadServices(config config.Config) (service.AuthService, client.ArtistsAPIClient) {
-	fmt.Println("Loading spotify services...")
+func loadServices(config config.Config) *service.CatalogService {
+	fmt.Println("Loading catalog service...")
 	cliConfig := config.Client
-	authService := loadAuthService(cliConfig)
-	artistApi := loadArtistApi(cliConfig)
-	fmt.Printf("✔ Services loaded! :)\n\n")
-	return authService, artistApi
+	catalogService, err := loadCatalogService(cliConfig)
+	if err != nil {
+		fmt.Println("✖ Catalog service loading failed :(")
+		fmt.Printf("╰┈➤%s\n\n", err.Error())
+		return nil
+	}
+	fmt.Printf("✔ Cataçpg service loaded! :)\n\n")
+	return catalogService
 }
 
-func loadArtistApi(cliConfig config.CliConfig) client.ArtistsAPIClient {
-	return client.NewArtistsAPIClient(cliConfig.BaseUrl)
-}
-
-func loadAuthService(cliConfig config.CliConfig) service.AuthService {
-	authClient := client.NewCliCredentialsAuth(
+func loadCatalogService(cliConfig config.CliConfig) (*service.CatalogService, error) {
+	return service.NewCatalogService(
 		cliConfig.BaseUrl,
 		cliConfig.AccountsUrl,
 		cliConfig.CliCredentials,
 	)
-	authService := service.NewAuthService(authClient)
-	return authService
 }
 
-func runApp(authService service.AuthService, artistApi client.ArtistsAPIClient) {
-	authSession, err := authenticateApp(authService)
-	if err == true {
-		return
-	}
-	if getArtist(artistApi, authSession) {
-		return
-	}
-
+func runApp(catalogService service.CatalogService) {
+	getArtist(catalogService, "7nzSoJISlVJsn7O0yTeMOB?si=1RkwrfE4QWanTYQMdN1pTg")
 	return
 }
 
-func getArtist(artistApi client.ArtistsAPIClient, authSession model.AuthSession) bool {
-	fmt.Println("Trying to get artist...")
-	artist, err := artistApi.GetArtist(authSession.Auth.AccessToken, "7nzSoJISlVJsn7O0yTeMOB?si=1RkwrfE4QWanTYQMdN1pTg")
+func getArtist(catalogService service.CatalogService, artistId string) bool {
+	fmt.Println("Trying to get am artist...")
+	artist, err := catalogService.GetArtist(artistId)
 
 	if err != nil {
 		fmt.Println("✖ Getting artist failed :(")
@@ -82,20 +74,4 @@ func getArtist(artistApi client.ArtistsAPIClient, authSession model.AuthSession)
 	}
 	fmt.Printf("\n")
 	return false
-}
-
-func authenticateApp(authService service.AuthService) (model.AuthSession, bool) {
-	fmt.Println("Trying to authenticate application...")
-	authSession, err := authService.AuthenticateApp()
-	if err != nil {
-		fmt.Println("✖ Authentication failed :(")
-		fmt.Printf("╰┈➤%s\n\n", err.Error())
-		return authSession, true
-	}
-	fmt.Println("✔ Authentication succeeded! :)")
-	if body, err3 := json.Marshal(authSession); err3 == nil && body != nil {
-		fmt.Printf("╰┈➤%s\n", string(body))
-	}
-	fmt.Printf("\n")
-	return authSession, false
 }

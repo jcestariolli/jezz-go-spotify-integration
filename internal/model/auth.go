@@ -9,8 +9,7 @@ type Auth struct {
 }
 
 type AuthSession struct {
-	Authenticated bool
-	Auth          *Auth
+	Auth *Auth
 }
 
 func (t AccessToken) String() string {

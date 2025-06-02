@@ -14,32 +14,28 @@ const (
 	cliCredentialsPath = "/api/token"
 )
 
-type AuthClient interface {
-	Authenticate() (model.AuthSession, error)
-}
-
-type CliCredentialsAuth struct {
+type CliCredentialsAuthClient struct {
 	endpoint                  string
 	accountUrl                string
 	cliCredentialsEncodedAuth string
 	cliCredentials            model.CliCredentials
 }
 
-func NewCliCredentialsAuth(
+func NewCliCredentialsAuthClient(
 	baseUrl string,
 	accountUrl string,
 	cliCredentials model.CliCredentials,
-) CliCredentialsAuth {
-	return CliCredentialsAuth{
+) CliCredentialsAuthClient {
+	return CliCredentialsAuthClient{
 		endpoint:       baseUrl,
 		accountUrl:     accountUrl,
 		cliCredentials: cliCredentials,
 	}
 }
 
-func (c CliCredentialsAuth) Authenticate() (model.AuthSession, error) {
-	authSession := model.AuthSession{}
-	req, err := c.genCliCredentialsAuthRequest()
+func (c CliCredentialsAuthClient) Authenticate() (*model.AuthSession, error) {
+	authSession := &model.AuthSession{}
+	req, err := c.createRequest()
 	if err != nil {
 		return authSession, fmt.Errorf("error creating client credentials request - %w", err)
 	}
@@ -49,18 +45,18 @@ func (c CliCredentialsAuth) Authenticate() (model.AuthSession, error) {
 		return authSession, fmt.Errorf("error connecting to authorization client - %w", err)
 	}
 
-	if err := c.validateReqSuccess(resp); err != nil {
+	if err := c.validateRespStatus(resp); err != nil {
 		return authSession, err
 	}
 
-	authSession, err = c.parseAuthResponse(resp)
+	authSession, err = c.parseResponse(resp)
 	if err != nil {
 		return authSession, fmt.Errorf("error authenticating - %w", err)
 	}
 	return authSession, nil
 }
 
-func (c CliCredentialsAuth) genCliCredentialsAuthRequest() (*http.Request, error) {
+func (c CliCredentialsAuthClient) createRequest() (*http.Request, error) {
 	formData := url.Values{}
 	formData.Set("grant_type", "client_credentials")
 	req, err := http.NewRequest("POST", c.accountUrl+cliCredentialsPath, strings.NewReader(formData.Encode()))
@@ -72,7 +68,7 @@ func (c CliCredentialsAuth) genCliCredentialsAuthRequest() (*http.Request, error
 	return req, err
 }
 
-func (c CliCredentialsAuth) validateReqSuccess(resp *http.Response) error {
+func (c CliCredentialsAuthClient) validateRespStatus(resp *http.Response) error {
 	if resp.StatusCode != 200 {
 		appErr := model.AppError{
 			Code:    resp.Status,
@@ -93,12 +89,12 @@ func (c CliCredentialsAuth) validateReqSuccess(resp *http.Response) error {
 	return nil
 }
 
-func (c CliCredentialsAuth) parseAuthResponse(resp *http.Response) (model.AuthSession, error) {
+func (c CliCredentialsAuthClient) parseResponse(resp *http.Response) (*model.AuthSession, error) {
 	defer func(body io.ReadCloser) {
 		_ = body.Close()
 	}(resp.Body)
 
-	authSession := model.AuthSession{}
+	var authSession *model.AuthSession
 	respBody, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return authSession, err
@@ -107,7 +103,7 @@ func (c CliCredentialsAuth) parseAuthResponse(resp *http.Response) (model.AuthSe
 	if err = json.Unmarshal(respBody, &authBody); err != nil || authBody.AccessToken == "" {
 		return authSession, model.AppError{Code: resp.Status, Message: "error obtaining auth response"}
 	}
-	authSession.Authenticated = true
+	authSession = &model.AuthSession{}
 	authSession.Auth = &authBody
 
 	return authSession, nil

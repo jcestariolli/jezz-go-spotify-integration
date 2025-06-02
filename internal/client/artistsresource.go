@@ -8,21 +8,21 @@ import (
 	"net/http"
 )
 
-type ArtistsAPIClient struct {
+type ArtistsResource struct {
 	baseUrl string
 }
 
-func NewArtistsAPIClient(
+func NewArtistsResource(
 	baseUrl string,
-) ArtistsAPIClient {
-	return ArtistsAPIClient{
+) ArtistsResource {
+	return ArtistsResource{
 		baseUrl: baseUrl + "/v1/artists",
 	}
 }
 
-func (a ArtistsAPIClient) GetArtist(accessToken model.AccessToken, artistId string) (model.Artist, error) {
+func (a ArtistsResource) GetArtist(accessToken model.AccessToken, artistId string) (model.Artist, error) {
 	artist := model.Artist{}
-	req, err := a.genArtistRequest(accessToken, artistId)
+	req, err := a.createRequest("GET", "/"+artistId, accessToken)
 	if err != nil {
 		return artist, fmt.Errorf("error creating artist request - %w", err)
 	}
@@ -44,10 +44,9 @@ func (a ArtistsAPIClient) GetArtist(accessToken model.AccessToken, artistId stri
 	return artist, nil
 }
 
-func (a ArtistsAPIClient) genArtistRequest(accessToken model.AccessToken, artistId string) (*http.Request, error) {
-	url := fmt.Sprintf("%s/%s", a.baseUrl, artistId)
-	fmt.Println("URL: " + url)
-	req, err := http.NewRequest("GET", url, nil)
+func (a ArtistsResource) createRequest(method string, path string, accessToken model.AccessToken) (*http.Request, error) {
+	url := fmt.Sprintf("%s%s", a.baseUrl, path)
+	req, err := http.NewRequest(method, url, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -56,29 +55,24 @@ func (a ArtistsAPIClient) genArtistRequest(accessToken model.AccessToken, artist
 	return req, err
 }
 
-func (a ArtistsAPIClient) validateReqSuccess(resp *http.Response) error {
+func (a ArtistsResource) validateReqSuccess(resp *http.Response) *model.ApiError {
 	if resp.StatusCode != 200 {
-		appErr := model.AppError{
-			Code:    resp.Status,
+		apiErr := model.ApiError{
+			Status:  resp.StatusCode,
 			Message: "error getting artist",
-			Details: "no details were provided",
 		}
 		respBody, err := io.ReadAll(resp.Body)
 		if err != nil {
-			return appErr
+			return &apiErr
 		}
-		var apiErr model.ApiError
-		if err2 := json.Unmarshal(respBody, &apiErr); err2 == nil && apiErr.Message != "" {
-			appErr.Message = apiErr.Message
-			appErr.Details = apiErr.Message
 
-		}
-		return appErr
+		_ = json.Unmarshal(respBody, &apiErr)
+		return &apiErr
 	}
 	return nil
 }
 
-func (a ArtistsAPIClient) parseResponse(resp *http.Response) (model.Artist, error) {
+func (a ArtistsResource) parseResponse(resp *http.Response) (model.Artist, error) {
 	defer func(body io.ReadCloser) {
 		_ = body.Close()
 	}(resp.Body)
