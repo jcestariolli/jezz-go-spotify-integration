@@ -10,7 +10,7 @@ type CatalogService struct {
 	cliCredentials model.CliCredentials
 	appAuthSession *model.AuthSession
 	authCli        client.CliCredentialsAuthClient
-	artistsCli     client.ArtistsResource
+	artistsCli     client.ArtistsResourceCli
 }
 
 func NewCatalogService(
@@ -27,7 +27,7 @@ func NewCatalogService(
 		cliCredentials: cliCredentials,
 		appAuthSession: authSession,
 		authCli:        authCli,
-		artistsCli:     client.NewArtistsResource(baseUrl),
+		artistsCli:     client.NewArtistsResourceCli(baseUrl),
 	}, nil
 }
 

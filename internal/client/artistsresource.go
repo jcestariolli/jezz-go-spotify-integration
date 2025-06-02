@@ -8,19 +8,19 @@ import (
 	"net/http"
 )
 
-type ArtistsResource struct {
+type ArtistsResourceCli struct {
 	baseUrl string
 }
 
-func NewArtistsResource(
+func NewArtistsResourceCli(
 	baseUrl string,
-) ArtistsResource {
-	return ArtistsResource{
+) ArtistsResourceCli {
+	return ArtistsResourceCli{
 		baseUrl: baseUrl + "/v1/artists",
 	}
 }
 
-func (a ArtistsResource) GetArtist(accessToken model.AccessToken, artistId string) (model.Artist, error) {
+func (a ArtistsResourceCli) GetArtist(accessToken model.AccessToken, artistId string) (model.Artist, error) {
 	artist := model.Artist{}
 	req, err := a.createRequest("GET", "/"+artistId, accessToken)
 	if err != nil {
@@ -44,7 +44,7 @@ func (a ArtistsResource) GetArtist(accessToken model.AccessToken, artistId strin
 	return artist, nil
 }
 
-func (a ArtistsResource) createRequest(method string, path string, accessToken model.AccessToken) (*http.Request, error) {
+func (a ArtistsResourceCli) createRequest(method string, path string, accessToken model.AccessToken) (*http.Request, error) {
 	url := fmt.Sprintf("%s%s", a.baseUrl, path)
 	req, err := http.NewRequest(method, url, nil)
 	if err != nil {
@@ -55,7 +55,7 @@ func (a ArtistsResource) createRequest(method string, path string, accessToken m
 	return req, err
 }
 
-func (a ArtistsResource) validateReqSuccess(resp *http.Response) *model.ApiError {
+func (a ArtistsResourceCli) validateReqSuccess(resp *http.Response) *model.ApiError {
 	if resp.StatusCode != 200 {
 		apiErr := model.ApiError{
 			Status:  resp.StatusCode,
@@ -72,7 +72,7 @@ func (a ArtistsResource) validateReqSuccess(resp *http.Response) *model.ApiError
 	return nil
 }
 
-func (a ArtistsResource) parseResponse(resp *http.Response) (model.Artist, error) {
+func (a ArtistsResourceCli) parseResponse(resp *http.Response) (model.Artist, error) {
 	defer func(body io.ReadCloser) {
 		_ = body.Close()
 	}(resp.Body)
