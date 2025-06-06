@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/go-playground/validator/v10"
 	"gopkg.in/yaml.v3"
-	"jezz-go-spotify-integration/internal/model"
 )
 
 const configFileName = "config.yml"
@@ -24,7 +23,7 @@ type Config struct {
 type CliConfig struct {
 	BaseUrl        string `json:"base_url" yaml:"base_url"  validate:"required,url"`
 	AccountsUrl    string `json:"accounts_url" yaml:"accounts_url"  validate:"required,url"`
-	CliCredentials model.CliCredentials
+	CliCredentials CliCredentials
 }
 
 func Load() (Config, error) {
@@ -61,8 +60,8 @@ func loadConfig() (Config, error) {
 	return config, nil
 }
 
-func loadSpotifyCliCredentials() (model.CliCredentials, error) {
-	var cliCredentials model.CliCredentials
+func loadSpotifyCliCredentials() (CliCredentials, error) {
+	var cliCredentials CliCredentials
 	if err := yaml.Unmarshal(spotifyCliCredentialsData, &cliCredentials); err != nil {
 		return cliCredentials, fmt.Errorf(
 			"error while unmarshalling spotify client credentials config - verify file %s | Error: %w",

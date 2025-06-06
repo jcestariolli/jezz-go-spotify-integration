@@ -1,4 +1,4 @@
-package model
+package artists
 
 type Href string
 
@@ -34,4 +34,10 @@ type Artist struct {
 	Popularity   int          `json:"popularity"`
 	Type         string       `json:"type"`
 	Uri          Uri          `json:"uri"`
+}
+
+type Artists []Artist
+
+type MultipleArtists struct {
+	Artists Artists `json:"artists"`
 }

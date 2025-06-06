@@ -1,15 +1,15 @@
-package model
+package commons
 
 import "encoding/json"
 
-type ApiError struct {
+type ResourceError struct {
 	Status  int    `json:"status"`
 	Message string `json:"message"`
 }
 
-func (e ApiError) Error() string {
+func (e ResourceError) Error() string {
 	if body, err := json.Marshal(e); err == nil {
 		return string(body)
 	}
-	return "api error, no details provided"
+	return "resource error, no details provided"
 }

@@ -1,4 +1,4 @@
-package model
+package config
 
 type CliCredentials struct {
 	Id     string `json:"client_id" yaml:"client_id" validate:"required"`

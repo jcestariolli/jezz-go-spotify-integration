@@ -1,4 +1,4 @@
-package model
+package commons
 
 import "encoding/json"
 

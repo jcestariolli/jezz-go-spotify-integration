@@ -10,7 +10,7 @@ import (
 
 func main() {
 	var spotifyConfig config.Config
-	if loadConfig(&spotifyConfig) != true {
+	if !loadConfig(&spotifyConfig) {
 		return
 	}
 	catalogService := loadServices(spotifyConfig)
@@ -55,12 +55,12 @@ func loadCatalogService(cliConfig config.CliConfig) (*service.CatalogService, er
 }
 
 func runApp(catalogService service.CatalogService) {
-	getArtist(catalogService, "7nzSoJISlVJsn7O0yTeMOB?si=1RkwrfE4QWanTYQMdN1pTg")
-	return
+	getArtist(catalogService, "7nzSoJISlVJsn7O0yTeMOB")
+	getMultipleArtists(catalogService, "4DFhHyjvGYa9wxdHUjtDkc", "4lgrzShsg2FLA89UM2fdO5")
 }
 
 func getArtist(catalogService service.CatalogService, artistId string) bool {
-	fmt.Println("Trying to get am artist...")
+	fmt.Println("Trying to get an artist...")
 	artist, err := catalogService.GetArtist(artistId)
 
 	if err != nil {
@@ -70,6 +70,23 @@ func getArtist(catalogService service.CatalogService, artistId string) bool {
 	}
 	fmt.Println("✔ Artist obtained! :)")
 	if body, err3 := json.Marshal(artist); err3 == nil && body != nil {
+		fmt.Printf("╰┈➤%s\n", string(body))
+	}
+	fmt.Printf("\n")
+	return false
+}
+
+func getMultipleArtists(catalogService service.CatalogService, artistIds ...string) bool {
+	fmt.Println("Trying to get multiple artists...")
+	artists, err := catalogService.GetArtists(artistIds...)
+
+	if err != nil {
+		fmt.Println("✖ Getting multiple artists failed :(")
+		fmt.Printf("╰┈➤%s\n\n", err.Error())
+		return true
+	}
+	fmt.Println("✔ Artists obtained! :)")
+	if body, err3 := json.Marshal(artists); err3 == nil && body != nil {
 		fmt.Printf("╰┈➤%s\n", string(body))
 	}
 	fmt.Printf("\n")
