@@ -1,12 +1,12 @@
-package artists
+package artist
 
 import (
 	"encoding/json"
 	"fmt"
 	"github.com/samber/lo"
 	"io"
-	"jezz-go-spotify-integration/internal/auth"
 	"jezz-go-spotify-integration/internal/commons"
+	"jezz-go-spotify-integration/internal/model"
 	"net/http"
 	"strings"
 )
@@ -28,30 +28,30 @@ func NewResource(
 	}
 }
 
-func (a Resource) Get(accessToken auth.AccessToken, artistId string) (Artist, error) {
+func (a Resource) Get(accessToken model.AccessToken, artistId string) (model.Artist, error) {
 	req, cErr := a.createRequest("GET", "/"+artistId, map[string]string{}, accessToken)
 	if cErr != nil {
-		return Artist{}, fmt.Errorf("error creating artist request for astist ID - %s - %w", artistId, cErr)
+		return model.Artist{}, fmt.Errorf("error creating artist request for astist ID - %s - %w", artistId, cErr)
 	}
 
 	resp, reqErr := (&http.Client{}).Do(req)
 	if reqErr != nil {
-		return Artist{}, fmt.Errorf("error connecting to artist client for astist ID - %s - %w", artistId, reqErr)
+		return model.Artist{}, fmt.Errorf("error connecting to artist client for astist ID - %s - %w", artistId, reqErr)
 	}
 
 	if vErr := a.validateReqSuccess(resp); vErr != nil {
-		return Artist{}, vErr
+		return model.Artist{}, vErr
 	}
 	artist, pErr := a.parseSingleArtistResponse(resp)
 	if pErr != nil {
-		return Artist{}, fmt.Errorf("error parsing response from resource for astist ID - %s - %w", artistId, pErr)
+		return model.Artist{}, fmt.Errorf("error parsing response from resource for astist ID - %s - %w", artistId, pErr)
 	}
 	return artist, nil
 }
 
-func (a Resource) GetBatch(accessToken auth.AccessToken, artistsIds ...string) (Artists, error) {
+func (a Resource) GetBatch(accessToken model.AccessToken, artistsIds ...string) (model.Artists, error) {
 	if err := a.validateArtistsIdSize(artistsIds); err != nil {
-		return Artists{}, err
+		return model.Artists{}, err
 	}
 	artistsIdsStr := strings.Join(artistsIds, ",")
 	queryParameters := map[string]string{
@@ -60,21 +60,21 @@ func (a Resource) GetBatch(accessToken auth.AccessToken, artistsIds ...string) (
 
 	req, cErr := a.createRequest("GET", "", queryParameters, accessToken)
 	if cErr != nil {
-		return Artists{}, fmt.Errorf("error creating artist request for astists IDs - %s - %w", artistsIdsStr, cErr)
+		return model.Artists{}, fmt.Errorf("error creating artist request for astists IDs - %s - %w", artistsIdsStr, cErr)
 	}
 
 	resp, reqErr := (&http.Client{}).Do(req)
 	if reqErr != nil {
-		return Artists{}, fmt.Errorf("error connecting to artist client for astists IDs - %s - %w", artistsIdsStr, reqErr)
+		return model.Artists{}, fmt.Errorf("error connecting to artist client for astists IDs - %s - %w", artistsIdsStr, reqErr)
 	}
 
 	if vErr := a.validateReqSuccess(resp); vErr != nil {
-		return Artists{}, vErr
+		return model.Artists{}, vErr
 	}
 
 	artists, pErr := a.parseMultipleArtistsResponse(resp)
 	if pErr != nil {
-		return Artists{}, fmt.Errorf("error parsing response from resource  for astists ID - %s - %w", artistsIdsStr, pErr)
+		return model.Artists{}, fmt.Errorf("error parsing response from resource  for astists ID - %s - %w", artistsIdsStr, pErr)
 	}
 	return artists, nil
 
@@ -87,7 +87,7 @@ func (a Resource) validateArtistsIdSize(artistIds []string) error {
 	return nil
 }
 
-func (a Resource) createRequest(method string, path string, queryParams map[string]string, accessToken auth.AccessToken) (*http.Request, error) {
+func (a Resource) createRequest(method string, path string, queryParams map[string]string, accessToken model.AccessToken) (*http.Request, error) {
 	url := a.baseUrl + apiVersion + artistsResource
 	if path != "" {
 		url += path
@@ -126,12 +126,12 @@ func (a Resource) validateReqSuccess(resp *http.Response) *commons.ResourceError
 	return nil
 }
 
-func (a Resource) parseMultipleArtistsResponse(resp *http.Response) (Artists, error) {
+func (a Resource) parseMultipleArtistsResponse(resp *http.Response) (model.Artists, error) {
 	defer func(body io.ReadCloser) {
 		_ = body.Close()
 	}(resp.Body)
 
-	multipleArtists := MultipleArtists{}
+	multipleArtists := model.MultipleArtists{}
 	respBody, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return multipleArtists.Artists, err
@@ -156,12 +156,12 @@ func (a Resource) parseMultipleArtistsResponse(resp *http.Response) (Artists, er
 	return multipleArtists.Artists, nil
 }
 
-func (a Resource) parseSingleArtistResponse(resp *http.Response) (Artist, error) {
+func (a Resource) parseSingleArtistResponse(resp *http.Response) (model.Artist, error) {
 	defer func(body io.ReadCloser) {
 		_ = body.Close()
 	}(resp.Body)
 
-	artist := Artist{}
+	artist := model.Artist{}
 	respBody, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return artist, err

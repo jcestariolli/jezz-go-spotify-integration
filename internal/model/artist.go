@@ -1,4 +1,4 @@
-package artists
+package model
 
 type Href string
 

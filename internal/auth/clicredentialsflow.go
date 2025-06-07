@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"jezz-go-spotify-integration/internal/commons"
+	"jezz-go-spotify-integration/internal/model"
 	"net/http"
 	"net/url"
 	"strings"
@@ -33,7 +34,7 @@ func NewCliCredentialsFlow(
 	}
 }
 
-func (c CliCredentialsFlow) Authenticate() (*Authentication, error) {
+func (c CliCredentialsFlow) Authenticate() (*model.Authentication, error) {
 	req, err := c.createRequest()
 	if err != nil {
 		return nil, fmt.Errorf("error creating client credentials request - %w", err)
@@ -78,7 +79,7 @@ func (c CliCredentialsFlow) validateRespStatus(resp *http.Response) error {
 		if err != nil {
 			return appErr
 		}
-		var authErr AuthenticationError
+		var authErr commons.AuthenticationError
 		if err = json.Unmarshal(respBody, &authErr); err == nil && authErr.Err != "" {
 			appErr.Message = authErr.Err
 			appErr.Details = authErr.ErrDescription
@@ -88,7 +89,7 @@ func (c CliCredentialsFlow) validateRespStatus(resp *http.Response) error {
 	return nil
 }
 
-func (c CliCredentialsFlow) parseResponse(resp *http.Response) (*Authentication, error) {
+func (c CliCredentialsFlow) parseResponse(resp *http.Response) (*model.Authentication, error) {
 	defer func(body io.ReadCloser) {
 		_ = body.Close()
 	}(resp.Body)
@@ -97,7 +98,7 @@ func (c CliCredentialsFlow) parseResponse(resp *http.Response) (*Authentication,
 	if err != nil {
 		return nil, err
 	}
-	var authBody Authentication
+	var authBody model.Authentication
 	if err = json.Unmarshal(respBody, &authBody); err != nil || authBody.AccessToken == "" {
 		return nil, commons.AppError{Code: resp.Status, Message: "error obtaining auth response"}
 	}

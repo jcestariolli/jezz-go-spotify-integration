@@ -4,8 +4,9 @@ import (
 	_ "embed"
 	"encoding/json"
 	"fmt"
+	"jezz-go-spotify-integration/internal/artist"
+	"jezz-go-spotify-integration/internal/auth"
 	"jezz-go-spotify-integration/internal/config"
-	"jezz-go-spotify-integration/internal/service"
 )
 
 func main() {
@@ -13,11 +14,10 @@ func main() {
 	if !loadConfig(&spotifyConfig) {
 		return
 	}
-	catalogService := loadServices(spotifyConfig)
-	if catalogService == nil {
-		return
-	}
-	runApp(*catalogService)
+	authService := loadAuthService(spotifyConfig)
+	artistService := loadServices(spotifyConfig, authService)
+
+	runAppFixedCalls(*artistService)
 }
 
 func loadConfig(configPtr *config.Config) bool {
@@ -33,62 +33,84 @@ func loadConfig(configPtr *config.Config) bool {
 	return true
 }
 
-func loadServices(config config.Config) *service.CatalogService {
-	fmt.Println("Loading catalog service...")
-	cliConfig := config.Client
-	catalogService, err := loadCatalogService(cliConfig)
+func loadAuthService(cfg config.Config) *auth.Service {
+	fmt.Println("Loading auth service...")
+	authService, err := auth.NewService(
+		cfg.Client.AccountsUrl,
+		cfg.Client.CliCredentials,
+	)
 	if err != nil {
-		fmt.Println("✖ Catalog service loading failed :(")
+		fmt.Println("✖ Auth service loading failed :(")
 		fmt.Printf("╰┈➤%s\n\n", err.Error())
 		return nil
 	}
-	fmt.Printf("✔ Cataçpg service loaded! :)\n\n")
+	fmt.Printf("✔ Auth service loaded! :)\n\n")
+	return authService
+}
+
+func loadServices(cfg config.Config, authService *auth.Service) *artist.Service {
+	cliConfig := cfg.Client
+	catalogService := loadArtistService(cliConfig, authService)
 	return catalogService
 }
 
-func loadCatalogService(cliConfig config.CliConfig) (*service.CatalogService, error) {
-	return service.NewCatalogService(
+func loadArtistService(cliConfig config.CliConfig, authService *auth.Service) *artist.Service {
+	fmt.Println("Loading artist service...")
+	artistService := artist.NewService(
 		cliConfig.BaseUrl,
-		cliConfig.AccountsUrl,
-		cliConfig.CliCredentials,
+		authService,
 	)
+	fmt.Printf("✔ Artist service loaded! :)\n\n")
+	return artistService
 }
 
-func runApp(catalogService service.CatalogService) {
+func runAppFixedCalls(catalogService artist.Service) {
 	getArtist(catalogService, "7nzSoJISlVJsn7O0yTeMOB")
 	getMultipleArtists(catalogService, "4DFhHyjvGYa9wxdHUjtDkc", "4lgrzShsg2FLA89UM2fdO5")
 }
 
-func getArtist(catalogService service.CatalogService, artistId string) bool {
+func getArtist(svc artist.Service, artistId string) {
 	fmt.Println("Trying to get an artist...")
-	artist, err := catalogService.GetArtist(artistId)
 
+	artistResponse, err := svc.GetArtist(artistId)
 	if err != nil {
 		fmt.Println("✖ Getting artist failed :(")
 		fmt.Printf("╰┈➤%s\n\n", err.Error())
-		return true
+		return
 	}
-	fmt.Println("✔ Artist obtained! :)")
-	if body, err3 := json.Marshal(artist); err3 == nil && body != nil {
-		fmt.Printf("╰┈➤%s\n", string(body))
+
+	if body, err3 := json.Marshal(artistResponse); err3 == nil && body != nil {
+		fmt.Println("✔ Artist obtained! :)")
+		fmt.Printf("╰┈➤%s\n\n", string(body))
+		return
+	} else if err3 != nil {
+		fmt.Println("✖ Getting artist failed :(")
+		fmt.Printf("╰┈➤%s\n\n", err3.Error())
+		return
 	}
-	fmt.Printf("\n")
-	return false
+	fmt.Println("✖ Getting artist failed :(")
+	fmt.Printf("╰┈➤Body is empty\n\n")
 }
 
-func getMultipleArtists(catalogService service.CatalogService, artistIds ...string) bool {
-	fmt.Println("Trying to get multiple artists...")
-	artists, err := catalogService.GetArtists(artistIds...)
+func getMultipleArtists(catalogService artist.Service, artistIds ...string) {
+	fmt.Println("Trying to get multiple artist...")
 
+	artists, err := catalogService.GetArtists(artistIds...)
 	if err != nil {
-		fmt.Println("✖ Getting multiple artists failed :(")
+		fmt.Println("✖ Getting multiple artist failed :(")
 		fmt.Printf("╰┈➤%s\n\n", err.Error())
-		return true
+		return
 	}
-	fmt.Println("✔ Artists obtained! :)")
+
 	if body, err3 := json.Marshal(artists); err3 == nil && body != nil {
-		fmt.Printf("╰┈➤%s\n", string(body))
+		fmt.Println("✔ Artists obtained! :)")
+		fmt.Printf("╰┈➤%s\n\n", string(body))
+		return
+	} else if err3 != nil {
+		fmt.Println("✖ Getting multiple artist failed :(")
+		fmt.Printf("╰┈➤%s\n\n", err3.Error())
+		return
 	}
-	fmt.Printf("\n")
-	return false
+	fmt.Println("✖ Getting multiple artist failed :(")
+	fmt.Printf("╰┈➤Body is empty\n\n")
 }
