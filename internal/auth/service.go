@@ -38,10 +38,6 @@ func (c *Service) authenticateApp() error {
 	return nil
 }
 
-func (c *Service) getAppAuth() *model.Authentication {
-	return c.appAuth
-}
-
 func (c *Service) GetAppAccessToken() model.AccessToken {
 	return c.appAuth.AccessToken
 }
