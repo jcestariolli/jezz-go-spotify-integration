@@ -1,28 +1,5 @@
 package model
 
-type Href string
-
-type Url string
-
-type Uri string
-
-type Genres []string
-
-type ExternalUrls struct {
-	Spotify string `json:"spotify"`
-}
-
-type Followers struct {
-	Href  Href `json:"href,omitempty"`
-	Total int  `json:"total"`
-}
-
-type Image struct {
-	Url    Url `json:"url"`
-	Height int `json:"height,omitempty"`
-	Width  int `json:"width,omitempty"`
-}
-
 type Artist struct {
 	ExternalUrls ExternalUrls `json:"external_urls"`
 	Followers    Followers    `json:"followers"`
