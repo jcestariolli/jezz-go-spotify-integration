@@ -34,7 +34,7 @@ test:
 lint:
 	golangci-lint run
 
-.PHONY: lint-with-fix
-lint-with-fix:
+.PHONY: lint-fix
+lint-fix:
 	golangci-lint run --fix
 
