@@ -1,4 +1,4 @@
-package artist
+package artists
 
 import (
 	"jezz-go-spotify-integration/internal/auth"

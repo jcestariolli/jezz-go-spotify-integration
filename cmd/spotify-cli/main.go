@@ -4,7 +4,7 @@ import (
 	_ "embed"
 	"encoding/json"
 	"fmt"
-	"jezz-go-spotify-integration/internal/artist"
+	"jezz-go-spotify-integration/internal/artists"
 	"jezz-go-spotify-integration/internal/auth"
 	"jezz-go-spotify-integration/internal/config"
 )
@@ -15,9 +15,9 @@ func main() {
 		return
 	}
 	authService := loadAuthService(spotifyConfig)
-	artistService := loadServices(spotifyConfig, authService)
+	artistsSvc := loadServices(spotifyConfig, authService)
 
-	runAppFixedCalls(*artistService)
+	runAppFixedCalls(*artistsSvc)
 }
 
 func loadConfig(configPtr *config.Config) bool {
@@ -48,28 +48,28 @@ func loadAuthService(cfg config.Config) *auth.Service {
 	return authService
 }
 
-func loadServices(cfg config.Config, authService *auth.Service) *artist.Service {
+func loadServices(cfg config.Config, authService *auth.Service) *artists.Service {
 	cliConfig := cfg.Client
-	catalogService := loadArtistService(cliConfig, authService)
-	return catalogService
+	artistsSvc := loadArtistsService(cliConfig, authService)
+	return artistsSvc
 }
 
-func loadArtistService(cliConfig config.CliConfig, authService *auth.Service) *artist.Service {
-	fmt.Println("Loading artist service...")
-	artistService := artist.NewService(
+func loadArtistsService(cliConfig config.CliConfig, authService *auth.Service) *artists.Service {
+	fmt.Println("Loading artists service...")
+	artistsSvc := artists.NewService(
 		cliConfig.BaseUrl,
 		authService,
 	)
 	fmt.Printf("✔ Artist service loaded! :)\n\n")
-	return artistService
+	return artistsSvc
 }
 
-func runAppFixedCalls(catalogService artist.Service) {
-	getArtist(catalogService, "7nzSoJISlVJsn7O0yTeMOB")
-	getMultipleArtists(catalogService, "4DFhHyjvGYa9wxdHUjtDkc", "4lgrzShsg2FLA89UM2fdO5")
+func runAppFixedCalls(artistsSvc artists.Service) {
+	getArtist(artistsSvc, "7nzSoJISlVJsn7O0yTeMOB")
+	getMultipleArtists(artistsSvc, "4DFhHyjvGYa9wxdHUjtDkc", "4lgrzShsg2FLA89UM2fdO5")
 }
 
-func getArtist(svc artist.Service, artistId string) {
+func getArtist(svc artists.Service, artistId string) {
 	fmt.Println("Trying to get an artist...")
 
 	artistResponse, err := svc.GetArtist(artistId)
@@ -92,25 +92,25 @@ func getArtist(svc artist.Service, artistId string) {
 	fmt.Printf("╰┈➤Body is empty\n\n")
 }
 
-func getMultipleArtists(catalogService artist.Service, artistIds ...string) {
-	fmt.Println("Trying to get multiple artist...")
+func getMultipleArtists(catalogService artists.Service, artistIds ...string) {
+	fmt.Println("Trying to get multiple artists...")
 
-	artists, err := catalogService.GetArtists(artistIds...)
+	artistsResponse, err := catalogService.GetArtists(artistIds...)
 	if err != nil {
-		fmt.Println("✖ Getting multiple artist failed :(")
+		fmt.Println("✖ Getting multiple artists failed :(")
 		fmt.Printf("╰┈➤%s\n\n", err.Error())
 		return
 	}
 
-	if body, err3 := json.Marshal(artists); err3 == nil && body != nil {
+	if body, err3 := json.Marshal(artistsResponse); err3 == nil && body != nil {
 		fmt.Println("✔ Artists obtained! :)")
 		fmt.Printf("╰┈➤%s\n\n", string(body))
 		return
 	} else if err3 != nil {
-		fmt.Println("✖ Getting multiple artist failed :(")
+		fmt.Println("✖ Getting multiple artists failed :(")
 		fmt.Printf("╰┈➤%s\n\n", err3.Error())
 		return
 	}
-	fmt.Println("✖ Getting multiple artist failed :(")
+	fmt.Println("✖ Getting multiple artists failed :(")
 	fmt.Printf("╰┈➤Body is empty\n\n")
 }

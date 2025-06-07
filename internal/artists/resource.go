@@ -1,4 +1,4 @@
-package artist
+package artists
 
 import (
 	"encoding/json"
@@ -113,7 +113,7 @@ func (a Resource) validateReqSuccess(resp *http.Response) *commons.ResourceError
 	if resp.StatusCode != 200 {
 		apiErr := commons.ResourceError{
 			Status:  resp.StatusCode,
-			Message: "error getting artist",
+			Message: "error in artists API",
 		}
 		respBody, err := io.ReadAll(resp.Body)
 		if err != nil {
@@ -144,7 +144,7 @@ func (a Resource) parseMultipleArtistsResponse(resp *http.Response) (model.Artis
 		}
 		var errMessage string
 		if len(multipleArtists.Artists) < 1 {
-			errMessage = ": empty artist list (response body: " + string(respBody) + " )"
+			errMessage = ": empty artists list (response body: " + string(respBody) + " )"
 		} else {
 			errMessage = ", no details were provided"
 		}
