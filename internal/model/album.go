@@ -2,6 +2,13 @@ package model
 
 type AlbumType string
 
+const (
+	DefaultAlbumType     AlbumType = "album"
+	SingleAlbumType      AlbumType = "single"
+	AppearsOnAlgumType   AlbumType = "appears_on"
+	CompilationAlbumType AlbumType = "compilation"
+)
+
 type Album struct {
 	AlbumType            AlbumType          `json:"album_type"`
 	TotalTracks          int                `json:"total_tracks"`
