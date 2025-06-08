@@ -34,6 +34,7 @@ type SimplifiedArtistAlbum struct {
 }
 
 type Album struct {
+	SimplifiedAlbum
 	Tracks      SimplifiedTracksPaginated `json:"tracks"`
 	Copyrights  []Copyright               `json:"copyrights"`
 	ExternalIds ExternalIds               `json:"external_ids"`
