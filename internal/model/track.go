@@ -19,12 +19,18 @@ type SimplifiedTrack struct {
 	IsLocal          bool               `json:"is_local"`
 }
 
-type Tracks struct {
-	Href     Href              `json:"href"`
-	Limit    Limit             `json:"limit"`
-	Next     Next              `json:"next"`
-	Offset   Offset            `json:"offset"`
-	Previous Previous          `json:"previous"`
-	Total    Total             `json:"total"`
-	Items    []SimplifiedTrack `json:"items"`
+type Track struct {
+	SimplifiedTrack
+	Album       SimplifiedAlbum `json:"album"`
+	ExternalIds ExternalIds     `json:"external_ids"`
+	Popularity  int             `json:"popularity"`
+}
+
+type MultipleTracks struct {
+	Tracks []Track `json:"tracks"`
+}
+
+type SimplifiedTracksPaginated struct {
+	Pagination
+	Items []SimplifiedTrack `json:"items"`
 }
