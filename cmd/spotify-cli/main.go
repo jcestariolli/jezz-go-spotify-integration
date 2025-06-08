@@ -2,12 +2,13 @@ package main
 
 import (
 	_ "embed"
-	"encoding/json"
 	"fmt"
+	"jezz-go-spotify-integration/cmd/spotify-cli/sample"
 	"jezz-go-spotify-integration/internal/albums"
 	"jezz-go-spotify-integration/internal/artists"
 	"jezz-go-spotify-integration/internal/auth"
 	"jezz-go-spotify-integration/internal/config"
+	"jezz-go-spotify-integration/internal/tracks"
 )
 
 func main() {
@@ -16,9 +17,9 @@ func main() {
 		return
 	}
 	authService := loadAuthService(spotifyConfig)
-	artistsSvc, albumSvc := loadServices(spotifyConfig, authService)
+	artistsSvc, albumSvc, tracksSvc := loadServices(spotifyConfig, authService)
 
-	runAppFixedCalls(*artistsSvc, *albumSvc)
+	sample.RunAppSampleCalls(*artistsSvc, *albumSvc, *tracksSvc)
 }
 
 func loadConfig(configPtr *config.Config) bool {
@@ -49,11 +50,12 @@ func loadAuthService(cfg config.Config) *auth.Service {
 	return authService
 }
 
-func loadServices(cfg config.Config, authService *auth.Service) (*artists.Service, *albums.Service) {
+func loadServices(cfg config.Config, authService *auth.Service) (*artists.Service, *albums.Service, *tracks.Service) {
 	cliConfig := cfg.Client
 	artistsSvc := loadArtistsService(cliConfig, authService)
 	albumsSvc := loadAlbumsService(cliConfig, authService)
-	return artistsSvc, albumsSvc
+	tracksSvc := loadTracksService(cliConfig, authService)
+	return artistsSvc, albumsSvc, tracksSvc
 }
 
 func loadArtistsService(cliConfig config.CliConfig, authService *auth.Service) *artists.Service {
@@ -76,152 +78,12 @@ func loadAlbumsService(cliConfig config.CliConfig, authService *auth.Service) *a
 	return albumsSvc
 }
 
-func runAppFixedCalls(artistsSvc artists.Service, albumsSvc albums.Service) {
-	getArtist(artistsSvc, "7nzSoJISlVJsn7O0yTeMOB")
-	getMultipleArtists(artistsSvc, "4DFhHyjvGYa9wxdHUjtDkc", "4lgrzShsg2FLA89UM2fdO5")
-	getAlbum(albumsSvc, "1QJmLRcuIMMjZ49elafR3K")
-	getAlbumForCountryMarket(albumsSvc, "1QJmLRcuIMMjZ49elafR3K")
-	getMultipleAlbums(albumsSvc, "6JLTZPPzQDKjv6zkenbZnc", "0lw68yx3MhKflWFqCsGkIs")
-	getMultipleAlbumsForCountryMarket(albumsSvc, "6JLTZPPzQDKjv6zkenbZnc", "0lw68yx3MhKflWFqCsGkIs")
-
-}
-
-func getArtist(svc artists.Service, artistId string) {
-	fmt.Println("Trying to get an artist...")
-
-	artistResponse, err := svc.GetArtist(artistId)
-	if err != nil {
-		fmt.Println("✖ Getting artist failed :(")
-		fmt.Printf("╰┈➤%s\n\n", err.Error())
-		return
-	}
-
-	if body, err3 := json.Marshal(artistResponse); err3 == nil && body != nil {
-		fmt.Println("✔ Artist obtained! :)")
-		fmt.Printf("╰┈➤%s\n\n", string(body))
-		return
-	} else if err3 != nil {
-		fmt.Println("✖ Getting artist failed :(")
-		fmt.Printf("╰┈➤%s\n\n", err3.Error())
-		return
-	}
-	fmt.Println("✖ Getting artist failed :(")
-	fmt.Printf("╰┈➤Body is empty\n\n")
-}
-
-func getMultipleArtists(svc artists.Service, artistIds ...string) {
-	fmt.Println("Trying to get multiple artists...")
-
-	artistsResponse, err := svc.GetArtists(artistIds...)
-	if err != nil {
-		fmt.Println("✖ Getting multiple artists failed :(")
-		fmt.Printf("╰┈➤%s\n\n", err.Error())
-		return
-	}
-
-	if body, err3 := json.Marshal(artistsResponse); err3 == nil && body != nil {
-		fmt.Println("✔ Artists obtained! :)")
-		fmt.Printf("╰┈➤%s\n\n", string(body))
-		return
-	} else if err3 != nil {
-		fmt.Println("✖ Getting multiple artists failed :(")
-		fmt.Printf("╰┈➤%s\n\n", err3.Error())
-		return
-	}
-	fmt.Println("✖ Getting multiple artists failed :(")
-	fmt.Printf("╰┈➤Body is empty\n\n")
-}
-
-func getAlbum(svc albums.Service, albumId string) {
-	fmt.Println("Trying to get an album...")
-
-	albumResponse, err := svc.GetAlbum(nil, albumId)
-	if err != nil {
-		fmt.Println("✖ Getting album failed :(")
-		fmt.Printf("╰┈➤%s\n\n", err.Error())
-		return
-	}
-
-	if body, err3 := json.Marshal(albumResponse); err3 == nil && body != nil {
-		fmt.Println("✔ Album obtained! :)")
-		fmt.Printf("╰┈➤%s\n\n", string(body))
-		return
-	} else if err3 != nil {
-		fmt.Println("✖ Getting album failed :(")
-		fmt.Printf("╰┈➤%s\n\n", err3.Error())
-		return
-	}
-	fmt.Println("✖ Getting album failed :(")
-	fmt.Printf("╰┈➤Body is empty\n\n")
-}
-
-func getAlbumForCountryMarket(svc albums.Service, albumId string) {
-	countryMarketName := "Brazil"
-	fmt.Println("Trying to get an album for " + countryMarketName + "'s market...")
-
-	albumResponse, err := svc.GetAlbum(&countryMarketName, albumId)
-	if err != nil {
-		fmt.Println("✖ Getting album for market failed :(")
-		fmt.Printf("╰┈➤%s\n\n", err.Error())
-		return
-	}
-
-	if body, err3 := json.Marshal(albumResponse); err3 == nil && body != nil {
-		fmt.Println("✔ Album obtained! :)")
-		fmt.Printf("╰┈➤%s\n\n", string(body))
-		return
-	} else if err3 != nil {
-		fmt.Println("✖ Getting album failed :(")
-		fmt.Printf("╰┈➤%s\n\n", err3.Error())
-		return
-	}
-	fmt.Println("✖ Getting album for market failed :(")
-	fmt.Printf("╰┈➤Body is empty\n\n")
-}
-
-func getMultipleAlbums(svc albums.Service, albumIds ...string) {
-	fmt.Println("Trying to get multiple albums...")
-
-	albumsResponse, err := svc.GetAlbums(nil, albumIds...)
-	if err != nil {
-		fmt.Println("✖ Getting multiple albums failed :(")
-		fmt.Printf("╰┈➤%s\n\n", err.Error())
-		return
-	}
-
-	if body, err3 := json.Marshal(albumsResponse); err3 == nil && body != nil {
-		fmt.Println("✔ Albums obtained! :)")
-		fmt.Printf("╰┈➤%s\n\n", string(body))
-		return
-	} else if err3 != nil {
-		fmt.Println("✖ Getting multiple albums failed :(")
-		fmt.Printf("╰┈➤%s\n\n", err3.Error())
-		return
-	}
-	fmt.Println("✖ Getting multiple albums failed :(")
-	fmt.Printf("╰┈➤Body is empty\n\n")
-}
-
-func getMultipleAlbumsForCountryMarket(svc albums.Service, albumIds ...string) {
-	countryMarketName := "Brazil"
-	fmt.Println("Trying to get multiple albums for " + countryMarketName + "'s market...")
-
-	albumsResponse, err := svc.GetAlbums(&countryMarketName, albumIds...)
-	if err != nil {
-		fmt.Println("✖ Getting multiple albums for market failed :(")
-		fmt.Printf("╰┈➤%s\n\n", err.Error())
-		return
-	}
-
-	if body, err3 := json.Marshal(albumsResponse); err3 == nil && body != nil {
-		fmt.Println("✔ Albums obtained! :)")
-		fmt.Printf("╰┈➤%s\n\n", string(body))
-		return
-	} else if err3 != nil {
-		fmt.Println("✖ Getting multiple albums failed :(")
-		fmt.Printf("╰┈➤%s\n\n", err3.Error())
-		return
-	}
-	fmt.Println("✖ Getting multiple albums for market failed :(")
-	fmt.Printf("╰┈➤Body is empty\n\n")
+func loadTracksService(cliConfig config.CliConfig, authService *auth.Service) *tracks.Service {
+	fmt.Println("Loading tracks service...")
+	tracksSvc := tracks.NewService(
+		cliConfig.BaseUrl,
+		authService,
+	)
+	fmt.Printf("✔ Track service loaded! :)\n\n")
+	return tracksSvc
 }
