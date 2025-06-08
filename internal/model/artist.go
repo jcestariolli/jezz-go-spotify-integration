@@ -17,8 +17,6 @@ type Artist struct {
 	Popularity int       `json:"popularity"`
 }
 
-type Artists []Artist
-
 type MultipleArtists struct {
-	Artists Artists `json:"artists"`
+	Artists []Artist `json:"artists"`
 }

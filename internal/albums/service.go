@@ -34,12 +34,12 @@ func (c *Service) GetAlbum(countryMarketName *string, albumId string) (model.Alb
 	return auth.ExecuteWithAuthRetry(c.authService, getAlbumFn)
 }
 
-func (c *Service) GetAlbums(countryMarketName *string, albumIds ...string) (model.Albums, error) {
+func (c *Service) GetAlbums(countryMarketName *string, albumIds ...string) ([]model.Album, error) {
 	market, err := c.getMarketByCountryName(countryMarketName)
 	if err != nil {
-		return model.Albums{}, fmt.Errorf("errror getting albums for country %s - unknown country! Details: %w", *countryMarketName, err)
+		return []model.Album{}, fmt.Errorf("errror getting albums for country %s - unknown country! Details: %w", *countryMarketName, err)
 	}
-	getAlbumsFn := func() (model.Albums, error) {
+	getAlbumsFn := func() ([]model.Album, error) {
 		return c.albumsResource.GetBatch(c.authService.GetAppAccessToken(), market, albumIds...)
 	}
 	return auth.ExecuteWithAuthRetry(c.authService, getAlbumsFn)

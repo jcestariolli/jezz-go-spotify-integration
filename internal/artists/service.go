@@ -20,16 +20,16 @@ func NewService(
 	}
 }
 
-func (c *Service) GetArtist(artistId string) (model.Artist, error) {
+func (s *Service) GetArtist(artistId string) (model.Artist, error) {
 	getArtistFn := func() (model.Artist, error) {
-		return c.artistsResource.Get(c.authService.GetAppAccessToken(), artistId)
+		return s.artistsResource.Get(s.authService.GetAppAccessToken(), artistId)
 	}
-	return auth.ExecuteWithAuthRetry(c.authService, getArtistFn)
+	return auth.ExecuteWithAuthRetry(s.authService, getArtistFn)
 }
 
-func (c *Service) GetArtists(artistIds ...string) (model.Artists, error) {
-	getArtistsFn := func() (model.Artists, error) {
-		return c.artistsResource.GetBatch(c.authService.GetAppAccessToken(), artistIds...)
+func (s *Service) GetArtists(artistIds ...string) ([]model.Artist, error) {
+	getArtistsFn := func() ([]model.Artist, error) {
+		return s.artistsResource.GetBatch(s.authService.GetAppAccessToken(), artistIds...)
 	}
-	return auth.ExecuteWithAuthRetry(c.authService, getArtistsFn)
+	return auth.ExecuteWithAuthRetry(s.authService, getArtistsFn)
 }

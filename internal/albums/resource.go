@@ -50,9 +50,9 @@ func (a Resource) Get(accessToken model.AccessToken, market *model.AvailableMark
 	return *output, nil
 }
 
-func (a Resource) GetBatch(accessToken model.AccessToken, market *model.AvailableMarket, albumsIds ...string) (model.Albums, error) {
+func (a Resource) GetBatch(accessToken model.AccessToken, market *model.AvailableMarket, albumsIds ...string) ([]model.Album, error) {
 	if err := a.validateAlbumsIdSize(albumsIds); err != nil {
-		return model.Albums{}, err
+		return []model.Album{}, err
 	}
 
 	albumsIdsStr := strings.Join(albumsIds, ",")
@@ -64,21 +64,21 @@ func (a Resource) GetBatch(accessToken model.AccessToken, market *model.Availabl
 	}
 	req, cErr := utils.CreateHttpRequest(utils.HttpGet, a.baseUrl+apiVersion+albumsResource, "", queryParameters, accessToken)
 	if cErr != nil {
-		return model.Albums{}, fmt.Errorf("error creating album request for albums IDs - %s - %w", albumsIdsStr, cErr)
+		return []model.Album{}, fmt.Errorf("error creating album request for albums IDs - %s - %w", albumsIdsStr, cErr)
 	}
 
 	resp, reqErr := (&http.Client{}).Do(req)
 	if reqErr != nil {
-		return model.Albums{}, fmt.Errorf("error connecting to album client for albums IDs - %s - %w", albumsIdsStr, reqErr)
+		return []model.Album{}, fmt.Errorf("error connecting to album client for albums IDs - %s - %w", albumsIdsStr, reqErr)
 	}
 
 	if vErr := utils.ValidateHttpResponseStatus(resp); vErr != nil {
-		return model.Albums{}, vErr
+		return []model.Album{}, vErr
 	}
 
 	output := &model.MultipleAlbums{}
 	if pErr := utils.ParseHttpResponse(resp, output); pErr != nil {
-		return model.Albums{}, fmt.Errorf("error parsing response from resource for albums ID - %s - %w", albumsIdsStr, pErr)
+		return []model.Album{}, fmt.Errorf("error parsing response from resource for albums ID - %s - %w", albumsIdsStr, pErr)
 	}
 	return output.Albums, nil
 

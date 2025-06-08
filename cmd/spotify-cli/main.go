@@ -203,7 +203,7 @@ func getMultipleAlbums(svc albums.Service, albumIds ...string) {
 }
 
 func getMultipleAlbumsForCountryMarket(svc albums.Service, albumIds ...string) {
-	countryMarketName := "Andorra"
+	countryMarketName := "Brazil"
 	fmt.Println("Trying to get multiple albums for " + countryMarketName + "'s market...")
 
 	albumsResponse, err := svc.GetAlbums(&countryMarketName, albumIds...)

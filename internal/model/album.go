@@ -2,14 +2,16 @@ package model
 
 type AlbumType string
 
+type AlbumGroup string
+
 const (
-	DefaultAlbumType     AlbumType = "album"
-	SingleAlbumType      AlbumType = "single"
-	AppearsOnAlgumType   AlbumType = "appears_on"
-	CompilationAlbumType AlbumType = "compilation"
+	DefaultAlbumGroup     AlbumGroup = "album"
+	SingleAlbumGroup      AlbumGroup = "single"
+	AppearsOnAlgumGroup   AlbumGroup = "appears_on"
+	CompilationAlbumGroup AlbumGroup = "compilation"
 )
 
-type Album struct {
+type SimplifiedAlbum struct {
 	AlbumType            AlbumType          `json:"album_type"`
 	TotalTracks          int                `json:"total_tracks"`
 	AvailableMarkets     []AvailableMarket  `json:"available_markets"`
@@ -24,15 +26,26 @@ type Album struct {
 	Type                 Type               `json:"type"`
 	Uri                  Uri                `json:"uri"`
 	Artists              []SimplifiedArtist `json:"artists"`
-	Tracks               Tracks             `json:"tracks"`
-	Copyrights           []Copyright        `json:"copyrights"`
-	ExternalIds          ExternalIds        `json:"external_ids"`
-	Label                string             `json:"label"`
-	Popularity           int                `json:"popularity"`
 }
 
-type Albums []Album
+type SimplifiedArtistAlbum struct {
+	SimplifiedAlbum
+	AlbumGroup AlbumGroup `json:"album_group"`
+}
+
+type Album struct {
+	Tracks      SimplifiedTracksPaginated `json:"tracks"`
+	Copyrights  []Copyright               `json:"copyrights"`
+	ExternalIds ExternalIds               `json:"external_ids"`
+	Label       string                    `json:"label"`
+	Popularity  int                       `json:"popularity"`
+}
 
 type MultipleAlbums struct {
-	Albums Albums `json:"albums"`
+	Albums []Album `json:"albums"`
+}
+
+type SimplifiedArtistAlbumsPaginated struct {
+	Pagination
+	Items []SimplifiedArtistAlbum `json:"items"`
 }
