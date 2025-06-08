@@ -10,9 +10,19 @@ import (
 	"strings"
 )
 
+type HttpMethod string
+
+const (
+	HttpGet HttpMethod = "GET"
+)
+
+func (m HttpMethod) String() string {
+	return string(m)
+}
+
 func CreateHttpRequest(
+	method HttpMethod,
 	url string,
-	method string,
 	path string,
 	queryParams map[string]string,
 	accessToken model.AccessToken,
@@ -28,7 +38,7 @@ func CreateHttpRequest(
 			"&",
 		)
 	}
-	req, err := http.NewRequest(method, url, nil)
+	req, err := http.NewRequest(method.String(), url, nil)
 	if err != nil {
 		return nil, err
 	}
