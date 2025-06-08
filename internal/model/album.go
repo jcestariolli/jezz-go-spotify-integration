@@ -23,3 +23,9 @@ type Album struct {
 	Label                string             `json:"label"`
 	Popularity           int                `json:"popularity"`
 }
+
+type Albums []Album
+
+type MultipleAlbums struct {
+	Albums Albums `json:"albums"`
+}
