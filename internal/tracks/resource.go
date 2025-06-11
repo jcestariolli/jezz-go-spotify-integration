@@ -60,7 +60,7 @@ func (r Resource) GetTracks(
 	output := &model.MultipleTracks{}
 
 	if err := utils.DoGetRequestAndValidateSuccess(url, queryParams, accessToken, output); err != nil {
-		return []model.Track{}, fmt.Errorf("error executingtrack request for tracks IDs - %s - %w", tracksIdsStr, err)
+		return []model.Track{}, fmt.Errorf("error executing track request for tracks IDs - %s - %w", tracksIdsStr, err)
 	}
 	return (*output).Tracks, nil
 }
