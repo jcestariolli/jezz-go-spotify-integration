@@ -28,7 +28,7 @@ func (r Resource) GetTrack(
 	url := r.baseUrl + internal.ApiVersion + internal.TracksPath + "/" + trackId
 	queryParams := map[string]string{}
 	params := []model.Pair[string, model.StringEvaluator]{
-		{"market", market},
+		{Key: "market", Value: market},
 	}
 	queryParams = utils.AppendQueryParams(queryParams, params...)
 	output := &model.Track{}
@@ -54,7 +54,7 @@ func (r Resource) GetTracks(
 		"ids": tracksIdsStr,
 	}
 	params := []model.Pair[string, model.StringEvaluator]{
-		{"market", market},
+		{Key: "market", Value: market},
 	}
 	queryParams = utils.AppendQueryParams(queryParams, params...)
 	output := &model.MultipleTracks{}

@@ -73,9 +73,9 @@ func (r Resource) GetArtistAlbums(
 		)
 	}
 	params := []model.Pair[string, model.StringEvaluator]{
-		{"market", market},
-		{"limit", limit},
-		{"market", offset},
+		{Key: "market", Value: market},
+		{Key: "limit", Value: limit},
+		{Key: "market", Value: offset},
 	}
 	queryParams = utils.AppendQueryParams(queryParams, params...)
 	output := &model.SimplifiedArtistAlbumsPaginated{}
@@ -94,7 +94,7 @@ func (r Resource) GetArtistTopTracks(
 	url := r.baseUrl + internal.ApiVersion + internal.ArtistsPath + "/" + artistId + internal.TopTracksPath
 	queryParams := map[string]string{}
 	params := []model.Pair[string, model.StringEvaluator]{
-		{"market", market},
+		{Key: "market", Value: market},
 	}
 	queryParams = utils.AppendQueryParams(queryParams, params...)
 	output := &model.MultipleTracks{}

@@ -28,7 +28,7 @@ func (r Resource) GetAlbum(
 	url := r.baseUrl + internal.ApiVersion + internal.AlbumsPath + "/" + albumId
 	queryParams := map[string]string{}
 	params := []model.Pair[string, model.StringEvaluator]{
-		{"market", market},
+		{Key: "market", Value: market},
 	}
 	queryParams = utils.AppendQueryParams(queryParams, params...)
 	output := &model.Album{}
@@ -54,7 +54,7 @@ func (r Resource) GetAlbums(
 		"ids": albumsIdsStr,
 	}
 	params := []model.Pair[string, model.StringEvaluator]{
-		{"market", market},
+		{Key: "market", Value: market},
 	}
 	queryParams = utils.AppendQueryParams(queryParams, params...)
 	output := &model.MultipleAlbums{}
@@ -79,9 +79,9 @@ func (r Resource) GetAlbumTracks(
 	url := r.baseUrl + internal.ApiVersion + internal.AlbumsPath + "/" + albumId + internal.TracksPath
 	queryParams := map[string]string{}
 	params := []model.Pair[string, model.StringEvaluator]{
-		{"market", market},
-		{"limit", limit},
-		{"offset", offset},
+		{Key: "market", Value: market},
+		{Key: "limit", Value: limit},
+		{Key: "offset", Value: offset},
 	}
 	queryParams = utils.AppendQueryParams(queryParams, params...)
 	output := &model.SimplifiedTracksPaginated{}
@@ -104,8 +104,8 @@ func (r Resource) GetNewReleases(
 	url := r.baseUrl + internal.ApiVersion + internal.NewReleasesPath
 	queryParams := map[string]string{}
 	params := []model.Pair[string, model.StringEvaluator]{
-		{"limit", limit},
-		{"offset", offset},
+		{Key: "limit", Value: limit},
+		{Key: "offset", Value: offset},
 	}
 	queryParams = utils.AppendQueryParams(queryParams, params...)
 	output := &model.AlbumsNewRelease{}
