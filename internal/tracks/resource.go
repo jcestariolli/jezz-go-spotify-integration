@@ -36,7 +36,7 @@ func (r Resource) GetTrack(
 	}
 	queryParameters = utils.AppendQueryParams(queryParameters, params...)
 
-	req, cErr := utils.CreateHttpRequest(utils.HttpGet, r.baseUrl+apiVersion+tracksResource, "/"+trackId, queryParameters, accessToken)
+	req, cErr := utils.CreateHttpRequest(utils.HttpGet, r.baseUrl+apiVersion+tracksResource+"/"+trackId, queryParameters, accessToken)
 	if cErr != nil {
 		return model.Track{}, fmt.Errorf("error creating track request for track ID - %s - %w", trackId, cErr)
 	}
@@ -74,7 +74,7 @@ func (r Resource) GetTracks(
 	}
 	queryParameters = utils.AppendQueryParams(queryParameters, params...)
 
-	req, cErr := utils.CreateHttpRequest(utils.HttpGet, r.baseUrl+apiVersion+tracksResource, "", queryParameters, accessToken)
+	req, cErr := utils.CreateHttpRequest(utils.HttpGet, r.baseUrl+apiVersion+tracksResource, queryParameters, accessToken)
 	if cErr != nil {
 		return []model.Track{}, fmt.Errorf("error creating track request for tracks IDs - %s - %w", tracksIdsStr, cErr)
 	}

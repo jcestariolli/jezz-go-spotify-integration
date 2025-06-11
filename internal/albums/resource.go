@@ -38,7 +38,7 @@ func (r Resource) GetAlbum(
 	}
 	queryParameters = utils.AppendQueryParams(queryParameters, params...)
 
-	req, cErr := utils.CreateHttpRequest(utils.HttpGet, r.baseUrl+apiVersion, albumsResource+"/"+albumId, queryParameters, accessToken)
+	req, cErr := utils.CreateHttpRequest(utils.HttpGet, r.baseUrl+apiVersion+albumsResource+"/"+albumId, queryParameters, accessToken)
 	if cErr != nil {
 		return model.Album{}, fmt.Errorf("error creating album request for album ID - %s - %w", albumId, cErr)
 	}
@@ -76,7 +76,7 @@ func (r Resource) GetAlbums(
 	}
 	queryParameters = utils.AppendQueryParams(queryParameters, params...)
 
-	req, cErr := utils.CreateHttpRequest(utils.HttpGet, r.baseUrl+apiVersion, albumsResource, queryParameters, accessToken)
+	req, cErr := utils.CreateHttpRequest(utils.HttpGet, r.baseUrl+apiVersion+albumsResource, queryParameters, accessToken)
 	if cErr != nil {
 		return []model.Album{}, fmt.Errorf("error creating album request for albums IDs - %s - %w", albumsIdsStr, cErr)
 	}
@@ -117,7 +117,7 @@ func (r Resource) GetAlbumTracks(
 	}
 	queryParameters = utils.AppendQueryParams(queryParameters, params...)
 
-	req, cErr := utils.CreateHttpRequest(utils.HttpGet, r.baseUrl+apiVersion, albumsResource+"/"+albumId+tracksResource, queryParameters, accessToken)
+	req, cErr := utils.CreateHttpRequest(utils.HttpGet, r.baseUrl+apiVersion+albumsResource+"/"+albumId+tracksResource, queryParameters, accessToken)
 	if cErr != nil {
 		return model.SimplifiedTracksPaginated{}, fmt.Errorf("error creating album tracks request for album ID - %s - %w", albumId, cErr)
 	}
@@ -154,7 +154,7 @@ func (r Resource) GetNewReleases(
 	}
 	queryParameters = utils.AppendQueryParams(queryParameters, params...)
 
-	req, cErr := utils.CreateHttpRequest(utils.HttpGet, r.baseUrl+apiVersion, newReleasesResource, queryParameters, accessToken)
+	req, cErr := utils.CreateHttpRequest(utils.HttpGet, r.baseUrl+apiVersion+newReleasesResource, queryParameters, accessToken)
 	if cErr != nil {
 		return model.AlbumsNewRelease{}, fmt.Errorf("error creating new releases request - %w", cErr)
 	}
