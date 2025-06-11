@@ -78,9 +78,8 @@ func (r Resource) GetAlbumTracks(
 	offset *model.Offset,
 	albumId string,
 ) (model.SimplifiedTracksPaginated, error) {
-	var errP error
-	if limit, offset, errP = utils.ValidatePaginationParams(limit, offset); errP != nil {
-		return model.SimplifiedTracksPaginated{}, fmt.Errorf("error creating album tracks request for album ID - %s - %w", albumId, errP)
+	if err := utils.ValidatePaginationParams(limit, offset); err != nil {
+		return model.SimplifiedTracksPaginated{}, fmt.Errorf("error creating album tracks request for album ID - %s - %w", albumId, err)
 	}
 
 	url := r.baseUrl + apiVersion + albumsResource + "/" + albumId + tracksResource
@@ -104,9 +103,8 @@ func (r Resource) GetNewReleases(
 	limit *model.Limit,
 	offset *model.Offset,
 ) (model.AlbumsNewRelease, error) {
-	var errP error
-	if limit, offset, errP = utils.ValidatePaginationParams(limit, offset); errP != nil {
-		return model.AlbumsNewRelease{}, fmt.Errorf("error creating new releases request - %w", errP)
+	if err := utils.ValidatePaginationParams(limit, offset); err != nil {
+		return model.AlbumsNewRelease{}, fmt.Errorf("error creating new releases request - %w", err)
 	}
 
 	url := r.baseUrl + apiVersion + newReleasesResource
