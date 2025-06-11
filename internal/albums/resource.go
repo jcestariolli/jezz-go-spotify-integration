@@ -31,9 +31,11 @@ func (r Resource) GetAlbum(
 	albumId string,
 ) (model.Album, error) {
 	queryParameters := map[string]string{}
-	if market != nil {
-		queryParameters["market"] = (*market).String()
+	params := []model.Pair[string, model.StringEvaluator]{
+		{"market", market},
 	}
+	queryParameters = utils.AppendQueryParams(queryParameters, params...)
+
 	req, cErr := utils.CreateHttpRequest(utils.HttpGet, r.baseUrl+apiVersion+albumsResource, "/"+albumId, queryParameters, accessToken)
 	if cErr != nil {
 		return model.Album{}, fmt.Errorf("error creating album request for album ID - %s - %w", albumId, cErr)
@@ -67,9 +69,11 @@ func (r Resource) GetAlbums(
 	queryParameters := map[string]string{
 		"ids": albumsIdsStr,
 	}
-	if market != nil {
-		queryParameters["market"] = (*market).String()
+	params := []model.Pair[string, model.StringEvaluator]{
+		{"market", market},
 	}
+	queryParameters = utils.AppendQueryParams(queryParameters, params...)
+
 	req, cErr := utils.CreateHttpRequest(utils.HttpGet, r.baseUrl+apiVersion+albumsResource, "", queryParameters, accessToken)
 	if cErr != nil {
 		return []model.Album{}, fmt.Errorf("error creating album request for albums IDs - %s - %w", albumsIdsStr, cErr)

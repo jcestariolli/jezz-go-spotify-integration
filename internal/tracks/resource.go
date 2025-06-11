@@ -31,9 +31,11 @@ func (r Resource) GetTrack(
 	trackId string,
 ) (model.Track, error) {
 	queryParameters := map[string]string{}
-	if market != nil {
-		queryParameters["market"] = (*market).String()
+	params := []model.Pair[string, model.StringEvaluator]{
+		{"market", market},
 	}
+	queryParameters = utils.AppendQueryParams(queryParameters, params...)
+
 	req, cErr := utils.CreateHttpRequest(utils.HttpGet, r.baseUrl+apiVersion+tracksResource, "/"+trackId, queryParameters, accessToken)
 	if cErr != nil {
 		return model.Track{}, fmt.Errorf("error creating track request for track ID - %s - %w", trackId, cErr)
@@ -67,9 +69,11 @@ func (r Resource) GetTracks(
 	queryParameters := map[string]string{
 		"ids": tracksIdsStr,
 	}
-	if market != nil {
-		queryParameters["market"] = (*market).String()
+	params := []model.Pair[string, model.StringEvaluator]{
+		{"market", market},
 	}
+	queryParameters = utils.AppendQueryParams(queryParameters, params...)
+
 	req, cErr := utils.CreateHttpRequest(utils.HttpGet, r.baseUrl+apiVersion+tracksResource, "", queryParameters, accessToken)
 	if cErr != nil {
 		return []model.Track{}, fmt.Errorf("error creating track request for tracks IDs - %s - %w", tracksIdsStr, cErr)
