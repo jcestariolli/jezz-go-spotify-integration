@@ -9,9 +9,10 @@ import (
 )
 
 const (
-	apiVersion      = "/v1"
-	artistsResource = "/artists"
-	albumsResource  = "/albums"
+	apiVersion        = "/v1"
+	artistsResource   = "/artists"
+	albumsResource    = "/albums"
+	topTracksResource = "/top-tracks"
 )
 
 type Resource struct {
@@ -89,6 +90,25 @@ func (r Resource) GetArtistAlbums(
 		return model.SimplifiedArtistAlbumsPaginated{}, fmt.Errorf("error executing artist albums request for astist ID - %s - %w", artistId, err)
 	}
 	return *output, nil
+}
+
+func (r Resource) GetArtistTopTracks(
+	accessToken model.AccessToken,
+	market *model.AvailableMarket,
+	artistId string,
+) ([]model.Track, error) {
+	url := r.baseUrl + apiVersion + artistsResource + "/" + artistId + topTracksResource
+	queryParams := map[string]string{}
+	params := []model.Pair[string, model.StringEvaluator]{
+		{"market", market},
+	}
+	queryParams = utils.AppendQueryParams(queryParams, params...)
+	output := &model.MultipleTracks{}
+
+	if err := utils.DoGetRequestAndValidateSuccess(url, queryParams, accessToken, output); err != nil {
+		return []model.Track{}, fmt.Errorf("error executing artist top-tracks request for astist ID - %s - %w", artistId, err)
+	}
+	return (*output).Tracks, nil
 }
 
 func (r Resource) validateArtistsIdSize(artistIds []string) error {
