@@ -51,6 +51,22 @@ func (s *Service) GetAlbums(
 	return auth.ExecuteWithAuthRetry(s.authService, getAlbumsFn)
 }
 
+func (s *Service) GetAlbumTracks(
+	countryMarketName *string,
+	limit *model.Limit,
+	offset *model.Offset,
+	albumId string,
+) (model.SimplifiedTracksPaginated, error) {
+	market, err := s.getMarketByCountryName(countryMarketName)
+	if err != nil {
+		return model.SimplifiedTracksPaginated{}, fmt.Errorf("errror getting album tracks for country %s - invalid country name: %w", *countryMarketName, err)
+	}
+	getAlbumFn := func() (model.SimplifiedTracksPaginated, error) {
+		return s.albumsResource.GetAlbumTracks(s.authService.GetAppAccessToken(), market, limit, offset, albumId)
+	}
+	return auth.ExecuteWithAuthRetry(s.authService, getAlbumFn)
+}
+
 func (s *Service) getMarketByCountryName(countryName *string) (*model.AvailableMarket, error) {
 	var market *model.AvailableMarket
 	if countryName != nil {
