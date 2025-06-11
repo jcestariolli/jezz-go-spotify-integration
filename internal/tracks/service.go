@@ -2,10 +2,9 @@ package tracks
 
 import (
 	"fmt"
-	"github.com/pariz/gountries"
-	"github.com/samber/lo"
 	"jezz-go-spotify-integration/internal/auth"
 	"jezz-go-spotify-integration/internal/model"
+	"jezz-go-spotify-integration/internal/utils"
 )
 
 type Service struct {
@@ -24,7 +23,7 @@ func NewService(
 }
 
 func (c *Service) GetTrack(countryMarketName *string, trackId string) (model.Track, error) {
-	market, err := c.getMarketByCountryName(countryMarketName)
+	market, err := utils.GetMarketByCountryName(countryMarketName)
 	if err != nil {
 		return model.Track{}, fmt.Errorf("errror getting track for country %s - unknown country! Details: %w", *countryMarketName, err)
 	}
@@ -35,7 +34,7 @@ func (c *Service) GetTrack(countryMarketName *string, trackId string) (model.Tra
 }
 
 func (c *Service) GetTracks(countryMarketName *string, trackIds ...string) ([]model.Track, error) {
-	market, err := c.getMarketByCountryName(countryMarketName)
+	market, err := utils.GetMarketByCountryName(countryMarketName)
 	if err != nil {
 		return []model.Track{}, fmt.Errorf("errror getting tracks for country %s - unknown country! Details: %w", *countryMarketName, err)
 	}
@@ -43,17 +42,4 @@ func (c *Service) GetTracks(countryMarketName *string, trackIds ...string) ([]mo
 		return c.tracksResource.GetTracks(c.authService.GetAppAccessToken(), market, trackIds...)
 	}
 	return auth.ExecuteWithAuthRetry(c.authService, getTracksFn)
-}
-
-func (c *Service) getMarketByCountryName(countryName *string) (*model.AvailableMarket, error) {
-	var market *model.AvailableMarket
-	if countryName != nil {
-		country, err := gountries.New().FindCountryByName(*countryName)
-		if err != nil {
-			return nil, err
-		}
-		market = lo.ToPtr(model.AvailableMarket(country.Alpha2))
-
-	}
-	return market, nil
 }
