@@ -7,6 +7,7 @@ import (
 	"jezz-go-spotify-integration/internal/commons"
 	"jezz-go-spotify-integration/internal/model"
 	"net/http"
+	"reflect"
 	"strings"
 )
 
@@ -85,4 +86,18 @@ func ParseHttpResponse[T any](resp *http.Response, output *T) error {
 		}
 	}
 	return nil
+}
+
+func AppendQueryParams(queryParams map[string]string, stringParams ...model.Pair[string, model.StringEvaluator]) map[string]string {
+	for _, pair := range stringParams {
+		if pair.Value != nil {
+			val := reflect.ValueOf(pair.Value)
+			// Check if the interface holds a nil pointer
+			if val.Kind() == reflect.Ptr && val.IsNil() {
+				continue
+			}
+			queryParams[pair.Key] = pair.Value.String()
+		}
+	}
+	return queryParams
 }

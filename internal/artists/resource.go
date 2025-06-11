@@ -25,7 +25,10 @@ func NewResource(
 	}
 }
 
-func (r Resource) Get(accessToken model.AccessToken, artistId string) (model.Artist, error) {
+func (r Resource) GetArtist(
+	accessToken model.AccessToken,
+	artistId string,
+) (model.Artist, error) {
 	req, cErr := utils.CreateHttpRequest(utils.HttpGet, r.baseUrl+apiVersion+artistsResource, "/"+artistId, map[string]string{}, accessToken)
 	if cErr != nil {
 		return model.Artist{}, fmt.Errorf("error creating artist request for astist ID - %s - %w", artistId, cErr)
@@ -46,7 +49,10 @@ func (r Resource) Get(accessToken model.AccessToken, artistId string) (model.Art
 	return *output, nil
 }
 
-func (r Resource) GetBatch(accessToken model.AccessToken, artistsIds ...string) ([]model.Artist, error) {
+func (r Resource) GetArtists(
+	accessToken model.AccessToken,
+	artistsIds ...string,
+) ([]model.Artist, error) {
 	if err := r.validateArtistsIdSize(artistsIds); err != nil {
 		return []model.Artist{}, err
 	}

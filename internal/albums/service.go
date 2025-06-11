@@ -23,29 +23,35 @@ func NewService(
 	}
 }
 
-func (c *Service) GetAlbum(countryMarketName *string, albumId string) (model.Album, error) {
-	market, err := c.getMarketByCountryName(countryMarketName)
+func (s *Service) GetAlbum(
+	countryMarketName *string,
+	albumId string,
+) (model.Album, error) {
+	market, err := s.getMarketByCountryName(countryMarketName)
 	if err != nil {
-		return model.Album{}, fmt.Errorf("errror getting album for country %s - unknown country! Details: %w", *countryMarketName, err)
+		return model.Album{}, fmt.Errorf("errror getting album for country %s - invalid country name: %w", *countryMarketName, err)
 	}
 	getAlbumFn := func() (model.Album, error) {
-		return c.albumsResource.Get(c.authService.GetAppAccessToken(), market, albumId)
+		return s.albumsResource.GetAlbum(s.authService.GetAppAccessToken(), market, albumId)
 	}
-	return auth.ExecuteWithAuthRetry(c.authService, getAlbumFn)
+	return auth.ExecuteWithAuthRetry(s.authService, getAlbumFn)
 }
 
-func (c *Service) GetAlbums(countryMarketName *string, albumIds ...string) ([]model.Album, error) {
-	market, err := c.getMarketByCountryName(countryMarketName)
+func (s *Service) GetAlbums(
+	countryMarketName *string,
+	albumsIds ...string,
+) ([]model.Album, error) {
+	market, err := s.getMarketByCountryName(countryMarketName)
 	if err != nil {
-		return []model.Album{}, fmt.Errorf("errror getting albums for country %s - unknown country! Details: %w", *countryMarketName, err)
+		return []model.Album{}, fmt.Errorf("errror getting albums for country %s - invalid country name: %w", *countryMarketName, err)
 	}
 	getAlbumsFn := func() ([]model.Album, error) {
-		return c.albumsResource.GetBatch(c.authService.GetAppAccessToken(), market, albumIds...)
+		return s.albumsResource.GetAlbums(s.authService.GetAppAccessToken(), market, albumsIds...)
 	}
-	return auth.ExecuteWithAuthRetry(c.authService, getAlbumsFn)
+	return auth.ExecuteWithAuthRetry(s.authService, getAlbumsFn)
 }
 
-func (c *Service) getMarketByCountryName(countryName *string) (*model.AvailableMarket, error) {
+func (s *Service) getMarketByCountryName(countryName *string) (*model.AvailableMarket, error) {
 	var market *model.AvailableMarket
 	if countryName != nil {
 		country, err := gountries.New().FindCountryByName(*countryName)
