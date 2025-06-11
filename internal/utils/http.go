@@ -86,3 +86,12 @@ func ParseHttpResponse[T any](resp *http.Response, output *T) error {
 	}
 	return nil
 }
+
+func AppendQueryParams(queryParams map[string]string, stringParams ...model.Pair[string, model.StringEvaluator]) map[string]string {
+	for _, pair := range stringParams {
+		if pair.Value != nil {
+			queryParams[pair.Key] = pair.Value.String()
+		}
+	}
+	return queryParams
+}
