@@ -25,12 +25,16 @@ func NewResource(
 	}
 }
 
-func (a Resource) Get(accessToken model.AccessToken, market *model.AvailableMarket, albumId string) (model.Album, error) {
+func (r Resource) GetAlbum(
+	accessToken model.AccessToken,
+	market *model.AvailableMarket,
+	albumId string,
+) (model.Album, error) {
 	queryParameters := map[string]string{}
 	if market != nil {
 		queryParameters["market"] = (*market).String()
 	}
-	req, cErr := utils.CreateHttpRequest(utils.HttpGet, a.baseUrl+apiVersion+albumsResource, "/"+albumId, queryParameters, accessToken)
+	req, cErr := utils.CreateHttpRequest(utils.HttpGet, r.baseUrl+apiVersion+albumsResource, "/"+albumId, queryParameters, accessToken)
 	if cErr != nil {
 		return model.Album{}, fmt.Errorf("error creating album request for album ID - %s - %w", albumId, cErr)
 	}
@@ -50,8 +54,12 @@ func (a Resource) Get(accessToken model.AccessToken, market *model.AvailableMark
 	return *output, nil
 }
 
-func (a Resource) GetBatch(accessToken model.AccessToken, market *model.AvailableMarket, albumsIds ...string) ([]model.Album, error) {
-	if err := a.validateAlbumsIdSize(albumsIds); err != nil {
+func (r Resource) GetAlbums(
+	accessToken model.AccessToken,
+	market *model.AvailableMarket,
+	albumsIds ...string,
+) ([]model.Album, error) {
+	if err := r.validateAlbumsIdsLen(albumsIds); err != nil {
 		return []model.Album{}, err
 	}
 
@@ -62,7 +70,7 @@ func (a Resource) GetBatch(accessToken model.AccessToken, market *model.Availabl
 	if market != nil {
 		queryParameters["market"] = (*market).String()
 	}
-	req, cErr := utils.CreateHttpRequest(utils.HttpGet, a.baseUrl+apiVersion+albumsResource, "", queryParameters, accessToken)
+	req, cErr := utils.CreateHttpRequest(utils.HttpGet, r.baseUrl+apiVersion+albumsResource, "", queryParameters, accessToken)
 	if cErr != nil {
 		return []model.Album{}, fmt.Errorf("error creating album request for albums IDs - %s - %w", albumsIdsStr, cErr)
 	}
@@ -84,8 +92,8 @@ func (a Resource) GetBatch(accessToken model.AccessToken, market *model.Availabl
 
 }
 
-func (a Resource) validateAlbumsIdSize(albumIds []string) error {
-	if len(albumIds) < 1 {
+func (r Resource) validateAlbumsIdsLen(albumsIds []string) error {
+	if len(albumsIds) < 1 {
 		return fmt.Errorf("error getting album - album id must not be null")
 	}
 	return nil
