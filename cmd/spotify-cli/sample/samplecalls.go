@@ -22,6 +22,8 @@ func RunAppSampleCalls(artistsSvc artists.Service, albumsSvc albums.Service, tra
 	getAlbumTracks(albumsSvc, "1QJmLRcuIMMjZ49elafR3K")
 	getAlbumTracksForCountryMarket(albumsSvc, "4R3tXoorBpHji6Jdms8a4Q")
 
+	getNewReleases(albumsSvc)
+
 	getTrack(tracksSvc, "3O5JIwSON3KBaoyMUsjLjn")
 	getTrackForCountryMarket(tracksSvc, "4h6G18XTQMtNpwYIXnrZI6")
 
@@ -214,6 +216,29 @@ func getAlbumTracksForCountryMarket(svc albums.Service, albumId string) {
 		return
 	}
 	fmt.Println("✖ Getting album's tracks for market failed :(")
+	fmt.Printf("╰┈➤Body is empty\n\n")
+}
+
+func getNewReleases(svc albums.Service) {
+	fmt.Println("Trying to get new releases...")
+
+	albumResponse, err := svc.GetNewReleases(nil, nil)
+	if err != nil {
+		fmt.Println("✖ Getting new releases failed :(")
+		fmt.Printf("╰┈➤%s\n\n", err.Error())
+		return
+	}
+
+	if body, err3 := json.Marshal(albumResponse); err3 == nil && body != nil {
+		fmt.Println("✔ New releases obtained! :)")
+		fmt.Printf("╰┈➤%s\n\n", string(body))
+		return
+	} else if err3 != nil {
+		fmt.Println("✖ Getting new releases failed :(")
+		fmt.Printf("╰┈➤%s\n\n", err3.Error())
+		return
+	}
+	fmt.Println("✖ Getting new releases failed :(")
 	fmt.Printf("╰┈➤Body is empty\n\n")
 }
 

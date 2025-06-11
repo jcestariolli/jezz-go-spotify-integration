@@ -46,7 +46,16 @@ type MultipleAlbums struct {
 	Albums []Album `json:"albums"`
 }
 
+type SimplifiedAlbumsPaginated struct {
+	Pagination
+	Items []SimplifiedAlbum `json:"items"`
+}
+
 type SimplifiedArtistAlbumsPaginated struct {
 	Pagination
 	Items []SimplifiedArtistAlbum `json:"items"`
+}
+
+type AlbumsNewRelease struct {
+	Albums SimplifiedAlbumsPaginated `json:"albums"`
 }
