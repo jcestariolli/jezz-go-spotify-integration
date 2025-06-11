@@ -3,15 +3,10 @@ package artists
 import (
 	"fmt"
 	"github.com/samber/lo"
+	"jezz-go-spotify-integration/internal"
 	"jezz-go-spotify-integration/internal/model"
 	"jezz-go-spotify-integration/internal/utils"
 	"strings"
-)
-
-const (
-	apiVersion      = "/v1"
-	artistsResource = "/artists"
-	albumsResource  = "/albums"
 )
 
 type Resource struct {
@@ -30,7 +25,7 @@ func (r Resource) GetArtist(
 	accessToken model.AccessToken,
 	artistId string,
 ) (model.Artist, error) {
-	url := r.baseUrl + apiVersion + artistsResource + "/" + artistId
+	url := r.baseUrl + internal.ApiVersion + internal.ArtistsPath + "/" + artistId
 	queryParams := map[string]string{}
 	output := &model.Artist{}
 
@@ -49,7 +44,7 @@ func (r Resource) GetArtists(
 	}
 	artistsIdsStr := strings.Join(artistsIds, ",")
 
-	url := r.baseUrl + apiVersion + artistsResource
+	url := r.baseUrl + internal.ApiVersion + internal.ArtistsPath
 	queryParams := map[string]string{
 		"ids": artistsIdsStr,
 	}
@@ -69,7 +64,7 @@ func (r Resource) GetArtistAlbums(
 	offset *model.Offset,
 	artistId string,
 ) (model.SimplifiedArtistAlbumsPaginated, error) {
-	url := r.baseUrl + apiVersion + artistsResource + "/" + artistId + albumsResource
+	url := r.baseUrl + internal.ApiVersion + internal.ArtistsPath + "/" + artistId + internal.AlbumsPath
 	queryParams := map[string]string{}
 	if len(includeGroups) > 0 {
 		queryParams["include_groups"] = strings.Join(
@@ -89,6 +84,25 @@ func (r Resource) GetArtistAlbums(
 		return model.SimplifiedArtistAlbumsPaginated{}, fmt.Errorf("error executing artist albums request for astist ID - %s - %w", artistId, err)
 	}
 	return *output, nil
+}
+
+func (r Resource) GetArtistTopTracks(
+	accessToken model.AccessToken,
+	market *model.AvailableMarket,
+	artistId string,
+) ([]model.Track, error) {
+	url := r.baseUrl + internal.ApiVersion + internal.ArtistsPath + "/" + artistId + internal.TopTracksPath
+	queryParams := map[string]string{}
+	params := []model.Pair[string, model.StringEvaluator]{
+		{"market", market},
+	}
+	queryParams = utils.AppendQueryParams(queryParams, params...)
+	output := &model.MultipleTracks{}
+
+	if err := utils.DoGetRequestAndValidateSuccess(url, queryParams, accessToken, output); err != nil {
+		return []model.Track{}, fmt.Errorf("error executing artist top-tracks request for astist ID - %s - %w", artistId, err)
+	}
+	return (*output).Tracks, nil
 }
 
 func (r Resource) validateArtistsIdSize(artistIds []string) error {

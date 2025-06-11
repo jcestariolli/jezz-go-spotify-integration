@@ -52,3 +52,18 @@ func (s *Service) GetArtistAlbums(
 	}
 	return auth.ExecuteWithAuthRetry(s.authService, getArtistAlbumsFn)
 }
+
+func (s *Service) GetArtistTopTracks(
+	countryMarketName *string,
+	artistId string,
+) ([]model.Track, error) {
+	market, err := utils.GetMarketByCountryName(countryMarketName)
+	if err != nil {
+		return []model.Track{}, fmt.Errorf("errror getting artist top-tracks for country %s - invalid country name: %w", *countryMarketName, err)
+	}
+	getArtistTopTracksFn := func() ([]model.Track, error) {
+		return s.artistsResource.GetArtistTopTracks(s.authService.GetAppAccessToken(), market, artistId)
+	}
+	return auth.ExecuteWithAuthRetry(s.authService, getArtistTopTracksFn)
+
+}

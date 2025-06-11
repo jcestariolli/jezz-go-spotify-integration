@@ -21,6 +21,8 @@ func RunAppSampleCalls(artistsSvc artists.Service, albumsSvc albums.Service, tra
 	getArtistAlbumsType(artistsSvc, "0k17h0D3J5VfsdmQ1iZtE9", model.SingleAlbumGroup, model.CompilationAlbumGroup)
 	getArtistAlbumsType(artistsSvc, "0k17h0D3J5VfsdmQ1iZtE9", model.AppearsOnAlgumGroup)
 
+	getArtistTopTracks(artistsSvc, "5LfGQac0EIXyAN8aUwmNAQ")
+
 	getAlbum(albumsSvc, "1QJmLRcuIMMjZ49elafR3K")
 	getAlbumForCountryMarket(albumsSvc, "4R3tXoorBpHji6Jdms8a4Q")
 
@@ -130,6 +132,29 @@ func getArtistAlbumsType(svc artists.Service, artistId string, albumGroup ...mod
 		return
 	}
 	fmt.Println("✖ Getting artist's " + albumGroupStr + "s failed :(")
+	fmt.Printf("╰┈➤Body is empty\n\n")
+}
+
+func getArtistTopTracks(svc artists.Service, artistId string) {
+	fmt.Println("Trying to get artist's top-tracks...")
+
+	artistResponse, err := svc.GetArtistTopTracks(nil, artistId)
+	if err != nil {
+		fmt.Println("✖ Getting artist's top-tracks failed :(")
+		fmt.Printf("╰┈➤%s\n\n", err.Error())
+		return
+	}
+
+	if body, err3 := json.Marshal(artistResponse); err3 == nil && body != nil {
+		fmt.Println("✔ Artist's top-tracks obtained! :)")
+		fmt.Printf("╰┈➤%s\n\n", string(body))
+		return
+	} else if err3 != nil {
+		fmt.Println("✖ Getting artist's top-tracks failed :(")
+		fmt.Printf("╰┈➤%s\n\n", err3.Error())
+		return
+	}
+	fmt.Println("✖ Getting artist's top-tracks failed :(")
 	fmt.Printf("╰┈➤Body is empty\n\n")
 }
 

@@ -2,14 +2,10 @@ package tracks
 
 import (
 	"fmt"
+	"jezz-go-spotify-integration/internal"
 	"jezz-go-spotify-integration/internal/model"
 	"jezz-go-spotify-integration/internal/utils"
 	"strings"
-)
-
-const (
-	apiVersion     = "/v1"
-	tracksResource = "/tracks"
 )
 
 type Resource struct {
@@ -29,7 +25,7 @@ func (r Resource) GetTrack(
 	market *model.AvailableMarket,
 	trackId string,
 ) (model.Track, error) {
-	url := r.baseUrl + apiVersion + tracksResource + "/" + trackId
+	url := r.baseUrl + internal.ApiVersion + internal.TracksPath + "/" + trackId
 	queryParams := map[string]string{}
 	params := []model.Pair[string, model.StringEvaluator]{
 		{"market", market},
@@ -52,7 +48,7 @@ func (r Resource) GetTracks(
 		return []model.Track{}, err
 	}
 
-	url := r.baseUrl + apiVersion + tracksResource
+	url := r.baseUrl + internal.ApiVersion + internal.TracksPath
 	tracksIdsStr := strings.Join(tracksIds, ",")
 	queryParams := map[string]string{
 		"ids": tracksIdsStr,
