@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"jezz-go-spotify-integration/internal/model"
 	"jezz-go-spotify-integration/internal/utils"
-	"net/http"
 	"strings"
 )
 
@@ -32,28 +31,16 @@ func (r Resource) GetAlbum(
 	market *model.AvailableMarket,
 	albumId string,
 ) (model.Album, error) {
-	queryParameters := map[string]string{}
+	url := r.baseUrl + apiVersion + albumsResource + "/" + albumId
+	queryParams := map[string]string{}
 	params := []model.Pair[string, model.StringEvaluator]{
 		{"market", market},
 	}
-	queryParameters = utils.AppendQueryParams(queryParameters, params...)
-
-	req, cErr := utils.CreateHttpRequest(utils.HttpGet, r.baseUrl+apiVersion, albumsResource+"/"+albumId, queryParameters, accessToken)
-	if cErr != nil {
-		return model.Album{}, fmt.Errorf("error creating album request for album ID - %s - %w", albumId, cErr)
-	}
-
-	resp, reqErr := (&http.Client{}).Do(req)
-	if reqErr != nil {
-		return model.Album{}, fmt.Errorf("error connecting to album client for album ID - %s - %w", albumId, reqErr)
-	}
-
-	if vErr := utils.ValidateHttpResponseStatus(resp); vErr != nil {
-		return model.Album{}, vErr
-	}
+	queryParams = utils.AppendQueryParams(queryParams, params...)
 	output := &model.Album{}
-	if pErr := utils.ParseHttpResponse(resp, output); pErr != nil {
-		return model.Album{}, fmt.Errorf("error parsing response from resource for album ID - %s - %w", albumId, pErr)
+
+	if err := utils.DoGetRequestAndValidateSuccess(url, queryParams, accessToken, output); err != nil {
+		return model.Album{}, fmt.Errorf("error executing album request for album ID - %s - %w", albumId, err)
 	}
 	return *output, nil
 }
@@ -67,34 +54,21 @@ func (r Resource) GetAlbums(
 		return []model.Album{}, err
 	}
 
+	url := r.baseUrl + apiVersion + albumsResource
 	albumsIdsStr := strings.Join(albumsIds, ",")
-	queryParameters := map[string]string{
+	queryParams := map[string]string{
 		"ids": albumsIdsStr,
 	}
 	params := []model.Pair[string, model.StringEvaluator]{
 		{"market", market},
 	}
-	queryParameters = utils.AppendQueryParams(queryParameters, params...)
-
-	req, cErr := utils.CreateHttpRequest(utils.HttpGet, r.baseUrl+apiVersion, albumsResource, queryParameters, accessToken)
-	if cErr != nil {
-		return []model.Album{}, fmt.Errorf("error creating album request for albums IDs - %s - %w", albumsIdsStr, cErr)
-	}
-
-	resp, reqErr := (&http.Client{}).Do(req)
-	if reqErr != nil {
-		return []model.Album{}, fmt.Errorf("error connecting to album client for albums IDs - %s - %w", albumsIdsStr, reqErr)
-	}
-
-	if vErr := utils.ValidateHttpResponseStatus(resp); vErr != nil {
-		return []model.Album{}, vErr
-	}
-
+	queryParams = utils.AppendQueryParams(queryParams, params...)
 	output := &model.MultipleAlbums{}
-	if pErr := utils.ParseHttpResponse(resp, output); pErr != nil {
-		return []model.Album{}, fmt.Errorf("error parsing response from resource for albums ID - %s - %w", albumsIdsStr, pErr)
+
+	if err := utils.DoGetRequestAndValidateSuccess(url, queryParams, accessToken, output); err != nil {
+		return []model.Album{}, fmt.Errorf("error executing album request for albums IDs - %s - %w", albumsIdsStr, err)
 	}
-	return output.Albums, nil
+	return (*output).Albums, nil
 }
 
 func (r Resource) GetAlbumTracks(
@@ -104,35 +78,22 @@ func (r Resource) GetAlbumTracks(
 	offset *model.Offset,
 	albumId string,
 ) (model.SimplifiedTracksPaginated, error) {
-	var errP error
-	if limit, offset, errP = utils.ValidatePaginationParams(limit, offset); errP != nil {
-		return model.SimplifiedTracksPaginated{}, fmt.Errorf("error creating album tracks request for album ID - %s - %w", albumId, errP)
+	if err := utils.ValidatePaginationParams(limit, offset); err != nil {
+		return model.SimplifiedTracksPaginated{}, fmt.Errorf("error creating album tracks request for album ID - %s - %w", albumId, err)
 	}
 
-	queryParameters := map[string]string{}
+	url := r.baseUrl + apiVersion + albumsResource + "/" + albumId + tracksResource
+	queryParams := map[string]string{}
 	params := []model.Pair[string, model.StringEvaluator]{
 		{"market", market},
 		{"limit", limit},
 		{"offset", offset},
 	}
-	queryParameters = utils.AppendQueryParams(queryParameters, params...)
-
-	req, cErr := utils.CreateHttpRequest(utils.HttpGet, r.baseUrl+apiVersion, albumsResource+"/"+albumId+tracksResource, queryParameters, accessToken)
-	if cErr != nil {
-		return model.SimplifiedTracksPaginated{}, fmt.Errorf("error creating album tracks request for album ID - %s - %w", albumId, cErr)
-	}
-
-	resp, reqErr := (&http.Client{}).Do(req)
-	if reqErr != nil {
-		return model.SimplifiedTracksPaginated{}, fmt.Errorf("error connecting to album tracks client for album ID - %s - %w", albumId, reqErr)
-	}
-
-	if vErr := utils.ValidateHttpResponseStatus(resp); vErr != nil {
-		return model.SimplifiedTracksPaginated{}, vErr
-	}
+	queryParams = utils.AppendQueryParams(queryParams, params...)
 	output := &model.SimplifiedTracksPaginated{}
-	if pErr := utils.ParseHttpResponse(resp, output); pErr != nil {
-		return model.SimplifiedTracksPaginated{}, fmt.Errorf("error parsing response from resource for album ID - %s - %w", albumId, pErr)
+
+	if err := utils.DoGetRequestAndValidateSuccess(url, queryParams, accessToken, output); err != nil {
+		return model.SimplifiedTracksPaginated{}, fmt.Errorf("error executing album tracks request for album ID - %s - %w", albumId, err)
 	}
 	return *output, nil
 }
@@ -142,34 +103,21 @@ func (r Resource) GetNewReleases(
 	limit *model.Limit,
 	offset *model.Offset,
 ) (model.AlbumsNewRelease, error) {
-	var errP error
-	if limit, offset, errP = utils.ValidatePaginationParams(limit, offset); errP != nil {
-		return model.AlbumsNewRelease{}, fmt.Errorf("error creating new releases request - %w", errP)
+	if err := utils.ValidatePaginationParams(limit, offset); err != nil {
+		return model.AlbumsNewRelease{}, fmt.Errorf("error creating new releases request - %w", err)
 	}
 
-	queryParameters := map[string]string{}
+	url := r.baseUrl + apiVersion + newReleasesResource
+	queryParams := map[string]string{}
 	params := []model.Pair[string, model.StringEvaluator]{
 		{"limit", limit},
 		{"offset", offset},
 	}
-	queryParameters = utils.AppendQueryParams(queryParameters, params...)
-
-	req, cErr := utils.CreateHttpRequest(utils.HttpGet, r.baseUrl+apiVersion, newReleasesResource, queryParameters, accessToken)
-	if cErr != nil {
-		return model.AlbumsNewRelease{}, fmt.Errorf("error creating new releases request - %w", cErr)
-	}
-
-	resp, reqErr := (&http.Client{}).Do(req)
-	if reqErr != nil {
-		return model.AlbumsNewRelease{}, fmt.Errorf("error connecting to new releases client - %w", reqErr)
-	}
-
-	if vErr := utils.ValidateHttpResponseStatus(resp); vErr != nil {
-		return model.AlbumsNewRelease{}, vErr
-	}
+	queryParams = utils.AppendQueryParams(queryParams, params...)
 	output := &model.AlbumsNewRelease{}
-	if pErr := utils.ParseHttpResponse(resp, output); pErr != nil {
-		return model.AlbumsNewRelease{}, fmt.Errorf("error parsing response from resource for new releases - %w", pErr)
+
+	if err := utils.DoGetRequestAndValidateSuccess(url, queryParams, accessToken, output); err != nil {
+		return model.AlbumsNewRelease{}, fmt.Errorf("error executing new releases request - %w", err)
 	}
 	return *output, nil
 }

@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"jezz-go-spotify-integration/internal/model"
 	"jezz-go-spotify-integration/internal/utils"
-	"net/http"
 	"strings"
 )
 
@@ -30,28 +29,16 @@ func (r Resource) GetTrack(
 	market *model.AvailableMarket,
 	trackId string,
 ) (model.Track, error) {
-	queryParameters := map[string]string{}
+	url := r.baseUrl + apiVersion + tracksResource + "/" + trackId
+	queryParams := map[string]string{}
 	params := []model.Pair[string, model.StringEvaluator]{
 		{"market", market},
 	}
-	queryParameters = utils.AppendQueryParams(queryParameters, params...)
-
-	req, cErr := utils.CreateHttpRequest(utils.HttpGet, r.baseUrl+apiVersion+tracksResource, "/"+trackId, queryParameters, accessToken)
-	if cErr != nil {
-		return model.Track{}, fmt.Errorf("error creating track request for track ID - %s - %w", trackId, cErr)
-	}
-
-	resp, reqErr := (&http.Client{}).Do(req)
-	if reqErr != nil {
-		return model.Track{}, fmt.Errorf("error connecting to track client for track ID - %s - %w", trackId, reqErr)
-	}
-
-	if vErr := utils.ValidateHttpResponseStatus(resp); vErr != nil {
-		return model.Track{}, vErr
-	}
+	queryParams = utils.AppendQueryParams(queryParams, params...)
 	output := &model.Track{}
-	if pErr := utils.ParseHttpResponse(resp, output); pErr != nil {
-		return model.Track{}, fmt.Errorf("error parsing response from resource for track ID - %s - %w", trackId, pErr)
+
+	if err := utils.DoGetRequestAndValidateSuccess(url, queryParams, accessToken, output); err != nil {
+		return model.Track{}, fmt.Errorf("error executing track request for track ID - %s - %w", trackId, err)
 	}
 	return *output, nil
 }
@@ -65,35 +52,21 @@ func (r Resource) GetTracks(
 		return []model.Track{}, err
 	}
 
+	url := r.baseUrl + apiVersion + tracksResource
 	tracksIdsStr := strings.Join(tracksIds, ",")
-	queryParameters := map[string]string{
+	queryParams := map[string]string{
 		"ids": tracksIdsStr,
 	}
 	params := []model.Pair[string, model.StringEvaluator]{
 		{"market", market},
 	}
-	queryParameters = utils.AppendQueryParams(queryParameters, params...)
-
-	req, cErr := utils.CreateHttpRequest(utils.HttpGet, r.baseUrl+apiVersion+tracksResource, "", queryParameters, accessToken)
-	if cErr != nil {
-		return []model.Track{}, fmt.Errorf("error creating track request for tracks IDs - %s - %w", tracksIdsStr, cErr)
-	}
-
-	resp, reqErr := (&http.Client{}).Do(req)
-	if reqErr != nil {
-		return []model.Track{}, fmt.Errorf("error connecting to track client for tracks IDs - %s - %w", tracksIdsStr, reqErr)
-	}
-
-	if vErr := utils.ValidateHttpResponseStatus(resp); vErr != nil {
-		return []model.Track{}, vErr
-	}
-
+	queryParams = utils.AppendQueryParams(queryParams, params...)
 	output := &model.MultipleTracks{}
-	if pErr := utils.ParseHttpResponse(resp, output); pErr != nil {
-		return []model.Track{}, fmt.Errorf("error parsing response from resource for tracks ID - %s - %w", tracksIdsStr, pErr)
-	}
-	return output.Tracks, nil
 
+	if err := utils.DoGetRequestAndValidateSuccess(url, queryParams, accessToken, output); err != nil {
+		return []model.Track{}, fmt.Errorf("error executingtrack request for tracks IDs - %s - %w", tracksIdsStr, err)
+	}
+	return (*output).Tracks, nil
 }
 
 func (r Resource) validateTracksIdSize(trackIds []string) error {
