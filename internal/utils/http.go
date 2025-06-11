@@ -2,6 +2,7 @@ package utils
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/samber/lo"
 	"io"
 	"jezz-go-spotify-integration/internal/commons"
@@ -24,13 +25,9 @@ func (m HttpMethod) String() string {
 func CreateHttpRequest(
 	method HttpMethod,
 	url string,
-	path string,
 	queryParams map[string]string,
 	accessToken model.AccessToken,
 ) (*http.Request, error) {
-	if path != "" {
-		url += path
-	}
 	if len(queryParams) > 0 {
 		url += "?" + strings.Join(
 			lo.MapToSlice(queryParams, func(key string, value string) string {
@@ -100,4 +97,30 @@ func AppendQueryParams(queryParams map[string]string, stringParams ...model.Pair
 		}
 	}
 	return queryParams
+}
+
+func DoGetRequestAndValidateSuccess[T any](
+	url string,
+	queryParams map[string]string,
+	accessToken model.AccessToken,
+	responseTypedOutput *T,
+) error {
+	req, cErr := CreateHttpRequest(HttpGet, url, queryParams, accessToken)
+	if cErr != nil {
+		return fmt.Errorf("error creating request - %s", cErr)
+	}
+
+	resp, reqErr := (&http.Client{}).Do(req)
+	if reqErr != nil {
+		return fmt.Errorf("error executing request - %w", reqErr)
+	}
+
+	if vErr := ValidateHttpResponseStatus(resp); vErr != nil {
+		return vErr
+	}
+
+	if pErr := ParseHttpResponse(resp, responseTypedOutput); pErr != nil {
+		return fmt.Errorf("error parsing response - %w", pErr)
+	}
+	return nil
 }
