@@ -29,7 +29,7 @@ func (c *Service) GetTrack(countryMarketName *string, trackId string) (model.Tra
 		return model.Track{}, fmt.Errorf("errror getting track for country %s - unknown country! Details: %w", *countryMarketName, err)
 	}
 	getTrackFn := func() (model.Track, error) {
-		return c.tracksResource.Get(c.authService.GetAppAccessToken(), market, trackId)
+		return c.tracksResource.GetTrack(c.authService.GetAppAccessToken(), market, trackId)
 	}
 	return auth.ExecuteWithAuthRetry(c.authService, getTrackFn)
 }
@@ -40,7 +40,7 @@ func (c *Service) GetTracks(countryMarketName *string, trackIds ...string) ([]mo
 		return []model.Track{}, fmt.Errorf("errror getting tracks for country %s - unknown country! Details: %w", *countryMarketName, err)
 	}
 	getTracksFn := func() ([]model.Track, error) {
-		return c.tracksResource.GetBatch(c.authService.GetAppAccessToken(), market, trackIds...)
+		return c.tracksResource.GetTracks(c.authService.GetAppAccessToken(), market, trackIds...)
 	}
 	return auth.ExecuteWithAuthRetry(c.authService, getTracksFn)
 }

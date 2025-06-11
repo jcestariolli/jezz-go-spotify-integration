@@ -25,12 +25,16 @@ func NewResource(
 	}
 }
 
-func (a Resource) Get(accessToken model.AccessToken, market *model.AvailableMarket, trackId string) (model.Track, error) {
+func (r Resource) GetTrack(
+	accessToken model.AccessToken,
+	market *model.AvailableMarket,
+	trackId string,
+) (model.Track, error) {
 	queryParameters := map[string]string{}
 	if market != nil {
 		queryParameters["market"] = (*market).String()
 	}
-	req, cErr := utils.CreateHttpRequest(utils.HttpGet, a.baseUrl+apiVersion+tracksResource, "/"+trackId, queryParameters, accessToken)
+	req, cErr := utils.CreateHttpRequest(utils.HttpGet, r.baseUrl+apiVersion+tracksResource, "/"+trackId, queryParameters, accessToken)
 	if cErr != nil {
 		return model.Track{}, fmt.Errorf("error creating track request for track ID - %s - %w", trackId, cErr)
 	}
@@ -50,8 +54,12 @@ func (a Resource) Get(accessToken model.AccessToken, market *model.AvailableMark
 	return *output, nil
 }
 
-func (a Resource) GetBatch(accessToken model.AccessToken, market *model.AvailableMarket, tracksIds ...string) ([]model.Track, error) {
-	if err := a.validateTracksIdSize(tracksIds); err != nil {
+func (r Resource) GetTracks(
+	accessToken model.AccessToken,
+	market *model.AvailableMarket,
+	tracksIds ...string,
+) ([]model.Track, error) {
+	if err := r.validateTracksIdSize(tracksIds); err != nil {
 		return []model.Track{}, err
 	}
 
@@ -62,7 +70,7 @@ func (a Resource) GetBatch(accessToken model.AccessToken, market *model.Availabl
 	if market != nil {
 		queryParameters["market"] = (*market).String()
 	}
-	req, cErr := utils.CreateHttpRequest(utils.HttpGet, a.baseUrl+apiVersion+tracksResource, "", queryParameters, accessToken)
+	req, cErr := utils.CreateHttpRequest(utils.HttpGet, r.baseUrl+apiVersion+tracksResource, "", queryParameters, accessToken)
 	if cErr != nil {
 		return []model.Track{}, fmt.Errorf("error creating track request for tracks IDs - %s - %w", tracksIdsStr, cErr)
 	}
@@ -84,7 +92,7 @@ func (a Resource) GetBatch(accessToken model.AccessToken, market *model.Availabl
 
 }
 
-func (a Resource) validateTracksIdSize(trackIds []string) error {
+func (r Resource) validateTracksIdSize(trackIds []string) error {
 	if len(trackIds) < 1 {
 		return fmt.Errorf("error getting track - track id must not be null")
 	}
