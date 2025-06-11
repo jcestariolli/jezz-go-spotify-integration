@@ -2,16 +2,10 @@ package albums
 
 import (
 	"fmt"
+	"jezz-go-spotify-integration/internal"
 	"jezz-go-spotify-integration/internal/model"
 	"jezz-go-spotify-integration/internal/utils"
 	"strings"
-)
-
-const (
-	apiVersion          = "/v1"
-	albumsResource      = "/albums"
-	tracksResource      = "/tracks"
-	newReleasesResource = "/browse/new-releases"
 )
 
 type Resource struct {
@@ -31,7 +25,7 @@ func (r Resource) GetAlbum(
 	market *model.AvailableMarket,
 	albumId string,
 ) (model.Album, error) {
-	url := r.baseUrl + apiVersion + albumsResource + "/" + albumId
+	url := r.baseUrl + internal.ApiVersion + internal.AlbumsPath + "/" + albumId
 	queryParams := map[string]string{}
 	params := []model.Pair[string, model.StringEvaluator]{
 		{"market", market},
@@ -54,7 +48,7 @@ func (r Resource) GetAlbums(
 		return []model.Album{}, err
 	}
 
-	url := r.baseUrl + apiVersion + albumsResource
+	url := r.baseUrl + internal.ApiVersion + internal.AlbumsPath
 	albumsIdsStr := strings.Join(albumsIds, ",")
 	queryParams := map[string]string{
 		"ids": albumsIdsStr,
@@ -82,7 +76,7 @@ func (r Resource) GetAlbumTracks(
 		return model.SimplifiedTracksPaginated{}, fmt.Errorf("error creating album tracks request for album ID - %s - %w", albumId, err)
 	}
 
-	url := r.baseUrl + apiVersion + albumsResource + "/" + albumId + tracksResource
+	url := r.baseUrl + internal.ApiVersion + internal.AlbumsPath + "/" + albumId + internal.TracksPath
 	queryParams := map[string]string{}
 	params := []model.Pair[string, model.StringEvaluator]{
 		{"market", market},
@@ -107,7 +101,7 @@ func (r Resource) GetNewReleases(
 		return model.AlbumsNewRelease{}, fmt.Errorf("error creating new releases request - %w", err)
 	}
 
-	url := r.baseUrl + apiVersion + newReleasesResource
+	url := r.baseUrl + internal.ApiVersion + internal.NewReleasesPath
 	queryParams := map[string]string{}
 	params := []model.Pair[string, model.StringEvaluator]{
 		{"limit", limit},
