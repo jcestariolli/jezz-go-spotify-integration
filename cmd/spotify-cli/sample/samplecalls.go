@@ -3,10 +3,12 @@ package sample
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/samber/lo"
 	"jezz-go-spotify-integration/internal/albums"
 	"jezz-go-spotify-integration/internal/artists"
 	"jezz-go-spotify-integration/internal/model"
 	"jezz-go-spotify-integration/internal/tracks"
+	"strings"
 )
 
 func RunAppSampleCalls(artistsSvc artists.Service, albumsSvc albums.Service, tracksSvc tracks.Service) {
@@ -16,9 +18,8 @@ func RunAppSampleCalls(artistsSvc artists.Service, albumsSvc albums.Service, tra
 
 	getArtistAlbums(artistsSvc, "0k17h0D3J5VfsdmQ1iZtE9")
 	getArtistAlbumsType(artistsSvc, "0k17h0D3J5VfsdmQ1iZtE9", model.DefaultAlbumGroup)
-	getArtistAlbumsType(artistsSvc, "0k17h0D3J5VfsdmQ1iZtE9", model.SingleAlbumGroup)
+	getArtistAlbumsType(artistsSvc, "0k17h0D3J5VfsdmQ1iZtE9", model.SingleAlbumGroup, model.CompilationAlbumGroup)
 	getArtistAlbumsType(artistsSvc, "0k17h0D3J5VfsdmQ1iZtE9", model.AppearsOnAlgumGroup)
-	getArtistAlbumsType(artistsSvc, "0k17h0D3J5VfsdmQ1iZtE9", model.CompilationAlbumGroup)
 
 	getAlbum(albumsSvc, "1QJmLRcuIMMjZ49elafR3K")
 	getAlbumForCountryMarket(albumsSvc, "4R3tXoorBpHji6Jdms8a4Q")
@@ -108,11 +109,11 @@ func getArtistAlbums(svc artists.Service, artistId string) {
 	fmt.Printf("╰┈➤Body is empty\n\n")
 }
 
-func getArtistAlbumsType(svc artists.Service, artistId string, albumGroup model.AlbumGroup) {
-	albumGroupStr := albumGroup.String()
+func getArtistAlbumsType(svc artists.Service, artistId string, albumGroup ...model.AlbumGroup) {
+	albumGroupStr := strings.Join(lo.Map(albumGroup, func(group model.AlbumGroup, _ int) string { return group.String() }), " and ")
 	fmt.Println("Trying to get artist's " + albumGroupStr + "s ...")
-	includeGroups := []model.AlbumGroup{albumGroup}
-	artistResponse, err := svc.GetArtistAlbums(nil, includeGroups, nil, nil, artistId)
+
+	artistResponse, err := svc.GetArtistAlbums(nil, albumGroup, nil, nil, artistId)
 	if err != nil {
 		fmt.Println("✖ Getting artist's " + albumGroupStr + "s failed :(")
 		fmt.Printf("╰┈➤%s\n\n", err.Error())
