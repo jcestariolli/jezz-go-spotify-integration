@@ -4,6 +4,10 @@ type AlbumType string
 
 type AlbumGroup string
 
+func (a AlbumGroup) String() string {
+	return string(a)
+}
+
 const (
 	DefaultAlbumGroup     AlbumGroup = "album"
 	SingleAlbumGroup      AlbumGroup = "single"
@@ -28,11 +32,6 @@ type SimplifiedAlbum struct {
 	Artists              []SimplifiedArtist `json:"artists"`
 }
 
-type SimplifiedArtistAlbum struct {
-	SimplifiedAlbum
-	AlbumGroup AlbumGroup `json:"album_group"`
-}
-
 type Album struct {
 	SimplifiedAlbum
 	Tracks      SimplifiedTracksPaginated `json:"tracks"`
@@ -49,11 +48,6 @@ type MultipleAlbums struct {
 type SimplifiedAlbumsPaginated struct {
 	Pagination
 	Items []SimplifiedAlbum `json:"items"`
-}
-
-type SimplifiedArtistAlbumsPaginated struct {
-	Pagination
-	Items []SimplifiedArtistAlbum `json:"items"`
 }
 
 type AlbumsNewRelease struct {

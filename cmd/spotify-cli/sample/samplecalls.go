@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"jezz-go-spotify-integration/internal/albums"
 	"jezz-go-spotify-integration/internal/artists"
+	"jezz-go-spotify-integration/internal/model"
 	"jezz-go-spotify-integration/internal/tracks"
 )
 
@@ -12,6 +13,12 @@ func RunAppSampleCalls(artistsSvc artists.Service, albumsSvc albums.Service, tra
 
 	getArtist(artistsSvc, "7nzSoJISlVJsn7O0yTeMOB")
 	getMultipleArtists(artistsSvc, "4DFhHyjvGYa9wxdHUjtDkc", "4lgrzShsg2FLA89UM2fdO5")
+
+	getArtistAlbums(artistsSvc, "0k17h0D3J5VfsdmQ1iZtE9")
+	getArtistAlbumsType(artistsSvc, "0k17h0D3J5VfsdmQ1iZtE9", model.DefaultAlbumGroup)
+	getArtistAlbumsType(artistsSvc, "0k17h0D3J5VfsdmQ1iZtE9", model.SingleAlbumGroup)
+	getArtistAlbumsType(artistsSvc, "0k17h0D3J5VfsdmQ1iZtE9", model.AppearsOnAlgumGroup)
+	getArtistAlbumsType(artistsSvc, "0k17h0D3J5VfsdmQ1iZtE9", model.CompilationAlbumGroup)
 
 	getAlbum(albumsSvc, "1QJmLRcuIMMjZ49elafR3K")
 	getAlbumForCountryMarket(albumsSvc, "4R3tXoorBpHji6Jdms8a4Q")
@@ -75,6 +82,53 @@ func getMultipleArtists(svc artists.Service, artistIds ...string) {
 		return
 	}
 	fmt.Println("✖ Getting multiple artists failed :(")
+	fmt.Printf("╰┈➤Body is empty\n\n")
+}
+
+func getArtistAlbums(svc artists.Service, artistId string) {
+	fmt.Println("Trying to get all artist's album types ...")
+
+	artistResponse, err := svc.GetArtistAlbums(nil, []model.AlbumGroup{}, nil, nil, artistId)
+	if err != nil {
+		fmt.Println("✖ Getting all artist's album types failed :(")
+		fmt.Printf("╰┈➤%s\n\n", err.Error())
+		return
+	}
+
+	if body, err3 := json.Marshal(artistResponse); err3 == nil && body != nil {
+		fmt.Println("✔ All Artist's album types obtained! :)")
+		fmt.Printf("╰┈➤%s\n\n", string(body))
+		return
+	} else if err3 != nil {
+		fmt.Println("✖ Getting all artist's album types failed :(")
+		fmt.Printf("╰┈➤%s\n\n", err3.Error())
+		return
+	}
+	fmt.Println("✖ Getting all artist's album types failed :(")
+	fmt.Printf("╰┈➤Body is empty\n\n")
+}
+
+func getArtistAlbumsType(svc artists.Service, artistId string, albumGroup model.AlbumGroup) {
+	albumGroupStr := albumGroup.String()
+	fmt.Println("Trying to get artist's " + albumGroupStr + "s ...")
+	includeGroups := []model.AlbumGroup{albumGroup}
+	artistResponse, err := svc.GetArtistAlbums(nil, includeGroups, nil, nil, artistId)
+	if err != nil {
+		fmt.Println("✖ Getting artist's " + albumGroupStr + "s failed :(")
+		fmt.Printf("╰┈➤%s\n\n", err.Error())
+		return
+	}
+
+	if body, err3 := json.Marshal(artistResponse); err3 == nil && body != nil {
+		fmt.Println("✔ Artist's " + albumGroupStr + "s obtained! :)")
+		fmt.Printf("╰┈➤%s\n\n", string(body))
+		return
+	} else if err3 != nil {
+		fmt.Println("✖ Getting artist's " + albumGroupStr + "s failed :(")
+		fmt.Printf("╰┈➤%s\n\n", err3.Error())
+		return
+	}
+	fmt.Println("✖ Getting artist's " + albumGroupStr + "s failed :(")
 	fmt.Printf("╰┈➤Body is empty\n\n")
 }
 

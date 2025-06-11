@@ -20,3 +20,13 @@ type Artist struct {
 type MultipleArtists struct {
 	Artists []Artist `json:"artists"`
 }
+
+type SimplifiedArtistAlbum struct {
+	SimplifiedAlbum
+	AlbumGroup AlbumGroup `json:"album_group"`
+}
+
+type SimplifiedArtistAlbumsPaginated struct {
+	Pagination
+	Items []SimplifiedArtistAlbum `json:"items"`
+}
