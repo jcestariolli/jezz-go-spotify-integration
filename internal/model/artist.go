@@ -1,5 +1,18 @@
 package model
 
+import (
+	"github.com/samber/lo"
+	"strings"
+)
+
+type ArtistsIds []Id
+
+func (a ArtistsIds) String() string {
+	return strings.Join(lo.Map(a, func(artistId Id, _ int) string {
+		return artistId.String()
+	}), ",")
+}
+
 type SimplifiedArtist struct {
 	ExternalUrls ExternalUrls `json:"external_urls"`
 	Href         Href         `json:"href"`

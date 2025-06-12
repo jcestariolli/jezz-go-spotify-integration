@@ -1,5 +1,18 @@
 package model
 
+import (
+	"github.com/samber/lo"
+	"strings"
+)
+
+type AlbumsIds []Id
+
+func (a AlbumsIds) String() string {
+	return strings.Join(lo.Map(a, func(albumId Id, _ int) string {
+		return albumId.String()
+	}), ",")
+}
+
 type AlbumType string
 
 type AlbumGroup string
@@ -8,12 +21,13 @@ func (a AlbumGroup) String() string {
 	return string(a)
 }
 
-const (
-	DefaultAlbumGroup     AlbumGroup = "album"
-	SingleAlbumGroup      AlbumGroup = "single"
-	AppearsOnAlgumGroup   AlbumGroup = "appears_on"
-	CompilationAlbumGroup AlbumGroup = "compilation"
-)
+type AlbumGroups []AlbumGroup
+
+func (a AlbumGroups) String() string {
+	return strings.Join(lo.Map(a, func(albumGroup AlbumGroup, _ int) string {
+		return albumGroup.String()
+	}), ",")
+}
 
 type SimplifiedAlbum struct {
 	AlbumType            AlbumType          `json:"album_type"`
