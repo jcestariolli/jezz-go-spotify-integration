@@ -3,6 +3,7 @@ package config
 import (
 	_ "embed"
 	"fmt"
+
 	"github.com/go-playground/validator/v10"
 	"gopkg.in/yaml.v3"
 )
