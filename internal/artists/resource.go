@@ -14,7 +14,7 @@ type Resource struct {
 
 func NewResource(
 	baseUrl string,
-) Resource {
+) internal.ArtistsResource {
 	return Resource{
 		httpClient: client.HttpCustomClient{},
 		baseUrl:    baseUrl,

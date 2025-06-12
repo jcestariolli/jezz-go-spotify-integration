@@ -3,6 +3,7 @@ package tracks
 import (
 	"fmt"
 	"github.com/samber/lo"
+	"jezz-go-spotify-integration/internal"
 	"jezz-go-spotify-integration/internal/auth"
 	"jezz-go-spotify-integration/internal/model"
 	"jezz-go-spotify-integration/internal/utils"
@@ -10,13 +11,13 @@ import (
 
 type Service struct {
 	authService    *auth.Service
-	tracksResource Resource
+	tracksResource internal.TracksResource
 }
 
 func NewService(
 	baseUrl string,
 	authService *auth.Service,
-) *Service {
+) internal.TracksService {
 	return &Service{
 		authService:    authService,
 		tracksResource: NewResource(baseUrl),
