@@ -12,6 +12,7 @@ endif
 install-deps:
 	go mod download
 	go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+	go install github.com/vektra/mockery/v2@latest
 
 
 .PHONY: build
@@ -37,4 +38,9 @@ lint:
 .PHONY: lint-fix
 lint-fix:
 	golangci-lint run --fix
+
+.PHONY: mocks-gen
+mocks-gen:
+	mockery --all --recursive --dir ./internal --output ./internal/mocks --keeptree --case snake
+
 
