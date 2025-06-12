@@ -1,5 +1,18 @@
 package model
 
+import (
+	"github.com/samber/lo"
+	"strings"
+)
+
+type TracksIds []Id
+
+func (a TracksIds) String() string {
+	return strings.Join(lo.Map(a, func(trackId Id, _ int) string {
+		return trackId.String()
+	}), ",")
+}
+
 type SimplifiedTrack struct {
 	Artists          []SimplifiedArtist `json:"artists"`
 	AvailableMarkets []AvailableMarket  `json:"available_markets"`
