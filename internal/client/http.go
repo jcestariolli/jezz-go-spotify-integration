@@ -3,13 +3,14 @@ package client
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/samber/lo"
 	"io"
 	"jezz-go-spotify-integration/internal/commons"
 	"jezz-go-spotify-integration/internal/model"
 	"net/http"
 	"reflect"
 	"strings"
+
+	"github.com/samber/lo"
 )
 
 type HttpClient interface {

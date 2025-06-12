@@ -2,11 +2,12 @@ package tracks
 
 import (
 	"fmt"
-	"github.com/samber/lo"
 	"jezz-go-spotify-integration/internal"
 	"jezz-go-spotify-integration/internal/auth"
 	"jezz-go-spotify-integration/internal/model"
 	"jezz-go-spotify-integration/internal/utils"
+
+	"github.com/samber/lo"
 )
 
 type Service struct {

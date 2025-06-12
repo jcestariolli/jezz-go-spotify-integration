@@ -1,9 +1,10 @@
 package utils
 
 import (
+	"jezz-go-spotify-integration/internal/model"
+
 	"github.com/pariz/gountries"
 	"github.com/samber/lo"
-	"jezz-go-spotify-integration/internal/model"
 )
 
 func GetMarketByCountryName(countryName *string) (*model.AvailableMarket, error) {
