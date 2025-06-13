@@ -32,9 +32,10 @@ jobs:
 
     - name: Create dummy config file
       run: |
-        mkdir -p config
-        touch config/spotify_client_credentials.yml
+        mkdir -p ./cmd/spotify-cli/config
+        touch ./cmd/spotify-cli/config/spotify_client_credentials.yml
       # Creates an empty dummy file for go:embed to prevent linting/build errors if not committed.
+      # Updated path to ./cmd/spotify-cli/config/
 
     - name: Install Dependencies
       run: |
