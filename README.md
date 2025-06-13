@@ -6,6 +6,13 @@ A Go-based integration project for interacting with the Spotify API. This projec
 
 ---
 
+
+## 📚 Study Project Notice
+
+**This project is primarily for study and learning purposes.** It's a personal endeavor to deepen understanding of Go programming, API integration (specifically with Spotify's API), and various development workflows like testing, linting, and mock generation. While functional, it might not adhere to all best practices for production-ready applications. Feel free to explore, learn from it, and provide feedback!
+
+---
+
 ## 🚀 Project Description
 
 This project is designed to facilitate integration with Spotify's API using Go. It includes:
