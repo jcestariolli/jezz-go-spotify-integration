@@ -21,26 +21,25 @@ This project is designed to facilitate integration with Spotify's API using Go. 
 
 ```
 .
-├── .golangci.yml               # Configuration for golangci-lint 📏
-├── .gitignore                  # Specifies intentionally untracked files to ignore 🚫
-├── Makefile                    # Automates common development tasks 🛠️
+├── .golangci.yml       # Configuration for golangci-lint 📏
+├── .gitignore          # Specifies intentionally untracked files to ignore 🚫
+├── Makefile            # Automates common development tasks 🛠️
 ├── cmd
-│   └── spotify-cli             # Main application entry point 🚀
-│       ├── config              # Configuration files (e.g., config.yml, spotify_client_credentials.yml) 📁
-│       ├── samples             # Contains sample code to demonstrate API interactions 💡
-│       │   └── samplecalls.go  # Sample calls to test all project features with the Spotify API 📞
-│       └── main.go             # Main application file ▶️
+│   └── spotify-cli     # Main application entry point 🚀
+│       ├── config      # Configuration files (e.g., config.yml, spotify_client_credentials.yml) 📁
+│       ├── samples     # Contains sample code to demonstrate API interactions 💡
+│       └── main.go     # Main application file ▶️
 │── internal
-│   ├── albums                  # Implementation for Spotify Album-related features 💿
-│   ├── artists                 # Implementation for Spotify Artist-related features 🎤
-│   ├── auth                    # Implementations for Spotify authentication (e.g., client credentials flow) 🔑
-│   ├── config                  # Configuration structs, loaders, and validation logic 📝
-│   ├── model                   # Domain models and types used across the app 🧩
-│   ├── tracks                  # Implementation for Spotify Track-related features 🎵
-│   ├── utils                   # Utility functions (e.g., pagination validation) 🛠️
-│   └── mocks                   # Auto-generated mocks for testing 🤖
+│   ├── albums          # Implementation for Spotify Album-related features 💿
+│   ├── artists         # Implementation for Spotify Artist-related features 🎤
+│   ├── auth            # Implementations for Spotify authentication (e.g., client credentials flow) 🔑
+│   ├── config          # Configuration structs, loaders, and validation logic 📝
+│   ├── model           # Domain models and types used across the app 🧩
+│   ├── tracks          # Implementation for Spotify Track-related features 🎵
+│   ├── utils           # Utility functions (e.g., pagination validation) 🛠️
+│   └── mocks           # Auto-generated mocks for testing 🤖
 └── test
-    └── data                    # Sample config files and test data 📊
+    └── data            # Sample config files and test data 📊
 ```
 This project's structure is organized to separate concerns. The primary application logic resides in `cmd/spotify-cli`, and internal libraries, models, utilities, authentication, and feature-specific implementations are within the `internal` directory. Root-level configuration files manage overall project settings and version control.
 
