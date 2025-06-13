@@ -30,6 +30,12 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-go-
 
+    - name: Create dummy config file
+      run: |
+        mkdir -p config
+        touch config/spotify_client_credentials.yml
+      # Creates an empty dummy file for go:embed to prevent linting/build errors if not committed.
+
     - name: Install Dependencies
       run: |
         make install-deps
