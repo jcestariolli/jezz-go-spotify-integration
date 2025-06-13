@@ -1,0 +1,57 @@
+# This workflow will build a golang project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-go
+
+name: Go CI/CD
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.24' # Updated Go version
+
+    - name: Cache Go modules
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/go/pkg/mod
+          ~/.cache/go-build
+        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+        restore-keys: |
+          ${{ runner.os }}-go-
+
+    - name: Install Dependencies
+      run: |
+        make install-deps
+        make tidy
+      # This step installs golangci-lint and mockery, and tidies go modules.
+
+    - name: Lint
+      run: make lint
+      # Runs the linter using golangci-lint as defined in your Makefile.
+
+    - name: Build
+      run: make build
+      # Builds your Go application as defined in your Makefile.
+
+    - name: Test
+      run: make test
+      # Runs all unit tests.
+
+    - name: Validate Coverage
+      run: make test-coverage
+      # Generates and displays test coverage report.
+
+    - name: Clean up
+      run: make clean
+      # Cleans up the coverage file after the workflow.
