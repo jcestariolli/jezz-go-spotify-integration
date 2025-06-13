@@ -2,6 +2,8 @@
 
 A Go-based integration project for interacting with the Spotify API. This project provides configuration loading, pagination utilities, mock generation, linting, building, and testing workflows to streamline development.
 
+📌 **_Important_**: this project only authenticates with client credentials and, considering this, it doesn't integrate with Spotify's endpoints that access user information.
+
 ---
 
 ## 🚀 Project Description
