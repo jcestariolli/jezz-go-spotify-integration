@@ -10,7 +10,8 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
+  # Pre-validation (CI) jobs: lint, build, test
+  lint:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -34,8 +35,7 @@ jobs:
       run: |
         mkdir -p ./cmd/spotify-cli/config
         touch ./cmd/spotify-cli/config/spotify_client_credentials.yml
-      # Creates an empty dummy file for go:embed to prevent linting/build errors if not committed.
-      # Updated path to ./cmd/spotify-cli/config/
+      # Creates an empty dummy file for go:embed to prevent linting errors if not committed.
 
     - name: Install Dependencies
       run: |
@@ -47,13 +47,112 @@ jobs:
       run: make lint
       # Runs the linter using golangci-lint as defined in your Makefile.
 
+  build:
+    needs: lint # This job will only run after the 'lint' job successfully completes
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.24' # Updated Go version
+
+    - name: Cache Go modules
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/go/pkg/mod
+          ~/.cache/go-build
+        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+        restore-keys: |
+          ${{ runner.os }}-go-
+
+    - name: Create dummy config file
+      run: |
+        mkdir -p ./cmd/spotify-cli/config
+        touch ./cmd/spotify-cli/config/spotify_client_credentials.yml
+      # Creates an empty dummy file for go:embed to prevent build errors if not committed.
+
+    - name: Install Dependencies
+      run: |
+        make install-deps
+        make tidy
+      # This step installs golangci-lint and mockery, and tidies go modules. (Needed for build)
+
     - name: Build
       run: make build
       # Builds your Go application as defined in your Makefile.
 
-    - name: Test
+  test:
+    needs: build # This job will only run after the 'build' job successfully completes
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.24' # Updated Go version
+
+    - name: Cache Go modules
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/go/pkg/mod
+          ~/.cache/go-build
+        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+        restore-keys: |
+          ${{ runner.os }}-go-
+
+    - name: Create dummy config file
+      run: |
+        mkdir -p ./cmd/spotify-cli/config
+        touch ./cmd/spotify-cli/config/spotify_client_credentials.yml
+      # Creates an empty dummy file for go:embed to prevent test errors if not committed.
+
+    - name: Install Dependencies
+      run: |
+        make install-deps
+        make tidy
+      # This step installs golangci-lint and mockery, and tidies go modules. (Needed for test)
+
+    - name: Run Tests
       run: make test
       # Runs all unit tests.
+
+  coverage:
+    needs: test # This job will only run after the 'test' job successfully completes
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.24' # Updated Go version
+
+    - name: Cache Go modules
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/go/pkg/mod
+          ~/.cache/go-build
+        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+        restore-keys: |
+          ${{ runner.os }}-go-
+
+    - name: Create dummy config file
+      run: |
+        mkdir -p ./cmd/spotify-cli/config
+        touch ./cmd/spotify-cli/config/spotify_client_credentials.yml
+      # Creates an empty dummy file for go:embed to prevent coverage errors if not committed.
+
+    - name: Install Dependencies
+      run: |
+        make install-deps
+        make tidy
+      # This step installs golangci-lint and mockery, and tidies go modules. (Needed for coverage)
 
     - name: Validate Coverage
       run: make test-coverage
