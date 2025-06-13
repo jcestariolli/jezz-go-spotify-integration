@@ -194,23 +194,23 @@ func Test_loadConfig(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		if tt.fields.configDataFile == "" {
-			t.Fatalf("AppConfig data file cannot be empty")
-		}
-		data, err := os.ReadFile(testDataDir + "/" + tt.fields.configDataFile)
-		if err != nil {
-			t.Fatalf("Could not load config data file")
-			return
-		}
-
 		t.Run(tt.name, func(t *testing.T) {
+			if tt.fields.configDataFile == "" {
+				t.Fatalf("Config data file cannot be empty")
+			}
+			data, errRead := os.ReadFile(testDataDir + "/" + tt.fields.configDataFile)
+			if errRead != nil {
+				t.Fatalf("Could not load config data file")
+				return
+			}
+
 			config := DummyConfig{}
 			err := loadConfig(data, &config)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("loadConfig() error = %v, wantErr %v", err, tt.wantErr)
 			}
 			if !reflect.DeepEqual(config, tt.want) {
-				t.Errorf("loadConfig()() got = %v, want %v", config, tt.want)
+				t.Errorf("loadConfig() got = %v, want %v", config, tt.want)
 			}
 		})
 	}
