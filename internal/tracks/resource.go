@@ -8,32 +8,32 @@ import (
 )
 
 type Resource struct {
-	httpClient client.HttpClient
-	baseUrl    string
+	httpClient client.HTTPClient
+	baseURL    string
 }
 
 func NewResource(
-	baseUrl string,
+	baseURL string,
 ) internal.TracksResource {
 	return Resource{
-		httpClient: client.HttpCustomClient{},
-		baseUrl:    baseUrl,
+		httpClient: client.HTTPCustomClient{},
+		baseURL:    baseURL,
 	}
 }
 
 func (r Resource) GetTrack(
 	accessToken model.AccessToken,
 	market *model.AvailableMarket,
-	trackId model.Id,
+	trackID model.ID,
 ) (model.Track, error) {
-	url := r.baseUrl + internal.ApiVersion + internal.TracksPath + "/" + trackId.String()
+	url := r.baseURL + internal.APIVersion + internal.TracksPath + "/" + trackID.String()
 	queryParams := &model.QueryParams{
 		"market": market,
 	}
 	output := &model.Track{}
 
-	if err := r.httpClient.DoRequest(model.HttpGet, url, queryParams, accessToken, output); err != nil {
-		return model.Track{}, fmt.Errorf("error executing track request for track ID - %s - %w", trackId.String(), err)
+	if err := r.httpClient.DoRequest(model.HTTPGet, url, queryParams, accessToken, output); err != nil {
+		return model.Track{}, fmt.Errorf("error executing track request for track ID - %s - %w", trackID.String(), err)
 	}
 	return *output, nil
 }
@@ -41,27 +41,27 @@ func (r Resource) GetTrack(
 func (r Resource) GetTracks(
 	accessToken model.AccessToken,
 	market *model.AvailableMarket,
-	tracksIds model.TracksIds,
+	tracksIDs model.TracksIDs,
 ) ([]model.Track, error) {
-	if err := r.validateTracksIdSize(tracksIds); err != nil {
+	if err := r.validateTracksIDsSize(tracksIDs); err != nil {
 		return []model.Track{}, err
 	}
 
-	url := r.baseUrl + internal.ApiVersion + internal.TracksPath
+	url := r.baseURL + internal.APIVersion + internal.TracksPath
 	queryParams := &model.QueryParams{
-		"ids":    tracksIds,
+		"ids":    tracksIDs,
 		"market": market,
 	}
 	output := &model.MultipleTracks{}
 
-	if err := r.httpClient.DoRequest(model.HttpGet, url, queryParams, accessToken, output); err != nil {
-		return []model.Track{}, fmt.Errorf("error executing track request for tracks IDs - %s - %w", tracksIds.String(), err)
+	if err := r.httpClient.DoRequest(model.HTTPGet, url, queryParams, accessToken, output); err != nil {
+		return []model.Track{}, fmt.Errorf("error executing track request for tracks IDs - %s - %w", tracksIDs.String(), err)
 	}
-	return (*output).Tracks, nil
+	return output.Tracks, nil
 }
 
-func (r Resource) validateTracksIdSize(tracksIds model.TracksIds) error {
-	if len(tracksIds) < 1 {
+func (r Resource) validateTracksIDsSize(tracksIDs model.TracksIDs) error {
+	if len(tracksIDs) < 1 {
 		return fmt.Errorf("error getting track - track id must not be null")
 	}
 	return nil

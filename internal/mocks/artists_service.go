@@ -13,9 +13,9 @@ type ArtistsService struct {
 	mock.Mock
 }
 
-// GetArtist provides a mock function with given fields: artistId
-func (_m *ArtistsService) GetArtist(artistId string) (model.Artist, error) {
-	ret := _m.Called(artistId)
+// GetArtist provides a mock function with given fields: artistID
+func (_m *ArtistsService) GetArtist(artistID string) (model.Artist, error) {
+	ret := _m.Called(artistID)
 
 	if len(ret) == 0 {
 		panic("no return value specified for GetArtist")
@@ -24,16 +24,16 @@ func (_m *ArtistsService) GetArtist(artistId string) (model.Artist, error) {
 	var r0 model.Artist
 	var r1 error
 	if rf, ok := ret.Get(0).(func(string) (model.Artist, error)); ok {
-		return rf(artistId)
+		return rf(artistID)
 	}
 	if rf, ok := ret.Get(0).(func(string) model.Artist); ok {
-		r0 = rf(artistId)
+		r0 = rf(artistID)
 	} else {
 		r0 = ret.Get(0).(model.Artist)
 	}
 
 	if rf, ok := ret.Get(1).(func(string) error); ok {
-		r1 = rf(artistId)
+		r1 = rf(artistID)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -41,9 +41,9 @@ func (_m *ArtistsService) GetArtist(artistId string) (model.Artist, error) {
 	return r0, r1
 }
 
-// GetArtistAlbums provides a mock function with given fields: countryMarketName, albumTypes, limit, offset, albumId
-func (_m *ArtistsService) GetArtistAlbums(countryMarketName *string, albumTypes *[]string, limit *int, offset *int, albumId string) (model.SimplifiedArtistAlbumsPaginated, error) {
-	ret := _m.Called(countryMarketName, albumTypes, limit, offset, albumId)
+// GetArtistAlbums provides a mock function with given fields: countryMarketName, albumTypes, limit, offset, albumID
+func (_m *ArtistsService) GetArtistAlbums(countryMarketName *string, albumTypes *[]string, limit *int, offset *int, albumID string) (model.SimplifiedArtistAlbumsPaginated, error) {
+	ret := _m.Called(countryMarketName, albumTypes, limit, offset, albumID)
 
 	if len(ret) == 0 {
 		panic("no return value specified for GetArtistAlbums")
@@ -52,16 +52,16 @@ func (_m *ArtistsService) GetArtistAlbums(countryMarketName *string, albumTypes 
 	var r0 model.SimplifiedArtistAlbumsPaginated
 	var r1 error
 	if rf, ok := ret.Get(0).(func(*string, *[]string, *int, *int, string) (model.SimplifiedArtistAlbumsPaginated, error)); ok {
-		return rf(countryMarketName, albumTypes, limit, offset, albumId)
+		return rf(countryMarketName, albumTypes, limit, offset, albumID)
 	}
 	if rf, ok := ret.Get(0).(func(*string, *[]string, *int, *int, string) model.SimplifiedArtistAlbumsPaginated); ok {
-		r0 = rf(countryMarketName, albumTypes, limit, offset, albumId)
+		r0 = rf(countryMarketName, albumTypes, limit, offset, albumID)
 	} else {
 		r0 = ret.Get(0).(model.SimplifiedArtistAlbumsPaginated)
 	}
 
 	if rf, ok := ret.Get(1).(func(*string, *[]string, *int, *int, string) error); ok {
-		r1 = rf(countryMarketName, albumTypes, limit, offset, albumId)
+		r1 = rf(countryMarketName, albumTypes, limit, offset, albumID)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -69,9 +69,9 @@ func (_m *ArtistsService) GetArtistAlbums(countryMarketName *string, albumTypes 
 	return r0, r1
 }
 
-// GetArtistTopTracks provides a mock function with given fields: countryMarketName, artistId
-func (_m *ArtistsService) GetArtistTopTracks(countryMarketName *string, artistId string) ([]model.Track, error) {
-	ret := _m.Called(countryMarketName, artistId)
+// GetArtistTopTracks provides a mock function with given fields: countryMarketName, artistID
+func (_m *ArtistsService) GetArtistTopTracks(countryMarketName *string, artistID string) ([]model.Track, error) {
+	ret := _m.Called(countryMarketName, artistID)
 
 	if len(ret) == 0 {
 		panic("no return value specified for GetArtistTopTracks")
@@ -80,10 +80,10 @@ func (_m *ArtistsService) GetArtistTopTracks(countryMarketName *string, artistId
 	var r0 []model.Track
 	var r1 error
 	if rf, ok := ret.Get(0).(func(*string, string) ([]model.Track, error)); ok {
-		return rf(countryMarketName, artistId)
+		return rf(countryMarketName, artistID)
 	}
 	if rf, ok := ret.Get(0).(func(*string, string) []model.Track); ok {
-		r0 = rf(countryMarketName, artistId)
+		r0 = rf(countryMarketName, artistID)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]model.Track)
@@ -91,7 +91,7 @@ func (_m *ArtistsService) GetArtistTopTracks(countryMarketName *string, artistId
 	}
 
 	if rf, ok := ret.Get(1).(func(*string, string) error); ok {
-		r1 = rf(countryMarketName, artistId)
+		r1 = rf(countryMarketName, artistID)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -99,11 +99,11 @@ func (_m *ArtistsService) GetArtistTopTracks(countryMarketName *string, artistId
 	return r0, r1
 }
 
-// GetArtists provides a mock function with given fields: artistIdsStr
-func (_m *ArtistsService) GetArtists(artistIdsStr ...string) ([]model.Artist, error) {
-	_va := make([]interface{}, len(artistIdsStr))
-	for _i := range artistIdsStr {
-		_va[_i] = artistIdsStr[_i]
+// GetArtists provides a mock function with given fields: artistIDsStr
+func (_m *ArtistsService) GetArtists(artistIDsStr ...string) ([]model.Artist, error) {
+	_va := make([]interface{}, len(artistIDsStr))
+	for _i := range artistIDsStr {
+		_va[_i] = artistIDsStr[_i]
 	}
 	var _ca []interface{}
 	_ca = append(_ca, _va...)
@@ -116,10 +116,10 @@ func (_m *ArtistsService) GetArtists(artistIdsStr ...string) ([]model.Artist, er
 	var r0 []model.Artist
 	var r1 error
 	if rf, ok := ret.Get(0).(func(...string) ([]model.Artist, error)); ok {
-		return rf(artistIdsStr...)
+		return rf(artistIDsStr...)
 	}
 	if rf, ok := ret.Get(0).(func(...string) []model.Artist); ok {
-		r0 = rf(artistIdsStr...)
+		r0 = rf(artistIDsStr...)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]model.Artist)
@@ -127,7 +127,7 @@ func (_m *ArtistsService) GetArtists(artistIdsStr ...string) ([]model.Artist, er
 	}
 
 	if rf, ok := ret.Get(1).(func(...string) error); ok {
-		r1 = rf(artistIdsStr...)
+		r1 = rf(artistIDsStr...)
 	} else {
 		r1 = ret.Error(1)
 	}

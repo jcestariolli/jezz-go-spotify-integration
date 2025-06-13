@@ -16,20 +16,20 @@ const (
 )
 
 type CliCredentialsFlow struct {
-	accountUrl   string
-	clientId     string
+	accountURL   string
+	clientID     string
 	clientSecret string
 }
 
 func NewCliCredentialsFlow(
-	accountUrl string,
-	clientId string,
+	accountURL string,
+	clientID string,
 	clientSecret string,
 
 ) CliCredentialsFlow {
 	return CliCredentialsFlow{
-		accountUrl:   accountUrl,
-		clientId:     clientId,
+		accountURL:   accountURL,
+		clientID:     clientID,
 		clientSecret: clientSecret,
 	}
 }
@@ -59,12 +59,12 @@ func (c CliCredentialsFlow) Authenticate() (*model.Authentication, error) {
 func (c CliCredentialsFlow) createRequest() (*http.Request, error) {
 	formData := url.Values{}
 	formData.Set("grant_type", "client_credentials")
-	req, err := http.NewRequest("POST", c.accountUrl+cliCredentialsPath, strings.NewReader(formData.Encode()))
+	req, err := http.NewRequest("POST", c.accountURL+cliCredentialsPath, strings.NewReader(formData.Encode()))
 	if err != nil {
 		return nil, err
 	}
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-	req.SetBasicAuth(c.clientId, c.clientSecret)
+	req.SetBasicAuth(c.clientID, c.clientSecret)
 	return req, err
 }
 

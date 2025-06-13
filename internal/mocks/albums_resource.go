@@ -13,9 +13,9 @@ type AlbumsResource struct {
 	mock.Mock
 }
 
-// GetAlbum provides a mock function with given fields: accessToken, market, albumId
-func (_m *AlbumsResource) GetAlbum(accessToken model.AccessToken, market *model.AvailableMarket, albumId model.Id) (model.Album, error) {
-	ret := _m.Called(accessToken, market, albumId)
+// GetAlbum provides a mock function with given fields: accessToken, market, albumID
+func (_m *AlbumsResource) GetAlbum(accessToken model.AccessToken, market *model.AvailableMarket, albumID model.ID) (model.Album, error) {
+	ret := _m.Called(accessToken, market, albumID)
 
 	if len(ret) == 0 {
 		panic("no return value specified for GetAlbum")
@@ -23,17 +23,17 @@ func (_m *AlbumsResource) GetAlbum(accessToken model.AccessToken, market *model.
 
 	var r0 model.Album
 	var r1 error
-	if rf, ok := ret.Get(0).(func(model.AccessToken, *model.AvailableMarket, model.Id) (model.Album, error)); ok {
-		return rf(accessToken, market, albumId)
+	if rf, ok := ret.Get(0).(func(model.AccessToken, *model.AvailableMarket, model.ID) (model.Album, error)); ok {
+		return rf(accessToken, market, albumID)
 	}
-	if rf, ok := ret.Get(0).(func(model.AccessToken, *model.AvailableMarket, model.Id) model.Album); ok {
-		r0 = rf(accessToken, market, albumId)
+	if rf, ok := ret.Get(0).(func(model.AccessToken, *model.AvailableMarket, model.ID) model.Album); ok {
+		r0 = rf(accessToken, market, albumID)
 	} else {
 		r0 = ret.Get(0).(model.Album)
 	}
 
-	if rf, ok := ret.Get(1).(func(model.AccessToken, *model.AvailableMarket, model.Id) error); ok {
-		r1 = rf(accessToken, market, albumId)
+	if rf, ok := ret.Get(1).(func(model.AccessToken, *model.AvailableMarket, model.ID) error); ok {
+		r1 = rf(accessToken, market, albumID)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -41,9 +41,9 @@ func (_m *AlbumsResource) GetAlbum(accessToken model.AccessToken, market *model.
 	return r0, r1
 }
 
-// GetAlbumTracks provides a mock function with given fields: accessToken, market, limit, offset, albumId
-func (_m *AlbumsResource) GetAlbumTracks(accessToken model.AccessToken, market *model.AvailableMarket, limit *model.Limit, offset *model.Offset, albumId model.Id) (model.SimplifiedTracksPaginated, error) {
-	ret := _m.Called(accessToken, market, limit, offset, albumId)
+// GetAlbumTracks provides a mock function with given fields: accessToken, market, limit, offset, albumID
+func (_m *AlbumsResource) GetAlbumTracks(accessToken model.AccessToken, market *model.AvailableMarket, limit *model.Limit, offset *model.Offset, albumID model.ID) (model.SimplifiedTracksPaginated, error) {
+	ret := _m.Called(accessToken, market, limit, offset, albumID)
 
 	if len(ret) == 0 {
 		panic("no return value specified for GetAlbumTracks")
@@ -51,17 +51,17 @@ func (_m *AlbumsResource) GetAlbumTracks(accessToken model.AccessToken, market *
 
 	var r0 model.SimplifiedTracksPaginated
 	var r1 error
-	if rf, ok := ret.Get(0).(func(model.AccessToken, *model.AvailableMarket, *model.Limit, *model.Offset, model.Id) (model.SimplifiedTracksPaginated, error)); ok {
-		return rf(accessToken, market, limit, offset, albumId)
+	if rf, ok := ret.Get(0).(func(model.AccessToken, *model.AvailableMarket, *model.Limit, *model.Offset, model.ID) (model.SimplifiedTracksPaginated, error)); ok {
+		return rf(accessToken, market, limit, offset, albumID)
 	}
-	if rf, ok := ret.Get(0).(func(model.AccessToken, *model.AvailableMarket, *model.Limit, *model.Offset, model.Id) model.SimplifiedTracksPaginated); ok {
-		r0 = rf(accessToken, market, limit, offset, albumId)
+	if rf, ok := ret.Get(0).(func(model.AccessToken, *model.AvailableMarket, *model.Limit, *model.Offset, model.ID) model.SimplifiedTracksPaginated); ok {
+		r0 = rf(accessToken, market, limit, offset, albumID)
 	} else {
 		r0 = ret.Get(0).(model.SimplifiedTracksPaginated)
 	}
 
-	if rf, ok := ret.Get(1).(func(model.AccessToken, *model.AvailableMarket, *model.Limit, *model.Offset, model.Id) error); ok {
-		r1 = rf(accessToken, market, limit, offset, albumId)
+	if rf, ok := ret.Get(1).(func(model.AccessToken, *model.AvailableMarket, *model.Limit, *model.Offset, model.ID) error); ok {
+		r1 = rf(accessToken, market, limit, offset, albumID)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -69,9 +69,9 @@ func (_m *AlbumsResource) GetAlbumTracks(accessToken model.AccessToken, market *
 	return r0, r1
 }
 
-// GetAlbums provides a mock function with given fields: accessToken, market, albumsIds
-func (_m *AlbumsResource) GetAlbums(accessToken model.AccessToken, market *model.AvailableMarket, albumsIds model.AlbumsIds) ([]model.Album, error) {
-	ret := _m.Called(accessToken, market, albumsIds)
+// GetAlbums provides a mock function with given fields: accessToken, market, albumsIDs
+func (_m *AlbumsResource) GetAlbums(accessToken model.AccessToken, market *model.AvailableMarket, albumsIDs model.AlbumsIDs) ([]model.Album, error) {
+	ret := _m.Called(accessToken, market, albumsIDs)
 
 	if len(ret) == 0 {
 		panic("no return value specified for GetAlbums")
@@ -79,19 +79,19 @@ func (_m *AlbumsResource) GetAlbums(accessToken model.AccessToken, market *model
 
 	var r0 []model.Album
 	var r1 error
-	if rf, ok := ret.Get(0).(func(model.AccessToken, *model.AvailableMarket, model.AlbumsIds) ([]model.Album, error)); ok {
-		return rf(accessToken, market, albumsIds)
+	if rf, ok := ret.Get(0).(func(model.AccessToken, *model.AvailableMarket, model.AlbumsIDs) ([]model.Album, error)); ok {
+		return rf(accessToken, market, albumsIDs)
 	}
-	if rf, ok := ret.Get(0).(func(model.AccessToken, *model.AvailableMarket, model.AlbumsIds) []model.Album); ok {
-		r0 = rf(accessToken, market, albumsIds)
+	if rf, ok := ret.Get(0).(func(model.AccessToken, *model.AvailableMarket, model.AlbumsIDs) []model.Album); ok {
+		r0 = rf(accessToken, market, albumsIDs)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]model.Album)
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(model.AccessToken, *model.AvailableMarket, model.AlbumsIds) error); ok {
-		r1 = rf(accessToken, market, albumsIds)
+	if rf, ok := ret.Get(1).(func(model.AccessToken, *model.AvailableMarket, model.AlbumsIDs) error); ok {
+		r1 = rf(accessToken, market, albumsIDs)
 	} else {
 		r1 = ret.Error(1)
 	}

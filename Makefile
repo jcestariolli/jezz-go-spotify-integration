@@ -8,39 +8,92 @@ else
     RUN_CMD := ./$(APP_NAME)p$(EXE_EXT)
 endif
 
+#################################################################
+# Pre-configuration section
+#################################################################
+
 .PHONY: install-deps
 install-deps:
 	go mod download
 	go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
 	go install github.com/vektra/mockery/v2@latest
 
+.PHONY: tidy
+tidy:
+	go mod tidy
+
+#################################################################
+# Build and bun section
+#################################################################
 
 .PHONY: build
 build:
-	go build -o ./$(APP_NAME)$(EXE_EXT) ./cmd/$(APP_NAME)
+	go build -o ./$(APP_NAME)$(EXE_EXT) ./cmd/$(APP_NAME) || { echo "build failed"; exit 1; }
+
 
 .PHONY: run
 run: build
 	$(RUN_CMD)
 
-.PHONY: tidy
-tidy:
-	go mod tidy
 
-.PHONY: test
-test:
-	go test ./...
+#################################################################
+# Lint section
+#################################################################
 
 .PHONY: lint
 lint:
-	golangci-lint run
+	golangci-lint run || { echo "lint failed"; exit 1; }
 
 .PHONY: lint-fix
 lint-fix:
-	golangci-lint run --fix
+	golangci-lint run --fix  || { echo "lint-fix failed"; exit 1; }
+
+
+#################################################################
+# Tests and mocks section
+#################################################################
+
+.PHONY: test
+test:
+	go test ./... || { echo "tests failed"; exit 1; }
+
+
+.PHONY: test-coverage
+test-coverage:
+	@echo "Running tests with coverage on internal package"
+	$(eval PKGS := $(shell go list ./internal/... | grep -vE '(/model(/|$$)|/mocks(/|$$))'))
+
+	@if [ -z "$(PKGS)" ]; then \
+		echo "No packages found to test after filtering."; \
+		exit 1; \
+	fi
+	go test -coverprofile=coverage.out $(PKGS)
+	go tool cover -func=coverage.out
+
+
+.PHONY: test-coverage-detailed
+test-coverage-detailed: test-coverage
+	go tool cover -func=coverage.out
+
 
 .PHONY: mocks-gen
 mocks-gen:
 	mockery --all --recursive --dir ./internal --output ./internal/mocks --keeptree --case snake
 
 
+#################################################################
+# Other
+#################################################################
+
+.PHONY: clean
+clean:
+	@echo "Cleaning up test coverage files..."
+	rm -f coverage.out
+
+
+#################################################################
+# Developer sections
+#################################################################
+
+.PHONY: pre-commit
+pre-commit: mocks-gen lint-fix build test test-coverage-detailed clean

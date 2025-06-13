@@ -11,8 +11,8 @@ type Loader[T any] interface {
 	Load(configData []byte) (T, error)
 }
 
-func validate(T any) error {
-	return validator.New().Struct(T)
+func validate(t any) error {
+	return validator.New().Struct(t)
 }
 
 func loadConfig[T any](configData []byte, config *T) error {

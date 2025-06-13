@@ -2,10 +2,10 @@ package model
 
 type Href string
 
-type Url string
+type URL string
 
-type Uri string
+type URI string
 
-type ExternalUrls struct {
+type ExternalURLs struct {
 	Spotify string `json:"spotify"`
 }

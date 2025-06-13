@@ -16,28 +16,28 @@ type Service struct {
 }
 
 func NewService(
-	baseUrl string,
+	baseURL string,
 	authService *auth.Service,
 ) internal.ArtistsService {
 	return &Service{
 		authService:     authService,
-		artistsResource: NewResource(baseUrl),
+		artistsResource: NewResource(baseURL),
 	}
 }
 
-func (s *Service) GetArtist(artistId string) (model.Artist, error) {
+func (s *Service) GetArtist(artistID string) (model.Artist, error) {
 	getArtistFn := func() (model.Artist, error) {
-		return s.artistsResource.GetArtist(s.authService.GetAppAccessToken(), model.Id(artistId))
+		return s.artistsResource.GetArtist(s.authService.GetAppAccessToken(), model.ID(artistID))
 	}
 	return auth.ExecuteWithAuthRetry(s.authService, getArtistFn)
 }
 
-func (s *Service) GetArtists(artistIdsStr ...string) ([]model.Artist, error) {
-	artistsIds := lo.Map(artistIdsStr, func(artistId string, _ int) model.Id {
-		return model.Id(artistId)
+func (s *Service) GetArtists(artistIDsStr ...string) ([]model.Artist, error) {
+	artistsIDs := lo.Map(artistIDsStr, func(artistID string, _ int) model.ID {
+		return model.ID(artistID)
 	})
 	getArtistsFn := func() ([]model.Artist, error) {
-		return s.artistsResource.GetArtists(s.authService.GetAppAccessToken(), artistsIds)
+		return s.artistsResource.GetArtists(s.authService.GetAppAccessToken(), artistsIDs)
 	}
 	return auth.ExecuteWithAuthRetry(s.authService, getArtistsFn)
 }
@@ -47,7 +47,7 @@ func (s *Service) GetArtistAlbums(
 	albumTypes *[]string,
 	limit *int,
 	offset *int,
-	albumId string,
+	albumID string,
 ) (model.SimplifiedArtistAlbumsPaginated, error) {
 	market, err := utils.GetMarketByCountryName(countryMarketName)
 	if err != nil {
@@ -72,21 +72,21 @@ func (s *Service) GetArtistAlbums(
 	}
 
 	getArtistAlbumsFn := func() (model.SimplifiedArtistAlbumsPaginated, error) {
-		return s.artistsResource.GetArtistAlbums(s.authService.GetAppAccessToken(), includeGroups, market, _limit, _offset, model.Id(albumId))
+		return s.artistsResource.GetArtistAlbums(s.authService.GetAppAccessToken(), includeGroups, market, _limit, _offset, model.ID(albumID))
 	}
 	return auth.ExecuteWithAuthRetry(s.authService, getArtistAlbumsFn)
 }
 
 func (s *Service) GetArtistTopTracks(
 	countryMarketName *string,
-	artistId string,
+	artistID string,
 ) ([]model.Track, error) {
 	market, err := utils.GetMarketByCountryName(countryMarketName)
 	if err != nil {
 		return []model.Track{}, fmt.Errorf("errror getting artist top-tracks for country %s - invalid country name: %w", *countryMarketName, err)
 	}
 	getArtistTopTracksFn := func() ([]model.Track, error) {
-		return s.artistsResource.GetArtistTopTracks(s.authService.GetAppAccessToken(), market, model.Id(artistId))
+		return s.artistsResource.GetArtistTopTracks(s.authService.GetAppAccessToken(), market, model.ID(artistID))
 	}
 	return auth.ExecuteWithAuthRetry(s.authService, getArtistTopTracksFn)
 

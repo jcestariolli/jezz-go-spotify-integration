@@ -6,11 +6,11 @@ import (
 	"github.com/samber/lo"
 )
 
-type AlbumsIds []Id
+type AlbumsIDs []ID
 
-func (a AlbumsIds) String() string {
-	return strings.Join(lo.Map(a, func(albumId Id, _ int) string {
-		return albumId.String()
+func (a AlbumsIDs) String() string {
+	return strings.Join(lo.Map(a, func(albumID ID, _ int) string {
+		return albumID.String()
 	}), ",")
 }
 
@@ -34,16 +34,16 @@ type SimplifiedAlbum struct {
 	AlbumType            AlbumType          `json:"album_type"`
 	TotalTracks          int                `json:"total_tracks"`
 	AvailableMarkets     []AvailableMarket  `json:"available_markets"`
-	ExternalUrls         ExternalUrls       `json:"external_urls"`
+	ExternalURLs         ExternalURLs       `json:"external_ur_ls"`
 	Href                 Href               `json:"href"`
-	Id                   Id                 `json:"id"`
+	ID                   ID                 `json:"id"`
 	Images               []Image            `json:"images"`
 	Name                 Name               `json:"name"`
 	ReleaseDate          string             `json:"release_date"`
 	ReleaseDatePrecision string             `json:"release_date_precision"`
 	Restrictions         Restrictions       `json:"restrictions"`
 	Type                 Type               `json:"type"`
-	Uri                  Uri                `json:"uri"`
+	URI                  URI                `json:"uri"`
 	Artists              []SimplifiedArtist `json:"artists"`
 }
 
@@ -51,7 +51,7 @@ type Album struct {
 	SimplifiedAlbum
 	Tracks      SimplifiedTracksPaginated `json:"tracks"`
 	Copyrights  []Copyright               `json:"copyrights"`
-	ExternalIds ExternalIds               `json:"external_ids"`
+	ExternalIDs ExternalIDs               `json:"external_i_ds"`
 	Label       string                    `json:"label"`
 	Popularity  int                       `json:"popularity"`
 }
