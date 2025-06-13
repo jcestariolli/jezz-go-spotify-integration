@@ -30,7 +30,7 @@ This project is designed to facilitate integration with Spotify's API using Go. 
 │       ├── samples             # Contains sample code to demonstrate API interactions 💡
 │       │   └── samplecalls.go  # Sample calls to test all project features with the Spotify API 📞
 │       └── main.go             # Main application file ▶️
-└── internal
+│── internal
 │   ├── albums                  # Implementation for Spotify Album-related features 💿
 │   ├── artists                 # Implementation for Spotify Artist-related features 🎤
 │   ├── auth                    # Implementations for Spotify authentication (e.g., client credentials flow) 🔑
@@ -40,7 +40,7 @@ This project is designed to facilitate integration with Spotify's API using Go. 
 │   ├── utils                   # Utility functions (e.g., pagination validation) 🛠️
 │   └── mocks                   # Auto-generated mocks for testing 🤖
 └── test
-│   └── data                    # Sample config files and test data 📊
+    └── data                    # Sample config files and test data 📊
 ```
 This project's structure is organized to separate concerns. The primary application logic resides in `cmd/spotify-cli`, and internal libraries, models, utilities, authentication, and feature-specific implementations are within the `internal` directory. Root-level configuration files manage overall project settings and version control.
 
