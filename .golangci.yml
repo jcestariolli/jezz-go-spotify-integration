@@ -8,10 +8,3 @@ linters:
     - goimports
 run:
   timeout: 5m
-
-issues:
-  exclude-dirs:
-    # Exclude any directory named 'mocks' regardless of its depth
-    # This pattern is generally effective across OS (handles both / and \)
-    - "^(.*/)?mocks(/.*)?$"
-

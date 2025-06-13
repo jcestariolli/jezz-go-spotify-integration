@@ -1,0 +1,3 @@
+client.base_url -> http://dummy.url
+ client.accounts_url -> http://dummy.url
+

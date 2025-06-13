@@ -12,35 +12,60 @@ import (
 	"jezz-go-spotify-integration/internal/tracks"
 )
 
+//go:embed config/config.yml
+var appConfigData []byte
+
+//go:embed config/spotify_client_credentials.yml
+var spotifyCliCredentialsData []byte
+
 func main() {
-	var spotifyConfig config.Config
-	if !loadConfig(&spotifyConfig) {
+	appCfg, cliCredCfg, err := loadConfigs()
+	if err != nil {
 		return
 	}
-	authService := loadAuthService(spotifyConfig)
-	artistsSvc, albumSvc, tracksSvc := loadServices(spotifyConfig, authService)
+	authService := loadAuthService(appCfg, cliCredCfg)
+	artistsSvc, albumSvc, tracksSvc := loadServices(appCfg, authService)
 
 	sample.RunAppSampleCalls(artistsSvc, albumSvc, tracksSvc)
 }
 
-func loadConfig(configPtr *config.Config) bool {
-	fmt.Println("Loading spotifyConfig configs...")
-	spotifyConfig, err := config.Load()
+func loadConfigs() (config.AppConfig, config.CliCredentials, error) {
+	fmt.Println("Loading app configs...")
+	appCfgLoader := NewAppConfigLoader()
+	appCfg, err := appCfgLoader.Load(appConfigData)
 	if err != nil {
 		fmt.Println("✖ Error loading configs :(")
 		fmt.Printf("╰┈➤%s\n\n", err.Error())
-		return false
+		return config.AppConfig{}, config.CliCredentials{}, err
 	}
-	*configPtr = spotifyConfig
-	fmt.Printf("✔ Configs loaded! :)\n\n")
-	return true
+	fmt.Printf("✔ App configs loaded! :)\n\n")
+
+	fmt.Println("Loading client credentials configs...")
+	cliCredCfgLoader := NewCliCredentialsLoader()
+	cliCredCfg, err := cliCredCfgLoader.Load(spotifyCliCredentialsData)
+	if err != nil {
+		fmt.Println("✖ Error loading client credentials configs :(")
+		fmt.Printf("╰┈➤%s\n\n", err.Error())
+		return config.AppConfig{}, config.CliCredentials{}, err
+	}
+	fmt.Printf("✔ Client credentials configs loaded! :)\n\n")
+
+	return appCfg, cliCredCfg, nil
 }
 
-func loadAuthService(cfg config.Config) *auth.Service {
+func NewAppConfigLoader() config.Loader[config.AppConfig] {
+	return config.AppConfigLoader{}
+}
+
+func NewCliCredentialsLoader() config.Loader[config.CliCredentials] {
+	return config.CliCredentialsConfigLoader{}
+}
+
+func loadAuthService(appCfg config.AppConfig, cliCredCfg config.CliCredentials) *auth.Service {
 	fmt.Println("Loading auth service...")
 	authService, err := auth.NewService(
-		cfg.Client.AccountsUrl,
-		cfg.Client.CliCredentials,
+		appCfg.Client.AccountsUrl,
+		cliCredCfg,
 	)
 	if err != nil {
 		fmt.Println("✖ Auth service loading failed :(")
@@ -51,7 +76,7 @@ func loadAuthService(cfg config.Config) *auth.Service {
 	return authService
 }
 
-func loadServices(cfg config.Config, authService *auth.Service) (internal.ArtistsService, internal.AlbumsService, internal.TracksService) {
+func loadServices(cfg config.AppConfig, authService *auth.Service) (internal.ArtistsService, internal.AlbumsService, internal.TracksService) {
 	cliConfig := cfg.Client
 	artistsSvc := loadArtistsService(cliConfig, authService)
 	albumsSvc := loadAlbumsService(cliConfig, authService)

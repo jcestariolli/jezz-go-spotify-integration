@@ -1,0 +1,8 @@
+{
+  "dummy_required_field": "dummy-field",
+  "dummy_url_field": "http://dummy.url",
+  "dummy_simple_field": 1,
+  "dummy_pointer_field": "dummy-pointer-value",
+  "dummy_required_pointer_field": "dummy-required-pointer-value"
+}
+
