@@ -23,8 +23,8 @@ func TestAppConfigLoader_Load(t *testing.T) {
 			},
 			want: AppConfig{
 				Client: CliConfig{
-					BaseUrl:     "http://dummy.url",
-					AccountsUrl: "http://dummy.url",
+					BaseURL:     "http://dummy.url",
+					AccountsURL: "http://dummy.url",
 				},
 			},
 			wantErr: false,
@@ -52,8 +52,8 @@ func TestAppConfigLoader_Load(t *testing.T) {
 			},
 			want: AppConfig{
 				Client: CliConfig{
-					BaseUrl:     "http://dummy.url",
-					AccountsUrl: "http://dummy.url",
+					BaseURL:     "http://dummy.url",
+					AccountsURL: "http://dummy.url",
 				},
 			},
 			wantErr: false,

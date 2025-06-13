@@ -1,9 +1,9 @@
 package model
 
 type LinkedFrom struct {
-	ExternalUrls ExternalUrls `json:"external_urls"`
+	ExternalURLs ExternalURLs `json:"external_ur_ls"`
 	Href         Href         `json:"href"`
-	Id           string       `json:"id"`
+	ID           string       `json:"id"`
 	Type         string       `json:"type"`
-	Uri          Uri          `json:"uri"`
+	URI          URI          `json:"uri"`
 }

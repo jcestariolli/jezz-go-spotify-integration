@@ -5,6 +5,12 @@ linters:
     - staticcheck
     - gosimple
     - unused
+    - gofmt
     - goimports
+    - ineffassign
+    - typecheck
+    - gocritic
+    - misspell
+    - revive
 run:
   timeout: 5m

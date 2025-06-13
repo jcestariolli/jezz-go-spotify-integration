@@ -1,8 +1,8 @@
 package model
 
-type Id string
+type ID string
 
-func (i Id) String() string {
+func (i ID) String() string {
 	return string(i)
 }
 

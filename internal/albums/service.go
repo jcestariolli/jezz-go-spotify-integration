@@ -16,43 +16,43 @@ type Service struct {
 }
 
 func NewService(
-	baseUrl string,
+	baseURL string,
 	authService *auth.Service,
 ) internal.AlbumsService {
 	return &Service{
 		authService:    authService,
-		albumsResource: NewResource(baseUrl),
+		albumsResource: NewResource(baseURL),
 	}
 }
 
 func (s *Service) GetAlbum(
 	countryMarketName *string,
-	albumId string,
+	albumID string,
 ) (model.Album, error) {
 	market, err := utils.GetMarketByCountryName(countryMarketName)
 	if err != nil {
 		return model.Album{}, fmt.Errorf("errror getting album for country %s - invalid country name: %w", *countryMarketName, err)
 	}
 	getAlbumFn := func() (model.Album, error) {
-		return s.albumsResource.GetAlbum(s.authService.GetAppAccessToken(), market, model.Id(albumId))
+		return s.albumsResource.GetAlbum(s.authService.GetAppAccessToken(), market, model.ID(albumID))
 	}
 	return auth.ExecuteWithAuthRetry(s.authService, getAlbumFn)
 }
 
 func (s *Service) GetAlbums(
 	countryMarketName *string,
-	albumsIds ...string,
+	albumsIDs ...string,
 ) ([]model.Album, error) {
 	market, err := utils.GetMarketByCountryName(countryMarketName)
 	if err != nil {
 		return []model.Album{}, fmt.Errorf("errror getting albums for country %s - invalid country name: %w", *countryMarketName, err)
 	}
 
-	_albumsIds := lo.Map(albumsIds, func(albumId string, _ int) model.Id {
-		return model.Id(albumId)
+	_albumsIDs := lo.Map(albumsIDs, func(albumID string, _ int) model.ID {
+		return model.ID(albumID)
 	})
 	getAlbumsFn := func() ([]model.Album, error) {
-		return s.albumsResource.GetAlbums(s.authService.GetAppAccessToken(), market, _albumsIds)
+		return s.albumsResource.GetAlbums(s.authService.GetAppAccessToken(), market, _albumsIDs)
 	}
 	return auth.ExecuteWithAuthRetry(s.authService, getAlbumsFn)
 }
@@ -61,7 +61,7 @@ func (s *Service) GetAlbumTracks(
 	countryMarketName *string,
 	limit *int,
 	offset *int,
-	albumId string,
+	albumID string,
 ) (model.SimplifiedTracksPaginated, error) {
 	market, err := utils.GetMarketByCountryName(countryMarketName)
 	if err != nil {
@@ -78,7 +78,7 @@ func (s *Service) GetAlbumTracks(
 	}
 
 	getAlbumTracksFn := func() (model.SimplifiedTracksPaginated, error) {
-		return s.albumsResource.GetAlbumTracks(s.authService.GetAppAccessToken(), market, _limit, _offset, model.Id(albumId))
+		return s.albumsResource.GetAlbumTracks(s.authService.GetAppAccessToken(), market, _limit, _offset, model.ID(albumID))
 	}
 	return auth.ExecuteWithAuthRetry(s.authService, getAlbumTracksFn)
 }

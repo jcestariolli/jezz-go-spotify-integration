@@ -13,9 +13,9 @@ type TracksService struct {
 	mock.Mock
 }
 
-// GetTrack provides a mock function with given fields: countryMarketName, trackId
-func (_m *TracksService) GetTrack(countryMarketName *string, trackId string) (model.Track, error) {
-	ret := _m.Called(countryMarketName, trackId)
+// GetTrack provides a mock function with given fields: countryMarketName, trackID
+func (_m *TracksService) GetTrack(countryMarketName *string, trackID string) (model.Track, error) {
+	ret := _m.Called(countryMarketName, trackID)
 
 	if len(ret) == 0 {
 		panic("no return value specified for GetTrack")
@@ -24,16 +24,16 @@ func (_m *TracksService) GetTrack(countryMarketName *string, trackId string) (mo
 	var r0 model.Track
 	var r1 error
 	if rf, ok := ret.Get(0).(func(*string, string) (model.Track, error)); ok {
-		return rf(countryMarketName, trackId)
+		return rf(countryMarketName, trackID)
 	}
 	if rf, ok := ret.Get(0).(func(*string, string) model.Track); ok {
-		r0 = rf(countryMarketName, trackId)
+		r0 = rf(countryMarketName, trackID)
 	} else {
 		r0 = ret.Get(0).(model.Track)
 	}
 
 	if rf, ok := ret.Get(1).(func(*string, string) error); ok {
-		r1 = rf(countryMarketName, trackId)
+		r1 = rf(countryMarketName, trackID)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -41,11 +41,11 @@ func (_m *TracksService) GetTrack(countryMarketName *string, trackId string) (mo
 	return r0, r1
 }
 
-// GetTracks provides a mock function with given fields: countryMarketName, tracksIds
-func (_m *TracksService) GetTracks(countryMarketName *string, tracksIds ...string) ([]model.Track, error) {
-	_va := make([]interface{}, len(tracksIds))
-	for _i := range tracksIds {
-		_va[_i] = tracksIds[_i]
+// GetTracks provides a mock function with given fields: countryMarketName, tracksIDs
+func (_m *TracksService) GetTracks(countryMarketName *string, tracksIDs ...string) ([]model.Track, error) {
+	_va := make([]interface{}, len(tracksIDs))
+	for _i := range tracksIDs {
+		_va[_i] = tracksIDs[_i]
 	}
 	var _ca []interface{}
 	_ca = append(_ca, countryMarketName)
@@ -59,10 +59,10 @@ func (_m *TracksService) GetTracks(countryMarketName *string, tracksIds ...strin
 	var r0 []model.Track
 	var r1 error
 	if rf, ok := ret.Get(0).(func(*string, ...string) ([]model.Track, error)); ok {
-		return rf(countryMarketName, tracksIds...)
+		return rf(countryMarketName, tracksIDs...)
 	}
 	if rf, ok := ret.Get(0).(func(*string, ...string) []model.Track); ok {
-		r0 = rf(countryMarketName, tracksIds...)
+		r0 = rf(countryMarketName, tracksIDs...)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]model.Track)
@@ -70,7 +70,7 @@ func (_m *TracksService) GetTracks(countryMarketName *string, tracksIds ...strin
 	}
 
 	if rf, ok := ret.Get(1).(func(*string, ...string) error); ok {
-		r1 = rf(countryMarketName, tracksIds...)
+		r1 = rf(countryMarketName, tracksIDs...)
 	} else {
 		r1 = ret.Error(1)
 	}

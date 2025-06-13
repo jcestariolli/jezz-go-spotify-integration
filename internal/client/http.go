@@ -13,9 +13,9 @@ import (
 	"github.com/samber/lo"
 )
 
-type HttpClient interface {
+type HTTPClient interface {
 	DoRequest(
-		method model.HttpMethod,
+		method model.HTTPMethod,
 		url string,
 		queryParams *model.QueryParams,
 		accessToken model.AccessToken,
@@ -23,10 +23,10 @@ type HttpClient interface {
 	) error
 }
 
-type HttpCustomClient struct{}
+type HTTPCustomClient struct{}
 
-func (c HttpCustomClient) DoRequest(
-	method model.HttpMethod,
+func (c HTTPCustomClient) DoRequest(
+	method model.HTTPMethod,
 	url string,
 	queryParams *model.QueryParams,
 	accessToken model.AccessToken,
@@ -52,8 +52,8 @@ func (c HttpCustomClient) DoRequest(
 	return nil
 }
 
-func (c HttpCustomClient) createRequest(
-	method model.HttpMethod,
+func (c HTTPCustomClient) createRequest(
+	method model.HTTPMethod,
 	url string,
 	queryParams *model.QueryParams,
 	accessToken model.AccessToken,
@@ -76,7 +76,7 @@ func (c HttpCustomClient) createRequest(
 	return req, err
 }
 
-func (c HttpCustomClient) validateResponseStatus(resp *http.Response) *commons.ResourceError {
+func (c HTTPCustomClient) validateResponseStatus(resp *http.Response) *commons.ResourceError {
 	if resp.StatusCode >= 300 {
 		apiErr := commons.ResourceError{
 			Status:  resp.StatusCode,
@@ -93,7 +93,7 @@ func (c HttpCustomClient) validateResponseStatus(resp *http.Response) *commons.R
 	return nil
 }
 
-func (c HttpCustomClient) parseResponse(resp *http.Response, output any) error {
+func (c HTTPCustomClient) parseResponse(resp *http.Response, output any) error {
 	defer func(body io.ReadCloser) {
 		_ = body.Close()
 	}(resp.Body)

@@ -64,7 +64,7 @@ func NewCliCredentialsLoader() config.Loader[config.CliCredentials] {
 func loadAuthService(appCfg config.AppConfig, cliCredCfg config.CliCredentials) *auth.Service {
 	fmt.Println("Loading auth service...")
 	authService, err := auth.NewService(
-		appCfg.Client.AccountsUrl,
+		appCfg.Client.AccountsURL,
 		cliCredCfg,
 	)
 	if err != nil {
@@ -87,7 +87,7 @@ func loadServices(cfg config.AppConfig, authService *auth.Service) (internal.Art
 func loadArtistsService(cliConfig config.CliConfig, authService *auth.Service) internal.ArtistsService {
 	fmt.Println("Loading artists service...")
 	artistsSvc := artists.NewService(
-		cliConfig.BaseUrl,
+		cliConfig.BaseURL,
 		authService,
 	)
 	fmt.Printf("✔ Artist service loaded! :)\n\n")
@@ -97,7 +97,7 @@ func loadArtistsService(cliConfig config.CliConfig, authService *auth.Service) i
 func loadAlbumsService(cliConfig config.CliConfig, authService *auth.Service) internal.AlbumsService {
 	fmt.Println("Loading albums service...")
 	albumsSvc := albums.NewService(
-		cliConfig.BaseUrl,
+		cliConfig.BaseURL,
 		authService,
 	)
 	fmt.Printf("✔ Album service loaded! :)\n\n")
@@ -107,7 +107,7 @@ func loadAlbumsService(cliConfig config.CliConfig, authService *auth.Service) in
 func loadTracksService(cliConfig config.CliConfig, authService *auth.Service) internal.TracksService {
 	fmt.Println("Loading tracks service...")
 	tracksSvc := tracks.NewService(
-		cliConfig.BaseUrl,
+		cliConfig.BaseURL,
 		authService,
 	)
 	fmt.Printf("✔ Track service loaded! :)\n\n")

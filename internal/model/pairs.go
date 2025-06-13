@@ -1,6 +1,6 @@
 package model
 
-type Pair[T any, U any] struct {
-	Key   T
-	Value U
+type Pair[key any, value any] struct {
+	Key   key
+	Value value
 }

@@ -6,11 +6,11 @@ import (
 	"github.com/samber/lo"
 )
 
-type TracksIds []Id
+type TracksIDs []ID
 
-func (a TracksIds) String() string {
-	return strings.Join(lo.Map(a, func(trackId Id, _ int) string {
-		return trackId.String()
+func (a TracksIDs) String() string {
+	return strings.Join(lo.Map(a, func(trackID ID, _ int) string {
+		return trackID.String()
 	}), ",")
 }
 
@@ -20,23 +20,23 @@ type SimplifiedTrack struct {
 	DiscNumber       int                `json:"disc_number"`
 	DurationMs       int                `json:"duration_ms"`
 	Explicit         bool               `json:"explicit"`
-	ExternalUrls     ExternalUrls       `json:"external_urls"`
+	ExternalURLs     ExternalURLs       `json:"external_ur_ls"`
 	Href             Href               `json:"href"`
-	Id               Id                 `json:"id"`
+	ID               ID                 `json:"id"`
 	IsPlayable       bool               `json:"is_playable"`
 	LinkedFrom       LinkedFrom         `json:"linked_from"`
 	Restrictions     Restrictions       `json:"restrictions"`
 	Name             Name               `json:"name"`
 	TrackNumber      int                `json:"track_number"`
 	Type             Type               `json:"type"`
-	Uri              Uri                `json:"uri"`
+	URI              URI                `json:"uri"`
 	IsLocal          bool               `json:"is_local"`
 }
 
 type Track struct {
 	SimplifiedTrack
 	Album       SimplifiedAlbum `json:"album"`
-	ExternalIds ExternalIds     `json:"external_ids"`
+	ExternalIDs ExternalIDs     `json:"external_i_ds"`
 	Popularity  int             `json:"popularity"`
 }
 

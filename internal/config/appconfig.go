@@ -4,8 +4,8 @@ type AppConfig struct {
 	Client CliConfig `json:"client" yaml:"client" validate:"required"`
 }
 type CliConfig struct {
-	BaseUrl     string `json:"base_url" yaml:"base_url"  validate:"required,url"`
-	AccountsUrl string `json:"accounts_url" yaml:"accounts_url"  validate:"required,url"`
+	BaseURL     string `json:"base_url" yaml:"base_url" validate:"required,url"`
+	AccountsURL string `json:"accounts_url" yaml:"accounts_url" validate:"required,url"`
 }
 
 type AppConfigLoader struct{}

@@ -6,21 +6,21 @@ import (
 	"github.com/samber/lo"
 )
 
-type ArtistsIds []Id
+type ArtistsIDs []ID
 
-func (a ArtistsIds) String() string {
-	return strings.Join(lo.Map(a, func(artistId Id, _ int) string {
-		return artistId.String()
+func (a ArtistsIDs) String() string {
+	return strings.Join(lo.Map(a, func(artistID ID, _ int) string {
+		return artistID.String()
 	}), ",")
 }
 
 type SimplifiedArtist struct {
-	ExternalUrls ExternalUrls `json:"external_urls"`
+	ExternalURLs ExternalURLs `json:"external_ur_ls"`
 	Href         Href         `json:"href"`
-	Id           Id           `json:"id"`
+	ID           ID           `json:"id"`
 	Name         Name         `json:"name"`
 	Type         Type         `json:"type"`
-	Uri          Uri          `json:"uri"`
+	URI          URI          `json:"uri"`
 }
 
 type Artist struct {

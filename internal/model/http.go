@@ -1,12 +1,12 @@
 package model
 
 const (
-	HttpGet HttpMethod = "GET"
+	HTTPGet HTTPMethod = "GET"
 )
 
-type HttpMethod string
+type HTTPMethod string
 
-func (m HttpMethod) String() string {
+func (m HTTPMethod) String() string {
 	return string(m)
 }
 

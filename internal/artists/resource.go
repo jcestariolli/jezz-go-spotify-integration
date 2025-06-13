@@ -8,50 +8,50 @@ import (
 )
 
 type Resource struct {
-	httpClient client.HttpClient
-	baseUrl    string
+	httpClient client.HTTPClient
+	baseURL    string
 }
 
 func NewResource(
-	baseUrl string,
+	baseURL string,
 ) internal.ArtistsResource {
 	return Resource{
-		httpClient: client.HttpCustomClient{},
-		baseUrl:    baseUrl,
+		httpClient: client.HTTPCustomClient{},
+		baseURL:    baseURL,
 	}
 }
 
 func (r Resource) GetArtist(
 	accessToken model.AccessToken,
-	artistId model.Id,
+	artistID model.ID,
 ) (model.Artist, error) {
-	url := r.baseUrl + internal.ApiVersion + internal.ArtistsPath + "/" + artistId.String()
+	url := r.baseURL + internal.APIVersion + internal.ArtistsPath + "/" + artistID.String()
 	output := &model.Artist{}
 
-	if err := r.httpClient.DoRequest(model.HttpGet, url, &model.QueryParams{}, accessToken, output); err != nil {
-		return model.Artist{}, fmt.Errorf("error executing artist request for astist ID - %s - %w", artistId.String(), err)
+	if err := r.httpClient.DoRequest(model.HTTPGet, url, &model.QueryParams{}, accessToken, output); err != nil {
+		return model.Artist{}, fmt.Errorf("error executing artist request for astist ID - %s - %w", artistID.String(), err)
 	}
 	return *output, nil
 }
 
 func (r Resource) GetArtists(
 	accessToken model.AccessToken,
-	artistsIds model.ArtistsIds,
+	artistsIDs model.ArtistsIDs,
 ) ([]model.Artist, error) {
-	if err := r.validateArtistsIdSize(artistsIds); err != nil {
+	if err := r.validateArtistsIDsSize(artistsIDs); err != nil {
 		return []model.Artist{}, err
 	}
 
-	url := r.baseUrl + internal.ApiVersion + internal.ArtistsPath
+	url := r.baseURL + internal.APIVersion + internal.ArtistsPath
 	queryParams := &model.QueryParams{
-		"ids": artistsIds,
+		"ids": artistsIDs,
 	}
 	output := &model.MultipleArtists{}
 
-	if err := r.httpClient.DoRequest(model.HttpGet, url, queryParams, accessToken, output); err != nil {
-		return []model.Artist{}, fmt.Errorf("error executing artist request for astists IDs - %s - %w", artistsIds.String(), err)
+	if err := r.httpClient.DoRequest(model.HTTPGet, url, queryParams, accessToken, output); err != nil {
+		return []model.Artist{}, fmt.Errorf("error executing artist request for astists IDs - %s - %w", artistsIDs.String(), err)
 	}
-	return (*output).Artists, nil
+	return output.Artists, nil
 }
 
 func (r Resource) GetArtistAlbums(
@@ -60,9 +60,9 @@ func (r Resource) GetArtistAlbums(
 	market *model.AvailableMarket,
 	limit *model.Limit,
 	offset *model.Offset,
-	artistId model.Id,
+	artistID model.ID,
 ) (model.SimplifiedArtistAlbumsPaginated, error) {
-	url := r.baseUrl + internal.ApiVersion + internal.ArtistsPath + "/" + artistId.String() + internal.AlbumsPath
+	url := r.baseURL + internal.APIVersion + internal.ArtistsPath + "/" + artistID.String() + internal.AlbumsPath
 	queryParams := &model.QueryParams{
 		"include_groups": includeGroups,
 		"market":         market,
@@ -71,8 +71,8 @@ func (r Resource) GetArtistAlbums(
 	}
 	output := &model.SimplifiedArtistAlbumsPaginated{}
 
-	if err := r.httpClient.DoRequest(model.HttpGet, url, queryParams, accessToken, output); err != nil {
-		return model.SimplifiedArtistAlbumsPaginated{}, fmt.Errorf("error executing artist albums request for astist ID - %s - %w", artistId.String(), err)
+	if err := r.httpClient.DoRequest(model.HTTPGet, url, queryParams, accessToken, output); err != nil {
+		return model.SimplifiedArtistAlbumsPaginated{}, fmt.Errorf("error executing artist albums request for astist ID - %s - %w", artistID.String(), err)
 	}
 	return *output, nil
 }
@@ -80,22 +80,22 @@ func (r Resource) GetArtistAlbums(
 func (r Resource) GetArtistTopTracks(
 	accessToken model.AccessToken,
 	market *model.AvailableMarket,
-	artistId model.Id,
+	artistID model.ID,
 ) ([]model.Track, error) {
-	url := r.baseUrl + internal.ApiVersion + internal.ArtistsPath + "/" + artistId.String() + internal.TopTracksPath
+	url := r.baseURL + internal.APIVersion + internal.ArtistsPath + "/" + artistID.String() + internal.TopTracksPath
 	queryParams := &model.QueryParams{
 		"market": market,
 	}
 	output := &model.MultipleTracks{}
 
-	if err := r.httpClient.DoRequest(model.HttpGet, url, queryParams, accessToken, output); err != nil {
-		return []model.Track{}, fmt.Errorf("error executing artist top-tracks request for astist ID - %s - %w", artistId.String(), err)
+	if err := r.httpClient.DoRequest(model.HTTPGet, url, queryParams, accessToken, output); err != nil {
+		return []model.Track{}, fmt.Errorf("error executing artist top-tracks request for astist ID - %s - %w", artistID.String(), err)
 	}
-	return (*output).Tracks, nil
+	return output.Tracks, nil
 }
 
-func (r Resource) validateArtistsIdSize(artistsIds model.ArtistsIds) error {
-	if len(artistsIds) < 1 {
+func (r Resource) validateArtistsIDsSize(artistsIDs model.ArtistsIDs) error {
+	if len(artistsIDs) < 1 {
 		return fmt.Errorf("error getting artist - artist id must not be null")
 	}
 	return nil

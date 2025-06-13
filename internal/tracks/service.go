@@ -16,38 +16,38 @@ type Service struct {
 }
 
 func NewService(
-	baseUrl string,
+	baseURL string,
 	authService *auth.Service,
 ) internal.TracksService {
 	return &Service{
 		authService:    authService,
-		tracksResource: NewResource(baseUrl),
+		tracksResource: NewResource(baseURL),
 	}
 }
 
-func (c *Service) GetTrack(countryMarketName *string, trackId string) (model.Track, error) {
+func (c *Service) GetTrack(countryMarketName *string, trackID string) (model.Track, error) {
 	market, err := utils.GetMarketByCountryName(countryMarketName)
 	if err != nil {
 		return model.Track{}, fmt.Errorf("errror getting track for country %s - unknown country! Details: %w", *countryMarketName, err)
 	}
 	getTrackFn := func() (model.Track, error) {
-		return c.tracksResource.GetTrack(c.authService.GetAppAccessToken(), market, model.Id(trackId))
+		return c.tracksResource.GetTrack(c.authService.GetAppAccessToken(), market, model.ID(trackID))
 	}
 	return auth.ExecuteWithAuthRetry(c.authService, getTrackFn)
 }
 
-func (c *Service) GetTracks(countryMarketName *string, tracksIds ...string) ([]model.Track, error) {
+func (c *Service) GetTracks(countryMarketName *string, tracksIDs ...string) ([]model.Track, error) {
 	market, err := utils.GetMarketByCountryName(countryMarketName)
 	if err != nil {
 		return []model.Track{}, fmt.Errorf("errror getting tracks for country %s - unknown country! Details: %w", *countryMarketName, err)
 	}
 
-	_tracksIds := lo.Map(tracksIds, func(trackId string, _ int) model.Id {
-		return model.Id(trackId)
+	_tracksIDs := lo.Map(tracksIDs, func(trackID string, _ int) model.ID {
+		return model.ID(trackID)
 	})
 
 	getTracksFn := func() ([]model.Track, error) {
-		return c.tracksResource.GetTracks(c.authService.GetAppAccessToken(), market, _tracksIds)
+		return c.tracksResource.GetTracks(c.authService.GetAppAccessToken(), market, _tracksIDs)
 	}
 	return auth.ExecuteWithAuthRetry(c.authService, getTracksFn)
 }

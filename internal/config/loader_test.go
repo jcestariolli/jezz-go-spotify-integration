@@ -10,7 +10,7 @@ import (
 
 type DummyConfig struct {
 	DummyRequiredField        string  `json:"dummy_required_field" yaml:"dummy_required_field" validate:"required"`
-	DummyUrlField             string  `json:"dummy_url_field" yaml:"dummy_url_field"  validate:"url"`
+	DummyURLField             string  `json:"dummy_url_field" yaml:"dummy_url_field" validate:"url"`
 	DummySimpleField          int     `json:"dummy_simple_field" yaml:"dummy_simple_field"`
 	DummyPointerField         *string `json:"dummy_pointer_field" yaml:"dummy_pointer_field"`
 	DummyRequiredPointerField *string `json:"dummy_required_pointer_field" yaml:"dummy_required_pointer_field" validate:"required"`
@@ -30,7 +30,7 @@ func TestConfig_validate(t *testing.T) {
 			fields: fields{
 				Config: DummyConfig{
 					DummyRequiredField:        "dummy-field",
-					DummyUrlField:             "http://dummy.url",
+					DummyURLField:             "http://dummy.url",
 					DummySimpleField:          1,
 					DummyPointerField:         lo.ToPtr("dummy-pointer-value"),
 					DummyRequiredPointerField: lo.ToPtr("dummy-required-pointer-value"),
@@ -53,7 +53,7 @@ func TestConfig_validate(t *testing.T) {
 			fields: fields{
 				Config: DummyConfig{
 					DummyRequiredField:        "dummy-field",
-					DummyUrlField:             "http://dummy.url",
+					DummyURLField:             "http://dummy.url",
 					DummySimpleField:          1,
 					DummyPointerField:         nil,
 					DummyRequiredPointerField: lo.ToPtr("dummy-required-pointer-value"),
@@ -73,7 +73,7 @@ func TestConfig_validate(t *testing.T) {
 			fields: fields{
 				Config: DummyConfig{
 					DummyRequiredField:        "dummy-field",
-					DummyUrlField:             "not-an-url",
+					DummyURLField:             "not-an-url",
 					DummySimpleField:          1,
 					DummyPointerField:         lo.ToPtr("dummy-pointer-value"),
 					DummyRequiredPointerField: lo.ToPtr("dummy-required-pointer-value"),
@@ -86,7 +86,7 @@ func TestConfig_validate(t *testing.T) {
 			fields: fields{
 				Config: DummyConfig{
 					DummyRequiredField:        "",
-					DummyUrlField:             "http://dummy.url",
+					DummyURLField:             "http://dummy.url",
 					DummySimpleField:          1,
 					DummyPointerField:         lo.ToPtr("dummy-pointer-value"),
 					DummyRequiredPointerField: lo.ToPtr("dummy-required-pointer-value"),
@@ -99,7 +99,7 @@ func TestConfig_validate(t *testing.T) {
 			fields: fields{
 				Config: DummyConfig{
 					DummyRequiredField:        "dummy-field",
-					DummyUrlField:             "http://dummy.url",
+					DummyURLField:             "http://dummy.url",
 					DummySimpleField:          1,
 					DummyPointerField:         lo.ToPtr("dummy-pointer-value"),
 					DummyRequiredPointerField: nil,
@@ -136,7 +136,7 @@ func Test_loadConfig(t *testing.T) {
 			},
 			want: DummyConfig{
 				DummyRequiredField:        "dummy-field",
-				DummyUrlField:             "http://dummy.url",
+				DummyURLField:             "http://dummy.url",
 				DummySimpleField:          1,
 				DummyPointerField:         lo.ToPtr("dummy-pointer-value"),
 				DummyRequiredPointerField: lo.ToPtr("dummy-required-pointer-value"),
@@ -150,7 +150,7 @@ func Test_loadConfig(t *testing.T) {
 			},
 			want: DummyConfig{
 				DummyRequiredField:        "",
-				DummyUrlField:             "",
+				DummyURLField:             "",
 				DummySimpleField:          0,
 				DummyPointerField:         nil,
 				DummyRequiredPointerField: nil,
@@ -164,7 +164,7 @@ func Test_loadConfig(t *testing.T) {
 			},
 			want: DummyConfig{
 				DummyRequiredField:        "dummy-field",
-				DummyUrlField:             "http://dummy.url",
+				DummyURLField:             "http://dummy.url",
 				DummySimpleField:          1,
 				DummyPointerField:         lo.ToPtr("dummy-pointer-value"),
 				DummyRequiredPointerField: lo.ToPtr("dummy-required-pointer-value"),
@@ -178,7 +178,7 @@ func Test_loadConfig(t *testing.T) {
 			},
 			want: DummyConfig{
 				DummyRequiredField:        "",
-				DummyUrlField:             "",
+				DummyURLField:             "",
 				DummySimpleField:          0,
 				DummyPointerField:         nil,
 				DummyRequiredPointerField: nil,

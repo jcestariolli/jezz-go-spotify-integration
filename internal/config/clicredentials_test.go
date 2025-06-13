@@ -22,7 +22,7 @@ func TestCliCredentialsConfigLoader_Load(t *testing.T) {
 				configDataFile: "cli-credentials-config-all-filled.yml",
 			},
 			want: CliCredentials{
-				Id:     "DUMMY_CLIENT_ID",
+				ID:     "DUMMY_CLIENT_ID",
 				Secret: "DUMMY_CLIENT_SECRET",
 			},
 			wantErr: false,
@@ -41,7 +41,7 @@ func TestCliCredentialsConfigLoader_Load(t *testing.T) {
 				configDataFile: "cli-credentials-config-all-filled.json",
 			},
 			want: CliCredentials{
-				Id:     "DUMMY_CLIENT_ID",
+				ID:     "DUMMY_CLIENT_ID",
 				Secret: "DUMMY_CLIENT_SECRET",
 			},
 			wantErr: false,
