@@ -16,9 +16,11 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
-      - uses: ./.github/actions/setup-go-project
+      - name: Setup Go Project
+        uses: ./.github/actions/setup-go-project
         with:
           go-version: ${{ inputs.go_version }}
 
@@ -31,9 +33,11 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
-      - uses: ./.github/actions/setup-go-project
+      - name: Setup Go Project
+        uses: ./.github/actions/setup-go-project
         with:
           go-version: ${{ inputs.go_version }}
 
@@ -47,9 +51,11 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
-      - uses: ./.github/actions/setup-go-project
+      - name: Setup Go Project
+        uses: ./.github/actions/setup-go-project
         with:
           go-version: ${{ inputs.go_version }}
 
@@ -62,72 +68,22 @@ jobs:
   test-coverage:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
-      - uses: ./.github/actions/setup-go-project
+      - name: Setup Go Project
+        uses: ./.github/actions/setup-go-project
+        with:
+          go-version: ${{ inputs.go-version }}
+
+      - name: Runs Test Coverage
+        uses: ./.github/actions/test-coverage
         with:
           go-version: ${{ inputs.go_version }}
-
-      - name: Validate Test Coverage
-        run: make test-coverage-detailed
-
-      - name: Upload Test Coverage Results
-        uses: actions/upload-artifact@v4
-        with:
-          name: code-coverage-report
-          path: ./coverage_detailed.txt
-
-      - name: Generate HTML Test Coverage
-        run: make test-coverage-html
-
-      - name: Upload HTML Test Coverage Results
-        uses: actions/upload-artifact@v4
-        with:
-          name: html-code-coverage-report
-          path: ./coverage.html
-
-      - name: Download Test Coverage Report
-        uses: actions/download-artifact@v4
-        with:
-          name: code-coverage-report
-          path: ./
-
-      - name: Extract Total Test Coverage
-        id: extract_total_coverage
-        if: github.event_name == 'pull_request'
-        run: |
-          TOTAL_COVERAGE=$(tail -n 1 coverage_detailed.txt | awk '{print $NF}')
-          echo "total_coverage=$TOTAL_COVERAGE" >> $GITHUB_OUTPUT
-
-      - name: Read Test Coverage Details
-        id: read_coverage
-        if: github.event_name == 'pull_request'
-        run: |
-          COVERAGE_CONTENT=$(cat coverage_detailed.txt)
-          echo "coverage_details<<EOF" >> $GITHUB_OUTPUT
-          echo "$COVERAGE_CONTENT" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
-
-      - name: Post Test Coverage as PR Comment
-        if: github.event_name == 'pull_request'
-        uses: marocchino/sticky-pull-request-comment@v2
-        with:
-          recreate: 'true'
-          header: "go-test-coverage"
-          message: |
-            ### 📊 Go Test Coverage Details
-            **Total Coverage: ${{ steps.extract_total_coverage.outputs.total_coverage }}**
-            <details>
-            <summary>Click to view detailed coverage report</summary>
-            
-            ```
-            ${{ steps.read_coverage.outputs.coverage_details }}
-            ```
-            
-            </details>
-            ---
-            
-            [View coverage artifacts here](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+          run-id: ${{ github.run_id }}
+          repository: ${{ github.repository }}
+          server-url: ${{ github.server_url }}
+          event-name: ${{ github.event_name }}
 
       - name: Clean up
         run: make clean

@@ -1,0 +1,89 @@
+# .github/actions/test-coverage-go/action.yml
+name: 'Go Test Coverage'
+description: 'Runs Go test coverage, uploads artifacts, and posts PR comments.'
+
+inputs:
+  go-version:
+    description: 'The Go version to use for build and test'
+    required: true
+  run-id:
+    description: 'The ID of the current workflow run (e.g., ${{ github.run_id }})'
+    required: true
+  repository:
+    description: 'The GitHub repository (e.g., ${{ github.repository }})'
+    required: true
+  server-url:
+    description: 'The GitHub server URL (e.g., ${{ github.server_url }})'
+    required: true
+  event-name:
+    description: 'The name of the event that triggered the workflow (e.g., ${{ github.event_name }})'
+    required: true
+
+
+runs:
+  using: "composite"
+  steps:
+    - name: Validate Test Coverage
+      shell: bash
+      run: make test-coverage-detailed
+
+    - name: Upload Test Coverage Results
+      uses: actions/upload-artifact@v4
+      with:
+        name: code-coverage-report
+        path: ./coverage_detailed.txt
+
+    - name: Generate HTML Test Coverage
+      shell: bash
+      run: make test-coverage-html
+
+    - name: Upload HTML Test Coverage Results
+      uses: actions/upload-artifact@v4
+      with:
+        name: html-code-coverage-report
+        path: ./coverage.html
+
+    - name: Download Test Coverage Report
+      uses: actions/download-artifact@v4
+      with:
+        name: code-coverage-report
+        path: ./
+
+    - name: Extract Total Test Coverage
+      id: extract_total_coverage
+      if: ${{ inputs.event-name == 'pull_request' }}
+      shell: bash
+      run: |
+        TOTAL_COVERAGE=$(tail -n 1 coverage_detailed.txt | awk '{print $NF}')
+        echo "total_coverage=$TOTAL_COVERAGE" >> $GITHUB_OUTPUT
+
+    - name: Read Test Coverage Details
+      id: read_coverage
+      if: ${{ inputs.event-name == 'pull_request' }}
+      shell: bash
+      run: |
+        COVERAGE_CONTENT=$(cat coverage_detailed.txt)
+        echo "coverage_details<<EOF" >> $GITHUB_OUTPUT
+        echo "$COVERAGE_CONTENT" >> $GITHUB_OUTPUT
+        echo "EOF" >> $GITHUB_OUTPUT
+
+    - name: Post Test Coverage as PR Comment
+      if: ${{ inputs.event-name == 'pull_request' }}
+      uses: marocchino/sticky-pull-request-comment@v2
+      with:
+        recreate: 'true'
+        header: "go-test-coverage"
+        message: |
+          ### 📊 Go Test Coverage Details
+          **Total Coverage: ${{ steps.extract_total_coverage.outputs.total_coverage }}**
+          <details>
+          <summary>Click to view detailed coverage report</summary>
+          
+          ```
+          ${{ steps.read_coverage.outputs.coverage_details }}
+          ```
+          
+          </details>
+          ---
+          
+          [View coverage artifacts here](${{ inputs.server-url }}/${{ inputs.repository }}/actions/runs/${{ inputs.run-id }})
