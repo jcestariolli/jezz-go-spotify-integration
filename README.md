@@ -95,7 +95,7 @@ The `Makefile` automates common development tasks, simplifying the workflow for 
 * `make test-coverage-detailed`
   Runs tests with detailed coverage reporting (excluding `model` and `mocks` packages), providing line-by-line coverage information. 📈
 * `make test-coverage-html`
-  Runs tests with detailed coverage reporting in HTML format 📈
+  Runs tests with detailed coverage reporting in HTML format. 💻
 * `make mocks-gen`
   Generates mocks for interfaces used in tests. 🤖
 * `make clean`
