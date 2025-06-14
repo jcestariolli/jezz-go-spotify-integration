@@ -1,7 +1,7 @@
-package internal
+package resource
 
 const (
-	ApiVersion      = "/v1"
+	APIVersion      = "/v1"
 	ArtistsPath     = "/artists"
 	AlbumsPath      = "/albums"
 	TracksPath      = "/tracks"

@@ -1,52 +1,53 @@
-package tracks
+package service
 
 import (
 	"fmt"
-	"github.com/samber/lo"
-	"jezz-go-spotify-integration/internal"
 	"jezz-go-spotify-integration/internal/auth"
 	"jezz-go-spotify-integration/internal/model"
+	"jezz-go-spotify-integration/internal/resource"
 	"jezz-go-spotify-integration/internal/utils"
+
+	"github.com/samber/lo"
 )
 
-type Service struct {
+type SpotifyTracksService struct {
 	authService    *auth.Service
-	tracksResource internal.TracksResource
+	tracksResource resource.TracksResource
 }
 
-func NewService(
-	baseUrl string,
+func NewSpotifyTracksService(
+	baseURL string,
 	authService *auth.Service,
-) internal.TracksService {
-	return &Service{
+) TracksService {
+	return &SpotifyTracksService{
 		authService:    authService,
-		tracksResource: NewResource(baseUrl),
+		tracksResource: resource.NewSpotifyTracksResource(baseURL),
 	}
 }
 
-func (c *Service) GetTrack(countryMarketName *string, trackId string) (model.Track, error) {
+func (c *SpotifyTracksService) GetTrack(countryMarketName *string, trackID string) (model.Track, error) {
 	market, err := utils.GetMarketByCountryName(countryMarketName)
 	if err != nil {
 		return model.Track{}, fmt.Errorf("errror getting track for country %s - unknown country! Details: %w", *countryMarketName, err)
 	}
 	getTrackFn := func() (model.Track, error) {
-		return c.tracksResource.GetTrack(c.authService.GetAppAccessToken(), market, model.Id(trackId))
+		return c.tracksResource.GetTrack(c.authService.GetAppAccessToken(), market, model.ID(trackID))
 	}
 	return auth.ExecuteWithAuthRetry(c.authService, getTrackFn)
 }
 
-func (c *Service) GetTracks(countryMarketName *string, tracksIds ...string) ([]model.Track, error) {
+func (c *SpotifyTracksService) GetTracks(countryMarketName *string, tracksIDs ...string) ([]model.Track, error) {
 	market, err := utils.GetMarketByCountryName(countryMarketName)
 	if err != nil {
 		return []model.Track{}, fmt.Errorf("errror getting tracks for country %s - unknown country! Details: %w", *countryMarketName, err)
 	}
 
-	_tracksIds := lo.Map(tracksIds, func(trackId string, _ int) model.Id {
-		return model.Id(trackId)
+	_tracksIDs := lo.Map(tracksIDs, func(trackID string, _ int) model.ID {
+		return model.ID(trackID)
 	})
 
 	getTracksFn := func() ([]model.Track, error) {
-		return c.tracksResource.GetTracks(c.authService.GetAppAccessToken(), market, _tracksIds)
+		return c.tracksResource.GetTracks(c.authService.GetAppAccessToken(), market, _tracksIDs)
 	}
 	return auth.ExecuteWithAuthRetry(c.authService, getTracksFn)
 }

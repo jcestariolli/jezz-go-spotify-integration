@@ -14,10 +14,10 @@ type Service struct {
 }
 
 func NewService(
-	accountUrl string,
+	accountURL string,
 	cliCredentials config.CliCredentials,
 ) (*Service, error) {
-	credentialsFlow := NewCliCredentialsFlow(accountUrl, cliCredentials.Id, cliCredentials.Secret)
+	credentialsFlow := NewCliCredentialsFlow(accountURL, cliCredentials.ID, cliCredentials.Secret)
 	authentication, err := credentialsFlow.Authenticate()
 	if err != nil {
 		return nil, err

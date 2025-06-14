@@ -3,29 +3,20 @@ package client
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/samber/lo"
 	"io"
 	"jezz-go-spotify-integration/internal/commons"
 	"jezz-go-spotify-integration/internal/model"
 	"net/http"
 	"reflect"
 	"strings"
+
+	"github.com/samber/lo"
 )
 
-type HttpClient interface {
-	DoRequest(
-		method model.HttpMethod,
-		url string,
-		queryParams *model.QueryParams,
-		accessToken model.AccessToken,
-		responseTypedOutput any,
-	) error
-}
+type HTTPCustomClient struct{}
 
-type HttpCustomClient struct{}
-
-func (c HttpCustomClient) DoRequest(
-	method model.HttpMethod,
+func (c HTTPCustomClient) DoRequest(
+	method model.HTTPMethod,
 	url string,
 	queryParams *model.QueryParams,
 	accessToken model.AccessToken,
@@ -51,8 +42,8 @@ func (c HttpCustomClient) DoRequest(
 	return nil
 }
 
-func (c HttpCustomClient) createRequest(
-	method model.HttpMethod,
+func (c HTTPCustomClient) createRequest(
+	method model.HTTPMethod,
 	url string,
 	queryParams *model.QueryParams,
 	accessToken model.AccessToken,
@@ -75,7 +66,7 @@ func (c HttpCustomClient) createRequest(
 	return req, err
 }
 
-func (c HttpCustomClient) validateResponseStatus(resp *http.Response) *commons.ResourceError {
+func (c HTTPCustomClient) validateResponseStatus(resp *http.Response) *commons.ResourceError {
 	if resp.StatusCode >= 300 {
 		apiErr := commons.ResourceError{
 			Status:  resp.StatusCode,
@@ -92,7 +83,7 @@ func (c HttpCustomClient) validateResponseStatus(resp *http.Response) *commons.R
 	return nil
 }
 
-func (c HttpCustomClient) parseResponse(resp *http.Response, output any) error {
+func (c HTTPCustomClient) parseResponse(resp *http.Response, output any) error {
 	defer func(body io.ReadCloser) {
 		_ = body.Close()
 	}(resp.Body)
