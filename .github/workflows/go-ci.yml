@@ -66,6 +66,7 @@ jobs:
         run: make clean
 
   test-coverage:
+    needs: build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
