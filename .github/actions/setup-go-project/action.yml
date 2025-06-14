@@ -1,0 +1,40 @@
+name: 'Setup Go Project'
+description: 'Sets up Go environment, caches modules, creates dummy config, and installs dependencies for a Go project.'
+inputs:
+  go-version:
+    description: 'The Go version to set up'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/checkout@v4
+      # Note: checkout is part of the setup for each job, so it's placed here.
+      # If you prefer, you can keep it in the individual jobs.
+
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: ${{ inputs.go-version }}
+
+    - name: Cache Go modules
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/go/pkg/mod
+          ~/.cache/go-build
+        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+        restore-keys: |
+          ${{ runner.os }}-go-
+
+    - name: Create dummy config file
+      run: |
+        mkdir -p ./cmd/spotify-cli/config
+        touch ./cmd/spotify-cli/config/spotify_client_credentials.yml
+      shell: bash
+
+    - name: Install Dependencies
+      run: |
+        make install-deps
+        make tidy
+      shell: bash
