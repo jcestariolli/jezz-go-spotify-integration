@@ -7,7 +7,7 @@ on:
   push:
     branches: [ "main" ]
   pull_request:
-    branches: [ "main" ]
+    types: [ opened, synchronize, reopened ]
 
 jobs:
   CI:
@@ -17,6 +17,7 @@ jobs:
 
   CD:
     needs: CI
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     uses: ./.github/workflows/go-cd.yml
     with:
       go_version: '1.24'
