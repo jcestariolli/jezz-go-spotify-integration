@@ -14,3 +14,7 @@ linters:
     - revive
 run:
   timeout: 5m
+
+issues:
+  exclude-dir:
+    - mocks
