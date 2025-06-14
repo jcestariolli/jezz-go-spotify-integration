@@ -30,9 +30,6 @@ This project is designed to facilitate integration with Spotify's API using Go. 
 
 ```
 .
-├── .golangci.yml       # Configuration for golangci-lint 📏
-├── .gitignore          # Specifies intentionally untracked files to ignore 🚫
-├── Makefile            # Automates common development tasks 🛠️
 ├── cmd
 │   └── spotify-cli     # Main application entry point 🚀
 │       ├── config      # Configuration files (e.g., config.yml, spotify_client_credentials.yml) 📁
@@ -46,8 +43,13 @@ This project is designed to facilitate integration with Spotify's API using Go. 
 │   ├── service         # Implementations of the business logic that will be executed before using resources 💼
 │   ├── utils           # Utility functions (e.g., pagination validation) 🛠️
 │   └── mocks           # Auto-generated mocks for testing 🤖
-└── test
-    └── data            # Sample config files and test data 📊
+│── test
+│   └── data            # Sample config files and test data 📊
+├── .github
+│   └── workflows       # Configurations for github pipelines / workflows ⚙️
+├── .gitignore          # File that specifies intentionally untracked files to ignore 🚫
+├── .golangci.yml       # File with configuration for golangci-lint 📏
+└── Makefile            # File that automates common development tasks 🛠️
 ```
 This project's structure is organized to separate concerns. The primary application logic resides in `cmd/spotify-cli`, and internal libraries, models, utilities, authentication, and feature-specific implementations are within the `internal` directory. Root-level configuration files manage overall project settings and version control.
 
