@@ -58,7 +58,7 @@ runs:
       shell: bash
       run: |
         TOTAL_COVERAGE_RAW=$(tail -n 1 coverage_detailed.txt | awk '{print $NF}')
-        TOTAL_COVERAGE_PERCENT=${TOTAL_COVERAGE_RAW%?} # Remove the '%' sign
+        TOTAL_COVERAGE_PERCENT=${TOTAL_COVERAGE_RAW%?}
         MIN_COVERAGE_PERCENTAGE=${{ inputs.min_coverage_percentage }}
 
         echo "Total coverage raw: $TOTAL_COVERAGE_RAW"
@@ -82,7 +82,7 @@ runs:
         echo "failure_message=$FAILURE_MESSAGE" >> $GITHUB_OUTPUT
         echo "coverage_passed=$COVERAGE_PASSED" >> $GITHUB_OUTPUT
 
-    - name: Read Test Coverage Details # This step populates the detailed coverage content
+    - name: Read Test Coverage Details
       id: read_coverage
       if: ${{ inputs.event_name == 'pull_request' }}
       shell: bash
@@ -113,6 +113,13 @@ runs:
           ---
           
           [View coverage artifacts here](${{ inputs.server_url }}/${{ inputs.repository }}/actions/runs/${{ inputs.run_id }})
+
+    - name: Fail if Test Coverage is Below Threshold
+      if: ${{ inputs.event_name == 'pull_request' && steps.extract_and_check_coverage.outputs.coverage_passed == 'false' }}
+      shell: bash
+      run: |
+          echo "Test coverage is below the required minimum. Failing the job."
+          exit 1 
 
     - name: Clean up
       shell: bash
