@@ -6,9 +6,9 @@ name: Go CI
 on:
   workflow_call:
     inputs:
-      go_version: # Define the input parameter here
+      go_version:
         description: 'The Go version to use for build and test'
-        required: true # It's required because main.yml will always provide it
+        required: true
         type: string
 
 jobs:
@@ -57,6 +57,41 @@ jobs:
         with:
           name: html-code-coverage-report
           path: ./coverage.html
+
+      - name: Download Test Coverage Report
+        uses: actions/download-artifact@v4
+        with:
+          name: code-coverage-report
+          path: ./
+
+      - name: Read Test Coverage Details
+        id: read_coverage
+        if: github.event_name == 'pull_request'
+        run: |
+          COVERAGE_CONTENT=$(cat coverage_detailed.txt)
+          echo "coverage_details<<EOF" >> $GITHUB_OUTPUT
+          echo "$COVERAGE_CONTENT" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Post Test Coverage as PR Comment
+        if: github.event_name == 'pull_request'
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          recreate: 'true'
+          header: "go-test-coverage"
+          message: |
+            ### 📊 Go Test Coverage Details
+            <details>
+            <summary>Click to view detailed coverage report</summary>
+            
+            ```
+            ${{ steps.read_coverage.outputs.coverage_details }}
+            ```
+            
+            </details>
+            ---
+            
+            [View coverage artifacts here](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
 
       - name: Clean up
         run: make clean
