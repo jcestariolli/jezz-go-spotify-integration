@@ -90,6 +90,7 @@ jobs:
             
             </details>
             ---
+            
             [View full HTML coverage report](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts/html-code-coverage-report)
 
       - name: Clean up
