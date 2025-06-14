@@ -5,6 +5,11 @@ name: Go CI
 
 on:
   workflow_call:
+    inputs:
+      go_version: # Define the input parameter here
+        description: 'The Go version to use for build and test'
+        required: true # It's required because main.yml will always provide it
+        type: string
 
 jobs:
   build:
@@ -14,7 +19,7 @@ jobs:
 
       - uses: ./.github/actions/setup-go-project
         with:
-          go-version: '1.24'
+          go-version: ${{ inputs.go_version }}
 
       - name: Lint
         run: make lint
@@ -30,7 +35,7 @@ jobs:
 
       - uses: ./.github/actions/setup-go-project
         with:
-          go-version: '1.24'
+          go-version:  ${{ inputs.go_version }}
 
       - name: Run Tests
         run: make test

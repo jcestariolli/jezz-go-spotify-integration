@@ -5,6 +5,11 @@ name: Go CD
 
 on:
   workflow_call:
+    inputs:
+      go_version: # Define the input parameter here
+        description: 'The Go version to use for build and test'
+        required: true # It's required because main.yml will always provide it
+        type: string
 
 jobs:
   fake-deploy:
