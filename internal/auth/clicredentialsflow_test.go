@@ -3,6 +3,7 @@ package auth
 import (
 	"bytes"
 	"encoding/base64"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
@@ -13,6 +14,16 @@ import (
 	"strings"
 	"testing"
 )
+
+type MockRoundTripper func(*http.Request) (*http.Response, error)
+
+func (m MockRoundTripper) RoundTrip(req *http.Request) (*http.Response, error) {
+	return m(req)
+}
+
+func newMockClient(rt MockRoundTripper) *http.Client {
+	return &http.Client{Transport: rt}
+}
 
 type errorReader struct {
 	err error
@@ -33,12 +44,156 @@ func TestNewCliCredentialsFlow(t *testing.T) {
 		"client-secret-mock",
 	)
 	want := CliCredentialsFlow{
-		"http://dummy.url",
-		"client-id-mock",
-		"client-secret-mock",
+		accountURL:   "http://dummy.url",
+		clientID:     "client-id-mock",
+		clientSecret: "client-secret-mock",
+		httpClient:   http.Client{},
 	}
 	if !reflect.DeepEqual(got, want) {
 		t.Errorf("NewCliCredentialsFlow() = %v, want %v", got, want)
+	}
+}
+
+func TestCliCredentialsFlow_Authenticate(t *testing.T) {
+	accountURL := "http://dummy.url"
+	clientID := "dummy-client-id"
+	clientSecret := "dummy-client-secret"
+	type want struct {
+		auth *model.Authentication
+		err  bool
+	}
+	tests := []struct {
+		name               string
+		mockHTTPNewRequest func(method, url string, body io.Reader) (*http.Request, error)
+		mockRoundTripper   MockRoundTripper
+		want               want
+	}{
+		{
+			name:               "Successful Authentication",
+			mockHTTPNewRequest: nil,
+			mockRoundTripper: func(req *http.Request) (*http.Response, error) {
+				if req.URL.String() != accountURL+"/api/token" {
+					t.Errorf("Unexpected request URL: got %s, want %s", req.URL.String(), accountURL+"/api/token")
+				}
+				if req.Method != "POST" {
+					t.Errorf("Unexpected request method: got %s, want POST", req.Method)
+				}
+				authResponse := model.Authentication{
+					AccessToken: "mock_access_token",
+					TokenType:   "Bearer",
+					ExpiresIn:   3600,
+				}
+				respBody, _ := json.Marshal(authResponse)
+				return &http.Response{
+					StatusCode: 200,
+					Body:       io.NopCloser(bytes.NewBuffer(respBody)),
+					Header:     make(http.Header),
+					Request:    req,
+				}, nil
+			},
+			want: want{
+				auth: &model.Authentication{
+					AccessToken: "mock_access_token",
+					TokenType:   "Bearer",
+					ExpiresIn:   3600,
+				},
+				err: false,
+			},
+		},
+		{
+			name: "Error creating request",
+			mockHTTPNewRequest: func(_, _ string, _ io.Reader) (*http.Request, error) {
+				return nil, fmt.Errorf("mock request creation error")
+			},
+			mockRoundTripper: func(_ *http.Request) (*http.Response, error) {
+				t.Fatal("MockRoundTripper should not be called if request creation fails")
+				return nil, nil
+			},
+			want: want{
+				auth: nil,
+				err:  true,
+			},
+		},
+		{
+			name:               "Error connecting to client",
+			mockHTTPNewRequest: nil,
+			mockRoundTripper: func(_ *http.Request) (*http.Response, error) {
+				return nil, fmt.Errorf("mock connection error")
+			},
+			want: want{
+				auth: nil,
+				err:  true,
+			},
+		},
+		{
+			name:               "Error when validating response status",
+			mockHTTPNewRequest: nil,
+			mockRoundTripper: func(req *http.Request) (*http.Response, error) {
+				authError := commons.AuthenticationError{
+					Err:            "invalid_client",
+					ErrDescription: "Invalid client credentials",
+				}
+				respBody, _ := json.Marshal(authError)
+				return &http.Response{
+					StatusCode: 400,
+					Status:     "400 Bad Request",
+					Body:       io.NopCloser(bytes.NewBuffer(respBody)),
+					Header:     make(http.Header),
+					Request:    req,
+				}, nil
+			},
+			want: want{
+				auth: nil,
+				err:  true,
+			},
+		},
+		{
+			name:               "Error parsing response",
+			mockHTTPNewRequest: nil,
+			mockRoundTripper: func(req *http.Request) (*http.Response, error) {
+				return &http.Response{
+					StatusCode: 200,
+					Body:       io.NopCloser(strings.NewReader(`{"access_token": "token", "malformed": `)), // Malformed JSON
+					Header:     make(http.Header),
+					Request:    req,
+				}, nil
+			},
+			want: want{
+				auth: nil,
+				err:  true,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if tt.mockHTTPNewRequest != nil {
+				originalHTTPNewRequest := httpNewRequest
+				defer func() {
+					httpNewRequest = originalHTTPNewRequest
+				}()
+				httpNewRequest = tt.mockHTTPNewRequest
+			}
+			c := CliCredentialsFlow{
+				accountURL:   accountURL,
+				clientID:     clientID,
+				clientSecret: clientSecret,
+				httpClient:   *newMockClient(tt.mockRoundTripper), // Inject the mock client here!
+			}
+			authResp, err := c.Authenticate()
+
+			if tt.want.err {
+				if err == nil {
+					t.Errorf("TestAuthenticate(%s): expected error, got nil", tt.name)
+				}
+			} else {
+				if authResp == nil {
+					t.Errorf("TestAuthenticate(%s): expected non-nil auth response, got nil", tt.name)
+				} else if *authResp != *tt.want.auth {
+					t.Errorf("TestAuthenticate(%s): expected auth %+v, got %+v", tt.name, tt.want.auth, authResp)
+				}
+			}
+		})
 	}
 }
 
