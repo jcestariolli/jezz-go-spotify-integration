@@ -12,6 +12,8 @@ on:
 jobs:
   CI:
     uses: ./.github/workflows/go-ci.yml
+    permissions:
+      pull-requests: write
     with:
       go_version: '1.24'
 

@@ -6,9 +6,9 @@ name: Go CI
 on:
   workflow_call:
     inputs:
-      go_version: # Define the input parameter here
+      go_version:
         description: 'The Go version to use for build and test'
-        required: true # It's required because main.yml will always provide it
+        required: true
         type: string
 
 jobs:
@@ -30,8 +30,6 @@ jobs:
   test:
     needs: build
     runs-on: ubuntu-latest
-    permissions:
-      pull-requests: write
     steps:
       - uses: actions/checkout@v4
 
