@@ -1,0 +1,23 @@
+# This workflow will build a golang project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-go
+
+name: Go
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    types: [ opened, synchronize, reopened ]
+
+jobs:
+  CI:
+    uses: ./.github/workflows/go-ci.yml
+    with:
+      go_version: '1.24'
+
+  CD:
+    needs: CI
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    uses: ./.github/workflows/go-cd.yml
+    with:
+      go_version: '1.24'

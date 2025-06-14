@@ -46,6 +46,7 @@ This project is designed to facilitate integration with Spotify's API using Go. 
 │── test
 │   └── data            # Sample config files and test data 📊
 ├── .github
+│   │── actions         # Configurations for common actions used on workflows ⚙️
 │   └── workflows       # Configurations for github pipelines / workflows ⚙️
 ├── .gitignore          # File that specifies intentionally untracked files to ignore 🚫
 ├── .golangci.yml       # File with configuration for golangci-lint 📏
