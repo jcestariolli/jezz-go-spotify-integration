@@ -13,22 +13,6 @@ runs:
       with:
         go-version: ${{ inputs.go-version }}
 
-    - name: Clean Go module cache directories
-      run: |
-        rm -rf ~/go/pkg/mod
-        rm -rf ~/.cache/go-build
-      shell: bash
-
-    - name: Cache Go modules
-      uses: actions/cache@v4
-      with:
-        path: |
-          ~/go/pkg/mod
-          ~/.cache/go-build
-        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-        restore-keys: |
-          ${{ runner.os }}-go-
-
     - name: Create dummy config file
       run: |
         mkdir -p ./cmd/spotify-cli/config
