@@ -15,6 +15,11 @@ const (
 	cliCredentialsPath = "/api/token"
 )
 
+var (
+	// for testing purposes
+	httpNewRequest = http.NewRequest
+)
+
 type CliCredentialsFlow struct {
 	accountURL   string
 	clientID     string
@@ -59,7 +64,7 @@ func (c CliCredentialsFlow) Authenticate() (*model.Authentication, error) {
 func (c CliCredentialsFlow) createRequest() (*http.Request, error) {
 	formData := url.Values{}
 	formData.Set("grant_type", "client_credentials")
-	req, err := http.NewRequest("POST", c.accountURL+cliCredentialsPath, strings.NewReader(formData.Encode()))
+	req, err := httpNewRequest("POST", c.accountURL+cliCredentialsPath, strings.NewReader(formData.Encode()))
 	if err != nil {
 		return nil, err
 	}
