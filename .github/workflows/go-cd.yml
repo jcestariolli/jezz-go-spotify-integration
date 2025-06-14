@@ -4,6 +4,8 @@
 name: Go CD (fake deployment)
 
 on:
+  push:
+    branches: [ "main" ]
   workflow_run:
     workflows: ["Go CI"]
     types: [completed]
