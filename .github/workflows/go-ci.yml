@@ -10,7 +10,6 @@ on:
     branches: [ "main" ]
 
 jobs:
-  # Pre-validation (CI) jobs: build, test
   build:
     runs-on: ubuntu-latest
     steps:
@@ -27,7 +26,7 @@ jobs:
         run: make build
 
   test:
-    needs: build # This job will only run after the 'build' job successfully completes
+    needs: build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -39,8 +38,23 @@ jobs:
       - name: Run Tests
         run: make test
 
-      - name: Validate Coverage
-        run: make test-coverage
+      - name: Validate Test Coverage
+        run: make test-coverage-detailed
+
+      - name: Upload Test Coverage Results
+        uses: actions/upload-artifact@v4
+        with:
+          name: code-coverage-report
+          path: ./coverage_detailed.txt
+
+      - name: Generate HTML Test Coverage
+        run:  make test-coverage-html
+
+      - name: Upload HTML Test Coverage Results
+        uses: actions/upload-artifact@v4
+        with:
+          name: html-code-coverage-report
+          path: ./coverage.html
 
       - name: Clean up
         run: make clean

@@ -24,3 +24,5 @@ cache/
 **/client_credentials.json
 **/*client_credentials.yml
 /coverage.out
+/coverage.html
+/coverage_detailed.txt
