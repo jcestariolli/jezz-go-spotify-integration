@@ -68,12 +68,19 @@ test-coverage:
 		exit 1; \
 	fi
 	go test -coverprofile=coverage.out $(PKGS)
-	go tool cover -func=coverage.out
-
 
 .PHONY: test-coverage-detailed
 test-coverage-detailed: test-coverage
-	go tool cover -func=coverage.out
+	@echo "Generating detailed coverage report to coverage_detailed.txt..."
+	go tool cover -func=coverage.out > coverage_detailed.txt
+    @echo "Detailed coverage report generated: coverage_detailed.txt"
+
+
+.PHONY: test-coverage-html
+test-coverage-html: test-coverage
+	@echo "Generating HTML coverage report..."
+	go tool cover -html=coverage.out -o coverage.html
+	@echo "HTML coverage report generated: coverage.html"
 
 
 .PHONY: mocks-gen
@@ -88,7 +95,7 @@ mocks-gen:
 .PHONY: clean
 clean:
 	@echo "Cleaning up test coverage files..."
-	rm -f coverage.out
+	rm -f coverage.out coverage.html coverage_detailed.txt spotify-cli.exe
 
 
 #################################################################
