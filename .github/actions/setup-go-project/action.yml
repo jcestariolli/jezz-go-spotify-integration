@@ -8,10 +8,6 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - uses: actions/checkout@v4
-      # Note: checkout is part of the setup for each job, so it's placed here.
-      # If you prefer, you can keep it in the individual jobs.
-
     - name: Set up Go
       uses: actions/setup-go@v4
       with:

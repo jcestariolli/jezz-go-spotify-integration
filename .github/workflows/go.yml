@@ -14,6 +14,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
+
       - uses: ./.github/actions/setup-go-project@refactor/packages # TODO change to main
         with:
           go-version: '1.24'
@@ -28,6 +30,8 @@ jobs:
     needs: build # This job will only run after the 'build' job successfully completes
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
+
       - uses: ./.github/actions/setup-go-project@refactor/packages # TODO change to main
         with:
           go-version: '1.24'
