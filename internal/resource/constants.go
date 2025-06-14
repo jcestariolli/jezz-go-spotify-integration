@@ -1,4 +1,4 @@
-package internal
+package resource
 
 const (
 	APIVersion      = "/v1"

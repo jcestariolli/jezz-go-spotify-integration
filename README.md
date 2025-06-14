@@ -39,12 +39,11 @@ This project is designed to facilitate integration with Spotify's API using Go. 
 │       ├── samples     # Contains sample code to demonstrate API interactions 💡
 │       └── main.go     # Main application file ▶️
 │── internal
-│   ├── albums          # Implementation for Spotify Album-related features 💿
-│   ├── artists         # Implementation for Spotify Artist-related features 🎤
 │   ├── auth            # Implementations for Spotify authentication (e.g., client credentials flow) 🔑
 │   ├── config          # Configuration structs, loaders, and validation logic 📝
 │   ├── model           # Domain models and types used across the app 🧩
-│   ├── tracks          # Implementation for Spotify Track-related features 🎵
+│   ├── resource        # Implementations for Spotify API integration for various features 🎵
+│   ├── service         # Implementations of the business logic that will be executed before using resources 💼
 │   ├── utils           # Utility functions (e.g., pagination validation) 🛠️
 │   └── mocks           # Auto-generated mocks for testing 🤖
 └── test

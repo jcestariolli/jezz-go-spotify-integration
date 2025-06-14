@@ -1,32 +1,31 @@
-package tracks
+package resource
 
 import (
 	"fmt"
-	"jezz-go-spotify-integration/internal"
 	"jezz-go-spotify-integration/internal/client"
 	"jezz-go-spotify-integration/internal/model"
 )
 
-type Resource struct {
+type SpotifyTracksResource struct {
 	httpClient client.HTTPClient
 	baseURL    string
 }
 
-func NewResource(
+func NewSpotifyTracksResource(
 	baseURL string,
-) internal.TracksResource {
-	return Resource{
+) TracksResource {
+	return SpotifyTracksResource{
 		httpClient: client.HTTPCustomClient{},
 		baseURL:    baseURL,
 	}
 }
 
-func (r Resource) GetTrack(
+func (r SpotifyTracksResource) GetTrack(
 	accessToken model.AccessToken,
 	market *model.AvailableMarket,
 	trackID model.ID,
 ) (model.Track, error) {
-	url := r.baseURL + internal.APIVersion + internal.TracksPath + "/" + trackID.String()
+	url := r.baseURL + APIVersion + TracksPath + "/" + trackID.String()
 	queryParams := &model.QueryParams{
 		"market": market,
 	}
@@ -38,7 +37,7 @@ func (r Resource) GetTrack(
 	return *output, nil
 }
 
-func (r Resource) GetTracks(
+func (r SpotifyTracksResource) GetTracks(
 	accessToken model.AccessToken,
 	market *model.AvailableMarket,
 	tracksIDs model.TracksIDs,
@@ -47,7 +46,7 @@ func (r Resource) GetTracks(
 		return []model.Track{}, err
 	}
 
-	url := r.baseURL + internal.APIVersion + internal.TracksPath
+	url := r.baseURL + APIVersion + TracksPath
 	queryParams := &model.QueryParams{
 		"ids":    tracksIDs,
 		"market": market,
@@ -60,7 +59,7 @@ func (r Resource) GetTracks(
 	return output.Tracks, nil
 }
 
-func (r Resource) validateTracksIDsSize(tracksIDs model.TracksIDs) error {
+func (r SpotifyTracksResource) validateTracksIDsSize(tracksIDs model.TracksIDs) error {
 	if len(tracksIDs) < 1 {
 		return fmt.Errorf("error getting track - track id must not be null")
 	}

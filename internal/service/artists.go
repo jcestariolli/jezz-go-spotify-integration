@@ -1,38 +1,38 @@
-package artists
+package service
 
 import (
 	"fmt"
-	"jezz-go-spotify-integration/internal"
 	"jezz-go-spotify-integration/internal/auth"
 	"jezz-go-spotify-integration/internal/model"
+	"jezz-go-spotify-integration/internal/resource"
 	"jezz-go-spotify-integration/internal/utils"
 
 	"github.com/samber/lo"
 )
 
-type Service struct {
+type SpotifyArtistsService struct {
 	authService     *auth.Service
-	artistsResource internal.ArtistsResource
+	artistsResource resource.ArtistsResource
 }
 
-func NewService(
+func NewSpotifyArtistsService(
 	baseURL string,
 	authService *auth.Service,
-) internal.ArtistsService {
-	return &Service{
+) ArtistsService {
+	return &SpotifyArtistsService{
 		authService:     authService,
-		artistsResource: NewResource(baseURL),
+		artistsResource: resource.NewSpotifyArtistsResource(baseURL),
 	}
 }
 
-func (s *Service) GetArtist(artistID string) (model.Artist, error) {
+func (s *SpotifyArtistsService) GetArtist(artistID string) (model.Artist, error) {
 	getArtistFn := func() (model.Artist, error) {
 		return s.artistsResource.GetArtist(s.authService.GetAppAccessToken(), model.ID(artistID))
 	}
 	return auth.ExecuteWithAuthRetry(s.authService, getArtistFn)
 }
 
-func (s *Service) GetArtists(artistIDsStr ...string) ([]model.Artist, error) {
+func (s *SpotifyArtistsService) GetArtists(artistIDsStr ...string) ([]model.Artist, error) {
 	artistsIDs := lo.Map(artistIDsStr, func(artistID string, _ int) model.ID {
 		return model.ID(artistID)
 	})
@@ -42,7 +42,7 @@ func (s *Service) GetArtists(artistIDsStr ...string) ([]model.Artist, error) {
 	return auth.ExecuteWithAuthRetry(s.authService, getArtistsFn)
 }
 
-func (s *Service) GetArtistAlbums(
+func (s *SpotifyArtistsService) GetArtistAlbums(
 	countryMarketName *string,
 	albumTypes *[]string,
 	limit *int,
@@ -77,7 +77,7 @@ func (s *Service) GetArtistAlbums(
 	return auth.ExecuteWithAuthRetry(s.authService, getArtistAlbumsFn)
 }
 
-func (s *Service) GetArtistTopTracks(
+func (s *SpotifyArtistsService) GetArtistTopTracks(
 	countryMarketName *string,
 	artistID string,
 ) ([]model.Track, error) {

@@ -3,7 +3,7 @@ package sample
 import (
 	"encoding/json"
 	"fmt"
-	"jezz-go-spotify-integration/internal"
+	"jezz-go-spotify-integration/internal/service"
 	"strings"
 )
 
@@ -14,7 +14,7 @@ const (
 	CompilationAlbumGroup = "compilation"
 )
 
-func RunAppSampleCalls(artistsSvc internal.ArtistsService, albumsSvc internal.AlbumsService, tracksSvc internal.TracksService) {
+func RunAppSampleCalls(artistsSvc service.ArtistsService, albumsSvc service.AlbumsService, tracksSvc service.TracksService) {
 
 	getArtist(artistsSvc, "7nzSoJISlVJsn7O0yTeMOB")
 	getMultipleArtists(artistsSvc, "4DFhHyjvGYa9wxdHUjtDkc", "4lgrzShsg2FLA89UM2fdO5")
@@ -45,7 +45,7 @@ func RunAppSampleCalls(artistsSvc internal.ArtistsService, albumsSvc internal.Al
 
 }
 
-func getArtist(svc internal.ArtistsService, artistID string) {
+func getArtist(svc service.ArtistsService, artistID string) {
 	fmt.Println("Trying to get an artist...")
 
 	artistResponse, err := svc.GetArtist(artistID)
@@ -68,7 +68,7 @@ func getArtist(svc internal.ArtistsService, artistID string) {
 	fmt.Printf("╰┈➤Body is empty\n\n")
 }
 
-func getMultipleArtists(svc internal.ArtistsService, artistIDs ...string) {
+func getMultipleArtists(svc service.ArtistsService, artistIDs ...string) {
 	fmt.Println("Trying to get multiple artists...")
 
 	artistsResponse, err := svc.GetArtists(artistIDs...)
@@ -91,7 +91,7 @@ func getMultipleArtists(svc internal.ArtistsService, artistIDs ...string) {
 	fmt.Printf("╰┈➤Body is empty\n\n")
 }
 
-func getArtistAlbums(svc internal.ArtistsService, artistID string) {
+func getArtistAlbums(svc service.ArtistsService, artistID string) {
 	fmt.Println("Trying to get all artist's album types ...")
 
 	artistResponse, err := svc.GetArtistAlbums(nil, nil, nil, nil, artistID)
@@ -114,7 +114,7 @@ func getArtistAlbums(svc internal.ArtistsService, artistID string) {
 	fmt.Printf("╰┈➤Body is empty\n\n")
 }
 
-func getArtistAlbumsType(svc internal.ArtistsService, artistID string, albumTypes ...string) {
+func getArtistAlbumsType(svc service.ArtistsService, artistID string, albumTypes ...string) {
 	albumTypesStr := strings.Join(albumTypes, " and ")
 	fmt.Println("Trying to get artist's " + albumTypesStr + "s ...")
 
@@ -138,7 +138,7 @@ func getArtistAlbumsType(svc internal.ArtistsService, artistID string, albumType
 	fmt.Printf("╰┈➤Body is empty\n\n")
 }
 
-func getArtistTopTracks(svc internal.ArtistsService, artistID string) {
+func getArtistTopTracks(svc service.ArtistsService, artistID string) {
 	fmt.Println("Trying to get artist's top-tracks...")
 
 	artistResponse, err := svc.GetArtistTopTracks(nil, artistID)
@@ -161,7 +161,7 @@ func getArtistTopTracks(svc internal.ArtistsService, artistID string) {
 	fmt.Printf("╰┈➤Body is empty\n\n")
 }
 
-func getAlbum(svc internal.AlbumsService, albumID string) {
+func getAlbum(svc service.AlbumsService, albumID string) {
 	fmt.Println("Trying to get an album...")
 
 	albumResponse, err := svc.GetAlbum(nil, albumID)
@@ -184,7 +184,7 @@ func getAlbum(svc internal.AlbumsService, albumID string) {
 	fmt.Printf("╰┈➤Body is empty\n\n")
 }
 
-func getAlbumForCountryMarket(svc internal.AlbumsService, albumID string) {
+func getAlbumForCountryMarket(svc service.AlbumsService, albumID string) {
 	countryMarketName := "Brazil"
 	fmt.Println("Trying to get an album for " + countryMarketName + "'s market...")
 
@@ -208,7 +208,7 @@ func getAlbumForCountryMarket(svc internal.AlbumsService, albumID string) {
 	fmt.Printf("╰┈➤Body is empty\n\n")
 }
 
-func getMultipleAlbums(svc internal.AlbumsService, albumIDs ...string) {
+func getMultipleAlbums(svc service.AlbumsService, albumIDs ...string) {
 	fmt.Println("Trying to get multiple albums...")
 
 	albumsResponse, err := svc.GetAlbums(nil, albumIDs...)
@@ -231,7 +231,7 @@ func getMultipleAlbums(svc internal.AlbumsService, albumIDs ...string) {
 	fmt.Printf("╰┈➤Body is empty\n\n")
 }
 
-func getMultipleAlbumsForCountryMarket(svc internal.AlbumsService, albumIDs ...string) {
+func getMultipleAlbumsForCountryMarket(svc service.AlbumsService, albumIDs ...string) {
 	countryMarketName := "Brazil"
 	fmt.Println("Trying to get multiple albums for " + countryMarketName + "'s market...")
 
@@ -255,7 +255,7 @@ func getMultipleAlbumsForCountryMarket(svc internal.AlbumsService, albumIDs ...s
 	fmt.Printf("╰┈➤Body is empty\n\n")
 }
 
-func getAlbumTracks(svc internal.AlbumsService, albumID string) {
+func getAlbumTracks(svc service.AlbumsService, albumID string) {
 	fmt.Println("Trying to get album's tracks...")
 
 	albumResponse, err := svc.GetAlbumTracks(nil, nil, nil, albumID)
@@ -278,7 +278,7 @@ func getAlbumTracks(svc internal.AlbumsService, albumID string) {
 	fmt.Printf("╰┈➤Body is empty\n\n")
 }
 
-func getAlbumTracksForCountryMarket(svc internal.AlbumsService, albumID string) {
+func getAlbumTracksForCountryMarket(svc service.AlbumsService, albumID string) {
 	countryMarketName := "Brazil"
 	fmt.Println("Trying to get an album's tracks for " + countryMarketName + "'s market...")
 
@@ -302,7 +302,7 @@ func getAlbumTracksForCountryMarket(svc internal.AlbumsService, albumID string) 
 	fmt.Printf("╰┈➤Body is empty\n\n")
 }
 
-func getNewReleases(svc internal.AlbumsService) {
+func getNewReleases(svc service.AlbumsService) {
 	fmt.Println("Trying to get new releases...")
 
 	albumResponse, err := svc.GetNewReleases(nil, nil)
@@ -325,7 +325,7 @@ func getNewReleases(svc internal.AlbumsService) {
 	fmt.Printf("╰┈➤Body is empty\n\n")
 }
 
-func getTrack(svc internal.TracksService, trackID string) {
+func getTrack(svc service.TracksService, trackID string) {
 	fmt.Println("Trying to get an track...")
 
 	trackResponse, err := svc.GetTrack(nil, trackID)
@@ -348,7 +348,7 @@ func getTrack(svc internal.TracksService, trackID string) {
 	fmt.Printf("╰┈➤Body is empty\n\n")
 }
 
-func getTrackForCountryMarket(svc internal.TracksService, trackID string) {
+func getTrackForCountryMarket(svc service.TracksService, trackID string) {
 	countryMarketName := "Brazil"
 	fmt.Println("Trying to get an track for " + countryMarketName + "'s market...")
 
@@ -372,7 +372,7 @@ func getTrackForCountryMarket(svc internal.TracksService, trackID string) {
 	fmt.Printf("╰┈➤Body is empty\n\n")
 }
 
-func getMultipleTracks(svc internal.TracksService, trackIDs ...string) {
+func getMultipleTracks(svc service.TracksService, trackIDs ...string) {
 	fmt.Println("Trying to get multiple tracks...")
 
 	tracksResponse, err := svc.GetTracks(nil, trackIDs...)
@@ -395,7 +395,7 @@ func getMultipleTracks(svc internal.TracksService, trackIDs ...string) {
 	fmt.Printf("╰┈➤Body is empty\n\n")
 }
 
-func getMultipleTracksForCountryMarket(svc internal.TracksService, trackIDs ...string) {
+func getMultipleTracksForCountryMarket(svc service.TracksService, trackIDs ...string) {
 	countryMarketName := "Brazil"
 	fmt.Println("Trying to get multiple tracks for " + countryMarketName + "'s market...")
 
