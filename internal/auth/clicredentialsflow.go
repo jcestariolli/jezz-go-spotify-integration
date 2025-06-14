@@ -24,18 +24,19 @@ type CliCredentialsFlow struct {
 	accountURL   string
 	clientID     string
 	clientSecret string
+	httpClient   http.Client
 }
 
 func NewCliCredentialsFlow(
 	accountURL string,
 	clientID string,
 	clientSecret string,
-
 ) CliCredentialsFlow {
 	return CliCredentialsFlow{
 		accountURL:   accountURL,
 		clientID:     clientID,
 		clientSecret: clientSecret,
+		httpClient:   http.Client{},
 	}
 }
 
@@ -45,7 +46,7 @@ func (c CliCredentialsFlow) Authenticate() (*model.Authentication, error) {
 		return nil, fmt.Errorf("error creating client credentials request - %w", err)
 	}
 
-	resp, err := (&http.Client{}).Do(req)
+	resp, err := (&c.httpClient).Do(req)
 	if err != nil {
 		return nil, fmt.Errorf("error connecting to authorization client - %w", err)
 	}
