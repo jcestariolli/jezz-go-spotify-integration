@@ -75,9 +75,9 @@ jobs:
 
       - name: Post Test Coverage as PR Comment
         if: github.event_name == 'pull_request'
-        uses: marocchino/sticky-pull-request-comment@v4
+        uses: marocchino/sticky-pull-request-comment@v2
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          recreate: 'true'
           header: "go-test-coverage"
           message: |
             ### 📊 Go Test Coverage Details
