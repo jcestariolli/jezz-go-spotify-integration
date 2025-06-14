@@ -13,6 +13,12 @@ runs:
       with:
         go-version: ${{ inputs.go-version }}
 
+    - name: Clean Go module cache directories
+      run: |
+        rm -rf ~/go/pkg/mod
+        rm -rf ~/.cache/go-build
+      shell: bash
+
     - name: Cache Go modules
       uses: actions/cache@v4
       with:
