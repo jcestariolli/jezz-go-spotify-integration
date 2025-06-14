@@ -1,0 +1,24 @@
+# This workflow will build a golang project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-go
+
+name: Go CD (fake deployment)
+
+on:
+  workflow_run:
+    workflows: ["Go CI"]
+    types: [completed]
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    if: github.event.workflow_run.conclusion == 'success'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy to environment
+        run: |
+          echo "Starting deployment..."
+          echo "---> I'm just kidding, there is no deployment configured yet :)"
+          echo "Deployment complete!"
