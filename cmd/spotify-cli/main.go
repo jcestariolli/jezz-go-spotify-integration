@@ -58,12 +58,10 @@ func NewCliCredentialsLoader() config.Loader[config.CliCredentials] {
 	return config.CliCredentialsConfigLoader{}
 }
 
-func loadAuthService(appCfg config.AppConfig, cliCredCfg config.CliCredentials) *auth.Service {
+func loadAuthService(appCfg config.AppConfig, cliCredCfg config.CliCredentials) *service.SpotifyAuthService {
 	fmt.Println("Loading auth service...")
-	authService, err := auth.NewService(
-		appCfg.Client.AccountsURL,
-		cliCredCfg,
-	)
+	credentialsFlow := auth.NewCliCredentialsFlow(appCfg.Client.AccountsURL, cliCredCfg.ID, cliCredCfg.Secret)
+	authService, err := service.NewSpotifyAuthService(credentialsFlow)
 	if err != nil {
 		fmt.Println("✖ Auth service loading failed :(")
 		fmt.Printf("╰┈➤%s\n\n", err.Error())
@@ -73,7 +71,7 @@ func loadAuthService(appCfg config.AppConfig, cliCredCfg config.CliCredentials) 
 	return authService
 }
 
-func loadServices(cfg config.AppConfig, authService *auth.Service) (service.ArtistsService, service.AlbumsService, service.TracksService) {
+func loadServices(cfg config.AppConfig, authService *service.SpotifyAuthService) (service.ArtistsService, service.AlbumsService, service.TracksService) {
 	cliConfig := cfg.Client
 	artistsSvc := loadArtistsService(cliConfig, authService)
 	albumsSvc := loadAlbumsService(cliConfig, authService)
@@ -81,7 +79,7 @@ func loadServices(cfg config.AppConfig, authService *auth.Service) (service.Arti
 	return artistsSvc, albumsSvc, tracksSvc
 }
 
-func loadArtistsService(cliConfig config.CliConfig, authService *auth.Service) service.ArtistsService {
+func loadArtistsService(cliConfig config.CliConfig, authService *service.SpotifyAuthService) service.ArtistsService {
 	fmt.Println("Loading artists service...")
 	artistsSvc := service.NewSpotifyArtistsService(
 		cliConfig.BaseURL,
@@ -91,7 +89,7 @@ func loadArtistsService(cliConfig config.CliConfig, authService *auth.Service) s
 	return artistsSvc
 }
 
-func loadAlbumsService(cliConfig config.CliConfig, authService *auth.Service) service.AlbumsService {
+func loadAlbumsService(cliConfig config.CliConfig, authService *service.SpotifyAuthService) service.AlbumsService {
 	fmt.Println("Loading albums service...")
 	albumsSvc := service.NewSpotifyAlbumsService(
 		cliConfig.BaseURL,
@@ -101,7 +99,7 @@ func loadAlbumsService(cliConfig config.CliConfig, authService *auth.Service) se
 	return albumsSvc
 }
 
-func loadTracksService(cliConfig config.CliConfig, authService *auth.Service) service.TracksService {
+func loadTracksService(cliConfig config.CliConfig, authService *service.SpotifyAuthService) service.TracksService {
 	fmt.Println("Loading tracks service...")
 	tracksSvc := service.NewSpotifyTracksService(
 		cliConfig.BaseURL,
