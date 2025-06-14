@@ -36,7 +36,7 @@ This project is designed to facilitate integration with Spotify's API using Go. 
 │       ├── samples     # Contains sample code to demonstrate API interactions 💡
 │       └── main.go     # Main application file ▶️
 │── internal
-│   ├── auth            # Implementations for Spotify authentication (e.g., client credentials flow) 🔑
+│   ├── auth            # Implementations for Spotify authentication flows 🔑
 │   ├── config          # Configuration structs, loaders, and validation logic 📝
 │   ├── model           # Domain models and types used across the app 🧩
 │   ├── resource        # Implementations for Spotify API integration for various features 🎵
