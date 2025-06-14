@@ -12,7 +12,8 @@ on:
         type: string
 
 jobs:
-  build:
+
+  lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -24,8 +25,23 @@ jobs:
       - name: Lint
         run: make lint
 
+      - name: Clean up
+        run: make clean
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/setup-go-project
+        with:
+          go-version: ${{ inputs.go_version }}
+
       - name: Build
         run: make build
+
+      - name: Clean up
+        run: make clean
 
   test:
     needs: build
@@ -39,6 +55,18 @@ jobs:
 
       - name: Run Tests
         run: make test
+
+      - name: Clean up
+        run: make clean
+
+  test-coverage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/setup-go-project
+        with:
+          go-version: ${{ inputs.go_version }}
 
       - name: Validate Test Coverage
         run: make test-coverage-detailed
@@ -68,7 +96,7 @@ jobs:
         id: extract_total_coverage
         if: github.event_name == 'pull_request'
         run: |
-          TOTAL_COVERAGE=$(tail -n 1 coverage_detailed.txt | awk '{print $$NF}')
+          TOTAL_COVERAGE=$(tail -n 1 coverage_detailed.txt | awk '{print $NF}')
           echo "total_coverage=$TOTAL_COVERAGE" >> $GITHUB_OUTPUT
 
       - name: Read Test Coverage Details
