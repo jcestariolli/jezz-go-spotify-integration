@@ -2,7 +2,6 @@ package service
 
 import (
 	"fmt"
-	"jezz-go-spotify-integration/internal/auth"
 	"jezz-go-spotify-integration/internal/model"
 	"jezz-go-spotify-integration/internal/resource"
 	"jezz-go-spotify-integration/internal/utils"
@@ -11,13 +10,13 @@ import (
 )
 
 type SpotifyAlbumsService struct {
-	authService    *auth.Service
+	authService    AuthService
 	albumsResource resource.AlbumsResource
 }
 
 func NewSpotifyAlbumsService(
 	baseURL string,
-	authService *auth.Service,
+	authService AuthService,
 ) AlbumsService {
 	return &SpotifyAlbumsService{
 		authService:    authService,
@@ -33,10 +32,14 @@ func (s *SpotifyAlbumsService) GetAlbum(
 	if err != nil {
 		return model.Album{}, fmt.Errorf("errror getting album for country %s - invalid country name: %w", *countryMarketName, err)
 	}
-	getAlbumFn := func() (model.Album, error) {
-		return s.albumsResource.GetAlbum(s.authService.GetAppAccessToken(), market, model.ID(albumID))
+
+	result, errA := s.authService.ExecuteWithAuthentication(func(accessToken model.AccessToken) (any, error) {
+		return s.albumsResource.GetAlbum(accessToken, market, model.ID(albumID))
+	})
+	if errA != nil {
+		return model.Album{}, errA
 	}
-	return auth.ExecuteWithAuthRetry(s.authService, getAlbumFn)
+	return result.(model.Album), nil
 }
 
 func (s *SpotifyAlbumsService) GetAlbums(
@@ -51,10 +54,13 @@ func (s *SpotifyAlbumsService) GetAlbums(
 	_albumsIDs := lo.Map(albumsIDs, func(albumID string, _ int) model.ID {
 		return model.ID(albumID)
 	})
-	getAlbumsFn := func() ([]model.Album, error) {
-		return s.albumsResource.GetAlbums(s.authService.GetAppAccessToken(), market, _albumsIDs)
+	result, errA := s.authService.ExecuteWithAuthentication(func(accessToken model.AccessToken) (any, error) {
+		return s.albumsResource.GetAlbums(accessToken, market, _albumsIDs)
+	})
+	if errA != nil {
+		return []model.Album{}, errA
 	}
-	return auth.ExecuteWithAuthRetry(s.authService, getAlbumsFn)
+	return result.([]model.Album), nil
 }
 
 func (s *SpotifyAlbumsService) GetAlbumTracks(
@@ -77,10 +83,14 @@ func (s *SpotifyAlbumsService) GetAlbumTracks(
 		_offset = lo.ToPtr(model.Offset(*offset))
 	}
 
-	getAlbumTracksFn := func() (model.SimplifiedTracksPaginated, error) {
-		return s.albumsResource.GetAlbumTracks(s.authService.GetAppAccessToken(), market, _limit, _offset, model.ID(albumID))
+	result, errA := s.authService.ExecuteWithAuthentication(func(accessToken model.AccessToken) (any, error) {
+		return s.albumsResource.GetAlbumTracks(accessToken, market, _limit, _offset, model.ID(albumID))
+	})
+	if errA != nil {
+		return model.SimplifiedTracksPaginated{}, errA
 	}
-	return auth.ExecuteWithAuthRetry(s.authService, getAlbumTracksFn)
+	return result.(model.SimplifiedTracksPaginated), nil
+
 }
 
 func (s *SpotifyAlbumsService) GetNewReleases(
@@ -96,8 +106,11 @@ func (s *SpotifyAlbumsService) GetNewReleases(
 		_offset = lo.ToPtr(model.Offset(*offset))
 	}
 
-	getAlbumFn := func() (model.AlbumsNewRelease, error) {
-		return s.albumsResource.GetNewReleases(s.authService.GetAppAccessToken(), _limit, _offset)
+	result, errA := s.authService.ExecuteWithAuthentication(func(accessToken model.AccessToken) (any, error) {
+		return s.albumsResource.GetNewReleases(accessToken, _limit, _offset)
+	})
+	if errA != nil {
+		return model.AlbumsNewRelease{}, errA
 	}
-	return auth.ExecuteWithAuthRetry(s.authService, getAlbumFn)
+	return result.(model.AlbumsNewRelease), nil
 }

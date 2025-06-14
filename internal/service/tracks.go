@@ -2,7 +2,6 @@ package service
 
 import (
 	"fmt"
-	"jezz-go-spotify-integration/internal/auth"
 	"jezz-go-spotify-integration/internal/model"
 	"jezz-go-spotify-integration/internal/resource"
 	"jezz-go-spotify-integration/internal/utils"
@@ -11,13 +10,13 @@ import (
 )
 
 type SpotifyTracksService struct {
-	authService    *auth.Service
+	authService    AuthService
 	tracksResource resource.TracksResource
 }
 
 func NewSpotifyTracksService(
 	baseURL string,
-	authService *auth.Service,
+	authService AuthService,
 ) TracksService {
 	return &SpotifyTracksService{
 		authService:    authService,
@@ -25,18 +24,22 @@ func NewSpotifyTracksService(
 	}
 }
 
-func (c *SpotifyTracksService) GetTrack(countryMarketName *string, trackID string) (model.Track, error) {
+func (s *SpotifyTracksService) GetTrack(countryMarketName *string, trackID string) (model.Track, error) {
 	market, err := utils.GetMarketByCountryName(countryMarketName)
 	if err != nil {
 		return model.Track{}, fmt.Errorf("errror getting track for country %s - unknown country! Details: %w", *countryMarketName, err)
 	}
-	getTrackFn := func() (model.Track, error) {
-		return c.tracksResource.GetTrack(c.authService.GetAppAccessToken(), market, model.ID(trackID))
+
+	result, errA := s.authService.ExecuteWithAuthentication(func(accessToken model.AccessToken) (any, error) {
+		return s.tracksResource.GetTrack(accessToken, market, model.ID(trackID))
+	})
+	if errA != nil {
+		return model.Track{}, errA
 	}
-	return auth.ExecuteWithAuthRetry(c.authService, getTrackFn)
+	return result.(model.Track), nil
 }
 
-func (c *SpotifyTracksService) GetTracks(countryMarketName *string, tracksIDs ...string) ([]model.Track, error) {
+func (s *SpotifyTracksService) GetTracks(countryMarketName *string, tracksIDs ...string) ([]model.Track, error) {
 	market, err := utils.GetMarketByCountryName(countryMarketName)
 	if err != nil {
 		return []model.Track{}, fmt.Errorf("errror getting tracks for country %s - unknown country! Details: %w", *countryMarketName, err)
@@ -46,8 +49,11 @@ func (c *SpotifyTracksService) GetTracks(countryMarketName *string, tracksIDs ..
 		return model.ID(trackID)
 	})
 
-	getTracksFn := func() ([]model.Track, error) {
-		return c.tracksResource.GetTracks(c.authService.GetAppAccessToken(), market, _tracksIDs)
+	result, errA := s.authService.ExecuteWithAuthentication(func(accessToken model.AccessToken) (any, error) {
+		return s.tracksResource.GetTracks(accessToken, market, _tracksIDs)
+	})
+	if errA != nil {
+		return []model.Track{}, errA
 	}
-	return auth.ExecuteWithAuthRetry(c.authService, getTracksFn)
+	return result.([]model.Track), nil
 }
