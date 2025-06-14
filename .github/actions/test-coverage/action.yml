@@ -3,22 +3,21 @@ name: 'Go Test Coverage'
 description: 'Runs Go test coverage, uploads artifacts, and posts PR comments.'
 
 inputs:
-  go-version:
+  go_version:
     description: 'The Go version to use for build and test'
     required: true
-  run-id:
+  run_id:
     description: 'The ID of the current workflow run'
     required: true
   repository:
     description: 'The GitHub repository'
     required: true
-  server-url:
+  server_url:
     description: 'The GitHub server URL'
     required: true
-  event-name:
+  event_name:
     description: 'The name of the event that triggered the workflow'
     required: true
-
 
 runs:
   using: "composite"
@@ -51,7 +50,7 @@ runs:
 
     - name: Extract Total Test Coverage
       id: extract_total_coverage
-      if: ${{ inputs.event-name == 'pull_request' }}
+      if: ${{ inputs.event_name == 'pull_request' }}
       shell: bash
       run: |
         TOTAL_COVERAGE=$(tail -n 1 coverage_detailed.txt | awk '{print $NF}')
@@ -59,7 +58,7 @@ runs:
 
     - name: Read Test Coverage Details
       id: read_coverage
-      if: ${{ inputs.event-name == 'pull_request' }}
+      if: ${{ inputs.event_name == 'pull_request' }}
       shell: bash
       run: |
         COVERAGE_CONTENT=$(cat coverage_detailed.txt)
@@ -68,7 +67,7 @@ runs:
         echo "EOF" >> $GITHUB_OUTPUT
 
     - name: Post Test Coverage as PR Comment
-      if: ${{ inputs.event-name == 'pull_request' }}
+      if: ${{ inputs.event_name == 'pull_request' }}
       uses: marocchino/sticky-pull-request-comment@v2
       with:
         recreate: 'true'
@@ -86,4 +85,4 @@ runs:
           </details>
           ---
           
-          [View coverage artifacts here](${{ inputs.server-url }}/${{ inputs.repository }}/actions/runs/${{ inputs.run-id }})
+          [View coverage artifacts here](${{ inputs.server_url }}/${{ inputs.repository }}/actions/runs/${{ inputs.run_id }})

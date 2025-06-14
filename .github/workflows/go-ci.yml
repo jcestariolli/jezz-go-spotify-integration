@@ -80,11 +80,11 @@ jobs:
       - name: Runs Test Coverage
         uses: ./.github/actions/test-coverage
         with:
-          go-version: ${{ inputs.go_version }}
-          run-id: ${{ github.run_id }}
+          go_version: ${{ inputs.go_version }}
+          run_id: ${{ github.run_id }}
           repository: ${{ github.repository }}
-          server-url: ${{ github.server_url }}
-          event-name: ${{ github.event_name }}
+          server_url: ${{ github.server_url }}
+          event_name: ${{ github.event_name }}
 
       - name: Clean up
         run: make clean
