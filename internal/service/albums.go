@@ -1,31 +1,31 @@
-package albums
+package service
 
 import (
 	"fmt"
-	"jezz-go-spotify-integration/internal"
 	"jezz-go-spotify-integration/internal/auth"
 	"jezz-go-spotify-integration/internal/model"
+	"jezz-go-spotify-integration/internal/resource"
 	"jezz-go-spotify-integration/internal/utils"
 
 	"github.com/samber/lo"
 )
 
-type Service struct {
+type SpotifyAlbumsService struct {
 	authService    *auth.Service
-	albumsResource internal.AlbumsResource
+	albumsResource resource.AlbumsResource
 }
 
-func NewService(
+func NewSpotifyAlbumsService(
 	baseURL string,
 	authService *auth.Service,
-) internal.AlbumsService {
-	return &Service{
+) AlbumsService {
+	return &SpotifyAlbumsService{
 		authService:    authService,
-		albumsResource: NewResource(baseURL),
+		albumsResource: resource.NewSpotifyAlbumsResource(baseURL),
 	}
 }
 
-func (s *Service) GetAlbum(
+func (s *SpotifyAlbumsService) GetAlbum(
 	countryMarketName *string,
 	albumID string,
 ) (model.Album, error) {
@@ -39,7 +39,7 @@ func (s *Service) GetAlbum(
 	return auth.ExecuteWithAuthRetry(s.authService, getAlbumFn)
 }
 
-func (s *Service) GetAlbums(
+func (s *SpotifyAlbumsService) GetAlbums(
 	countryMarketName *string,
 	albumsIDs ...string,
 ) ([]model.Album, error) {
@@ -57,7 +57,7 @@ func (s *Service) GetAlbums(
 	return auth.ExecuteWithAuthRetry(s.authService, getAlbumsFn)
 }
 
-func (s *Service) GetAlbumTracks(
+func (s *SpotifyAlbumsService) GetAlbumTracks(
 	countryMarketName *string,
 	limit *int,
 	offset *int,
@@ -83,7 +83,7 @@ func (s *Service) GetAlbumTracks(
 	return auth.ExecuteWithAuthRetry(s.authService, getAlbumTracksFn)
 }
 
-func (s *Service) GetNewReleases(
+func (s *SpotifyAlbumsService) GetNewReleases(
 	limit *int,
 	offset *int,
 ) (model.AlbumsNewRelease, error) {

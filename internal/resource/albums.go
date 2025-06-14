@@ -1,33 +1,32 @@
-package albums
+package resource
 
 import (
 	"fmt"
-	"jezz-go-spotify-integration/internal"
 	"jezz-go-spotify-integration/internal/client"
 	"jezz-go-spotify-integration/internal/model"
 	"jezz-go-spotify-integration/internal/utils"
 )
 
-type Resource struct {
+type SpotifyAlbumsResource struct {
 	httpClient client.HTTPClient
 	baseURL    string
 }
 
-func NewResource(
+func NewSpotifyAlbumsResource(
 	baseURL string,
-) internal.AlbumsResource {
-	return Resource{
+) AlbumsResource {
+	return SpotifyAlbumsResource{
 		httpClient: client.HTTPCustomClient{},
 		baseURL:    baseURL,
 	}
 }
 
-func (r Resource) GetAlbum(
+func (r SpotifyAlbumsResource) GetAlbum(
 	accessToken model.AccessToken,
 	market *model.AvailableMarket,
 	albumID model.ID,
 ) (model.Album, error) {
-	url := r.baseURL + internal.APIVersion + internal.AlbumsPath + "/" + albumID.String()
+	url := r.baseURL + APIVersion + AlbumsPath + "/" + albumID.String()
 	queryParams := &model.QueryParams{
 		"market": market,
 	}
@@ -39,7 +38,7 @@ func (r Resource) GetAlbum(
 	return *output, nil
 }
 
-func (r Resource) GetAlbums(
+func (r SpotifyAlbumsResource) GetAlbums(
 	accessToken model.AccessToken,
 	market *model.AvailableMarket,
 	albumsIDs model.AlbumsIDs,
@@ -48,7 +47,7 @@ func (r Resource) GetAlbums(
 		return []model.Album{}, err
 	}
 
-	url := r.baseURL + internal.APIVersion + internal.AlbumsPath
+	url := r.baseURL + APIVersion + AlbumsPath
 	queryParams := &model.QueryParams{
 		"ids":    albumsIDs,
 		"market": market,
@@ -61,7 +60,7 @@ func (r Resource) GetAlbums(
 	return output.Albums, nil
 }
 
-func (r Resource) GetAlbumTracks(
+func (r SpotifyAlbumsResource) GetAlbumTracks(
 	accessToken model.AccessToken,
 	market *model.AvailableMarket,
 	limit *model.Limit,
@@ -72,7 +71,7 @@ func (r Resource) GetAlbumTracks(
 		return model.SimplifiedTracksPaginated{}, fmt.Errorf("error creating album tracks request for album ID - %s - %w", albumID.String(), err)
 	}
 
-	url := r.baseURL + internal.APIVersion + internal.AlbumsPath + "/" + albumID.String() + internal.TracksPath
+	url := r.baseURL + APIVersion + AlbumsPath + "/" + albumID.String() + TracksPath
 	queryParams := &model.QueryParams{
 		"market": market,
 		"limit":  limit,
@@ -86,7 +85,7 @@ func (r Resource) GetAlbumTracks(
 	return *output, nil
 }
 
-func (r Resource) GetNewReleases(
+func (r SpotifyAlbumsResource) GetNewReleases(
 	accessToken model.AccessToken,
 	limit *model.Limit,
 	offset *model.Offset,
@@ -95,7 +94,7 @@ func (r Resource) GetNewReleases(
 		return model.AlbumsNewRelease{}, fmt.Errorf("error creating new releases request - %w", err)
 	}
 
-	url := r.baseURL + internal.APIVersion + internal.NewReleasesPath
+	url := r.baseURL + APIVersion + NewReleasesPath
 	queryParams := &model.QueryParams{
 		"limit":  limit,
 		"offset": offset,
@@ -108,7 +107,7 @@ func (r Resource) GetNewReleases(
 	return *output, nil
 }
 
-func (r Resource) validateAlbumsIDsLen(albumsIDs model.AlbumsIDs) error {
+func (r SpotifyAlbumsResource) validateAlbumsIDsLen(albumsIDs model.AlbumsIDs) error {
 	if len(albumsIDs) < 1 {
 		return fmt.Errorf("error getting album - album id must not be null")
 	}

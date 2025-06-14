@@ -1,31 +1,31 @@
-package tracks
+package service
 
 import (
 	"fmt"
-	"jezz-go-spotify-integration/internal"
 	"jezz-go-spotify-integration/internal/auth"
 	"jezz-go-spotify-integration/internal/model"
+	"jezz-go-spotify-integration/internal/resource"
 	"jezz-go-spotify-integration/internal/utils"
 
 	"github.com/samber/lo"
 )
 
-type Service struct {
+type SpotifyTracksService struct {
 	authService    *auth.Service
-	tracksResource internal.TracksResource
+	tracksResource resource.TracksResource
 }
 
-func NewService(
+func NewSpotifyTracksService(
 	baseURL string,
 	authService *auth.Service,
-) internal.TracksService {
-	return &Service{
+) TracksService {
+	return &SpotifyTracksService{
 		authService:    authService,
-		tracksResource: NewResource(baseURL),
+		tracksResource: resource.NewSpotifyTracksResource(baseURL),
 	}
 }
 
-func (c *Service) GetTrack(countryMarketName *string, trackID string) (model.Track, error) {
+func (c *SpotifyTracksService) GetTrack(countryMarketName *string, trackID string) (model.Track, error) {
 	market, err := utils.GetMarketByCountryName(countryMarketName)
 	if err != nil {
 		return model.Track{}, fmt.Errorf("errror getting track for country %s - unknown country! Details: %w", *countryMarketName, err)
@@ -36,7 +36,7 @@ func (c *Service) GetTrack(countryMarketName *string, trackID string) (model.Tra
 	return auth.ExecuteWithAuthRetry(c.authService, getTrackFn)
 }
 
-func (c *Service) GetTracks(countryMarketName *string, tracksIDs ...string) ([]model.Track, error) {
+func (c *SpotifyTracksService) GetTracks(countryMarketName *string, tracksIDs ...string) ([]model.Track, error) {
 	market, err := utils.GetMarketByCountryName(countryMarketName)
 	if err != nil {
 		return []model.Track{}, fmt.Errorf("errror getting tracks for country %s - unknown country! Details: %w", *countryMarketName, err)

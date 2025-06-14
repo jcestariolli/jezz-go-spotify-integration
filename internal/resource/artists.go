@@ -1,31 +1,30 @@
-package artists
+package resource
 
 import (
 	"fmt"
-	"jezz-go-spotify-integration/internal"
 	"jezz-go-spotify-integration/internal/client"
 	"jezz-go-spotify-integration/internal/model"
 )
 
-type Resource struct {
+type SpotifyArtistsResource struct {
 	httpClient client.HTTPClient
 	baseURL    string
 }
 
-func NewResource(
+func NewSpotifyArtistsResource(
 	baseURL string,
-) internal.ArtistsResource {
-	return Resource{
+) ArtistsResource {
+	return SpotifyArtistsResource{
 		httpClient: client.HTTPCustomClient{},
 		baseURL:    baseURL,
 	}
 }
 
-func (r Resource) GetArtist(
+func (r SpotifyArtistsResource) GetArtist(
 	accessToken model.AccessToken,
 	artistID model.ID,
 ) (model.Artist, error) {
-	url := r.baseURL + internal.APIVersion + internal.ArtistsPath + "/" + artistID.String()
+	url := r.baseURL + APIVersion + ArtistsPath + "/" + artistID.String()
 	output := &model.Artist{}
 
 	if err := r.httpClient.DoRequest(model.HTTPGet, url, &model.QueryParams{}, accessToken, output); err != nil {
@@ -34,7 +33,7 @@ func (r Resource) GetArtist(
 	return *output, nil
 }
 
-func (r Resource) GetArtists(
+func (r SpotifyArtistsResource) GetArtists(
 	accessToken model.AccessToken,
 	artistsIDs model.ArtistsIDs,
 ) ([]model.Artist, error) {
@@ -42,7 +41,7 @@ func (r Resource) GetArtists(
 		return []model.Artist{}, err
 	}
 
-	url := r.baseURL + internal.APIVersion + internal.ArtistsPath
+	url := r.baseURL + APIVersion + ArtistsPath
 	queryParams := &model.QueryParams{
 		"ids": artistsIDs,
 	}
@@ -54,7 +53,7 @@ func (r Resource) GetArtists(
 	return output.Artists, nil
 }
 
-func (r Resource) GetArtistAlbums(
+func (r SpotifyArtistsResource) GetArtistAlbums(
 	accessToken model.AccessToken,
 	includeGroups *model.AlbumGroups,
 	market *model.AvailableMarket,
@@ -62,7 +61,7 @@ func (r Resource) GetArtistAlbums(
 	offset *model.Offset,
 	artistID model.ID,
 ) (model.SimplifiedArtistAlbumsPaginated, error) {
-	url := r.baseURL + internal.APIVersion + internal.ArtistsPath + "/" + artistID.String() + internal.AlbumsPath
+	url := r.baseURL + APIVersion + ArtistsPath + "/" + artistID.String() + AlbumsPath
 	queryParams := &model.QueryParams{
 		"include_groups": includeGroups,
 		"market":         market,
@@ -77,12 +76,12 @@ func (r Resource) GetArtistAlbums(
 	return *output, nil
 }
 
-func (r Resource) GetArtistTopTracks(
+func (r SpotifyArtistsResource) GetArtistTopTracks(
 	accessToken model.AccessToken,
 	market *model.AvailableMarket,
 	artistID model.ID,
 ) ([]model.Track, error) {
-	url := r.baseURL + internal.APIVersion + internal.ArtistsPath + "/" + artistID.String() + internal.TopTracksPath
+	url := r.baseURL + APIVersion + ArtistsPath + "/" + artistID.String() + TopTracksPath
 	queryParams := &model.QueryParams{
 		"market": market,
 	}
@@ -94,7 +93,7 @@ func (r Resource) GetArtistTopTracks(
 	return output.Tracks, nil
 }
 
-func (r Resource) validateArtistsIDsSize(artistsIDs model.ArtistsIDs) error {
+func (r SpotifyArtistsResource) validateArtistsIDsSize(artistsIDs model.ArtistsIDs) error {
 	if len(artistsIDs) < 1 {
 		return fmt.Errorf("error getting artist - artist id must not be null")
 	}

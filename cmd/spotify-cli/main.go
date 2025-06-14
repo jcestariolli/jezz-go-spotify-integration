@@ -4,12 +4,9 @@ import (
 	_ "embed"
 	"fmt"
 	"jezz-go-spotify-integration/cmd/spotify-cli/sample"
-	"jezz-go-spotify-integration/internal"
-	"jezz-go-spotify-integration/internal/albums"
-	"jezz-go-spotify-integration/internal/artists"
 	"jezz-go-spotify-integration/internal/auth"
 	"jezz-go-spotify-integration/internal/config"
-	"jezz-go-spotify-integration/internal/tracks"
+	"jezz-go-spotify-integration/internal/service"
 )
 
 //go:embed config/config.yml
@@ -76,7 +73,7 @@ func loadAuthService(appCfg config.AppConfig, cliCredCfg config.CliCredentials) 
 	return authService
 }
 
-func loadServices(cfg config.AppConfig, authService *auth.Service) (internal.ArtistsService, internal.AlbumsService, internal.TracksService) {
+func loadServices(cfg config.AppConfig, authService *auth.Service) (service.ArtistsService, service.AlbumsService, service.TracksService) {
 	cliConfig := cfg.Client
 	artistsSvc := loadArtistsService(cliConfig, authService)
 	albumsSvc := loadAlbumsService(cliConfig, authService)
@@ -84,9 +81,9 @@ func loadServices(cfg config.AppConfig, authService *auth.Service) (internal.Art
 	return artistsSvc, albumsSvc, tracksSvc
 }
 
-func loadArtistsService(cliConfig config.CliConfig, authService *auth.Service) internal.ArtistsService {
+func loadArtistsService(cliConfig config.CliConfig, authService *auth.Service) service.ArtistsService {
 	fmt.Println("Loading artists service...")
-	artistsSvc := artists.NewService(
+	artistsSvc := service.NewSpotifyArtistsService(
 		cliConfig.BaseURL,
 		authService,
 	)
@@ -94,9 +91,9 @@ func loadArtistsService(cliConfig config.CliConfig, authService *auth.Service) i
 	return artistsSvc
 }
 
-func loadAlbumsService(cliConfig config.CliConfig, authService *auth.Service) internal.AlbumsService {
+func loadAlbumsService(cliConfig config.CliConfig, authService *auth.Service) service.AlbumsService {
 	fmt.Println("Loading albums service...")
-	albumsSvc := albums.NewService(
+	albumsSvc := service.NewSpotifyAlbumsService(
 		cliConfig.BaseURL,
 		authService,
 	)
@@ -104,9 +101,9 @@ func loadAlbumsService(cliConfig config.CliConfig, authService *auth.Service) in
 	return albumsSvc
 }
 
-func loadTracksService(cliConfig config.CliConfig, authService *auth.Service) internal.TracksService {
+func loadTracksService(cliConfig config.CliConfig, authService *auth.Service) service.TracksService {
 	fmt.Println("Loading tracks service...")
-	tracksSvc := tracks.NewService(
+	tracksSvc := service.NewSpotifyTracksService(
 		cliConfig.BaseURL,
 		authService,
 	)

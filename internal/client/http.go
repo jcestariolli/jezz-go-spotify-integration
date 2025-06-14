@@ -13,16 +13,6 @@ import (
 	"github.com/samber/lo"
 )
 
-type HTTPClient interface {
-	DoRequest(
-		method model.HTTPMethod,
-		url string,
-		queryParams *model.QueryParams,
-		accessToken model.AccessToken,
-		responseTypedOutput any,
-	) error
-}
-
 type HTTPCustomClient struct{}
 
 func (c HTTPCustomClient) DoRequest(
