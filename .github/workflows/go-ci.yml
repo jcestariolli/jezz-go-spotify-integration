@@ -85,6 +85,7 @@ jobs:
           repository: ${{ github.repository }}
           server_url: ${{ github.server_url }}
           event_name: ${{ github.event_name }}
+          min_coverage_percentage: '70'
 
       - name: Clean up
         run: make clean
