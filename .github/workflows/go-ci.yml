@@ -64,6 +64,13 @@ jobs:
           name: code-coverage-report
           path: ./
 
+      - name: Extract Total Test Coverage
+        id: extract_total_coverage
+        if: github.event_name == 'pull_request'
+        run: |
+          TOTAL_COVERAGE=$(tail -n 1 coverage_detailed.txt | awk '{print $$NF}')
+          echo "total_coverage=$TOTAL_COVERAGE" >> $GITHUB_OUTPUT
+
       - name: Read Test Coverage Details
         id: read_coverage
         if: github.event_name == 'pull_request'
@@ -81,6 +88,7 @@ jobs:
           header: "go-test-coverage"
           message: |
             ### 📊 Go Test Coverage Details
+            **Total Coverage: ${{ steps.extract_total_coverage.outputs.total_coverage }}**
             <details>
             <summary>Click to view detailed coverage report</summary>
             
