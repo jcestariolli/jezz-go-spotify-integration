@@ -7,16 +7,16 @@ inputs:
     description: 'The Go version to use for build and test'
     required: true
   run-id:
-    description: 'The ID of the current workflow run (e.g., ${{ github.run_id }})'
+    description: 'The ID of the current workflow run'
     required: true
   repository:
-    description: 'The GitHub repository (e.g., ${{ github.repository }})'
+    description: 'The GitHub repository'
     required: true
   server-url:
-    description: 'The GitHub server URL (e.g., ${{ github.server_url }})'
+    description: 'The GitHub server URL'
     required: true
   event-name:
-    description: 'The name of the event that triggered the workflow (e.g., ${{ github.event_name }})'
+    description: 'The name of the event that triggered the workflow'
     required: true
 
 
