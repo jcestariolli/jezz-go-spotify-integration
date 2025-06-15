@@ -2,10 +2,10 @@ package service
 
 import "jezz-go-spotify-integration/internal/model"
 
-type FnWithAuthentication func(accessToken model.AccessToken) (any, error)
+type ExecuteWithAuthenticationFn func(accessToken model.AccessToken) (any, error)
 
 type AuthService interface {
-	ExecuteWithAuthentication(fn FnWithAuthentication) (any, error)
+	ExecuteWithAuthentication(fn ExecuteWithAuthenticationFn) (any, error)
 }
 
 type AlbumsService interface {

@@ -8,15 +8,16 @@ import (
 )
 
 type SpotifyAlbumsResource struct {
-	httpClient client.HTTPClient
+	httpClient client.HTTPApiClient
 	baseURL    string
 }
 
 func NewSpotifyAlbumsResource(
+	httpAPIClient client.HTTPApiClient,
 	baseURL string,
 ) AlbumsResource {
 	return SpotifyAlbumsResource{
-		httpClient: client.HTTPCustomClient{},
+		httpClient: httpAPIClient,
 		baseURL:    baseURL,
 	}
 }
@@ -32,7 +33,7 @@ func (r SpotifyAlbumsResource) GetAlbum(
 	}
 	output := &model.Album{}
 
-	if err := r.httpClient.DoRequest(model.HTTPGet, url, queryParams, accessToken, output); err != nil {
+	if err := r.httpClient.DoRequest(model.HTTPGet, url, queryParams, client.ContentTypeJSON, &accessToken, output); err != nil {
 		return model.Album{}, fmt.Errorf("error executing album request for album ID - %s - %w", albumID.String(), err)
 	}
 	return *output, nil
@@ -54,7 +55,7 @@ func (r SpotifyAlbumsResource) GetAlbums(
 	}
 	output := &model.MultipleAlbums{}
 
-	if err := r.httpClient.DoRequest(model.HTTPGet, url, queryParams, accessToken, output); err != nil {
+	if err := r.httpClient.DoRequest(model.HTTPGet, url, queryParams, client.ContentTypeJSON, &accessToken, output); err != nil {
 		return []model.Album{}, fmt.Errorf("error executing album request for albums IDs - %s - %w", albumsIDs.String(), err)
 	}
 	return output.Albums, nil
@@ -79,7 +80,7 @@ func (r SpotifyAlbumsResource) GetAlbumTracks(
 	}
 	output := &model.SimplifiedTracksPaginated{}
 
-	if err := r.httpClient.DoRequest(model.HTTPGet, url, queryParams, accessToken, output); err != nil {
+	if err := r.httpClient.DoRequest(model.HTTPGet, url, queryParams, client.ContentTypeJSON, &accessToken, output); err != nil {
 		return model.SimplifiedTracksPaginated{}, fmt.Errorf("error executing album tracks request for album ID - %s - %w", albumID.String(), err)
 	}
 	return *output, nil
@@ -101,7 +102,7 @@ func (r SpotifyAlbumsResource) GetNewReleases(
 	}
 	output := &model.AlbumsNewRelease{}
 
-	if err := r.httpClient.DoRequest(model.HTTPGet, url, queryParams, accessToken, output); err != nil {
+	if err := r.httpClient.DoRequest(model.HTTPGet, url, queryParams, client.ContentTypeJSON, &accessToken, output); err != nil {
 		return model.AlbumsNewRelease{}, fmt.Errorf("error executing new releases request - %w", err)
 	}
 	return *output, nil

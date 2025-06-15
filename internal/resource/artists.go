@@ -7,15 +7,16 @@ import (
 )
 
 type SpotifyArtistsResource struct {
-	httpClient client.HTTPClient
+	httpClient client.HTTPApiClient
 	baseURL    string
 }
 
 func NewSpotifyArtistsResource(
+	httpAPIClient client.HTTPApiClient,
 	baseURL string,
 ) ArtistsResource {
 	return SpotifyArtistsResource{
-		httpClient: client.HTTPCustomClient{},
+		httpClient: httpAPIClient,
 		baseURL:    baseURL,
 	}
 }
@@ -27,7 +28,7 @@ func (r SpotifyArtistsResource) GetArtist(
 	url := r.baseURL + APIVersion + ArtistsPath + "/" + artistID.String()
 	output := &model.Artist{}
 
-	if err := r.httpClient.DoRequest(model.HTTPGet, url, &model.QueryParams{}, accessToken, output); err != nil {
+	if err := r.httpClient.DoRequest(model.HTTPGet, url, &model.QueryParams{}, client.ContentTypeJSON, &accessToken, output); err != nil {
 		return model.Artist{}, fmt.Errorf("error executing artist request for astist ID - %s - %w", artistID.String(), err)
 	}
 	return *output, nil
@@ -47,7 +48,7 @@ func (r SpotifyArtistsResource) GetArtists(
 	}
 	output := &model.MultipleArtists{}
 
-	if err := r.httpClient.DoRequest(model.HTTPGet, url, queryParams, accessToken, output); err != nil {
+	if err := r.httpClient.DoRequest(model.HTTPGet, url, queryParams, client.ContentTypeJSON, &accessToken, output); err != nil {
 		return []model.Artist{}, fmt.Errorf("error executing artist request for astists IDs - %s - %w", artistsIDs.String(), err)
 	}
 	return output.Artists, nil
@@ -70,7 +71,7 @@ func (r SpotifyArtistsResource) GetArtistAlbums(
 	}
 	output := &model.SimplifiedArtistAlbumsPaginated{}
 
-	if err := r.httpClient.DoRequest(model.HTTPGet, url, queryParams, accessToken, output); err != nil {
+	if err := r.httpClient.DoRequest(model.HTTPGet, url, queryParams, client.ContentTypeJSON, &accessToken, output); err != nil {
 		return model.SimplifiedArtistAlbumsPaginated{}, fmt.Errorf("error executing artist albums request for astist ID - %s - %w", artistID.String(), err)
 	}
 	return *output, nil
@@ -87,7 +88,7 @@ func (r SpotifyArtistsResource) GetArtistTopTracks(
 	}
 	output := &model.MultipleTracks{}
 
-	if err := r.httpClient.DoRequest(model.HTTPGet, url, queryParams, accessToken, output); err != nil {
+	if err := r.httpClient.DoRequest(model.HTTPGet, url, queryParams, client.ContentTypeJSON, &accessToken, output); err != nil {
 		return []model.Track{}, fmt.Errorf("error executing artist top-tracks request for astist ID - %s - %w", artistID.String(), err)
 	}
 	return output.Tracks, nil

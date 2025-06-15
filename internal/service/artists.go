@@ -2,6 +2,7 @@ package service
 
 import (
 	"fmt"
+	"jezz-go-spotify-integration/internal/client"
 	"jezz-go-spotify-integration/internal/model"
 	"jezz-go-spotify-integration/internal/resource"
 	"jezz-go-spotify-integration/internal/utils"
@@ -16,11 +17,12 @@ type SpotifyArtistsService struct {
 
 func NewSpotifyArtistsService(
 	baseURL string,
+	httpAPIClient client.HTTPApiClient,
 	authService AuthService,
 ) ArtistsService {
 	return &SpotifyArtistsService{
 		authService:     authService,
-		artistsResource: resource.NewSpotifyArtistsResource(baseURL),
+		artistsResource: resource.NewSpotifyArtistsResource(httpAPIClient, baseURL),
 	}
 }
 

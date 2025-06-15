@@ -25,7 +25,7 @@ func NewSpotifyAuthService(
 	}, nil
 }
 
-func (s *SpotifyAuthService) ExecuteWithAuthentication(fn FnWithAuthentication) (any, error) {
+func (s *SpotifyAuthService) ExecuteWithAuthentication(fn ExecuteWithAuthenticationFn) (any, error) {
 	t, err := s.authAndExecute(false, fn)
 	if err != nil {
 		apiErr := commons.ResourceError{}
@@ -45,7 +45,7 @@ func (s *SpotifyAuthService) authenticate() error {
 	return nil
 }
 
-func (s *SpotifyAuthService) authAndExecute(forceAuth bool, fn FnWithAuthentication) (any, error) {
+func (s *SpotifyAuthService) authAndExecute(forceAuth bool, fn ExecuteWithAuthenticationFn) (any, error) {
 	if forceAuth || s.appAuth == nil {
 		err := s.authenticate()
 		if err != nil {
