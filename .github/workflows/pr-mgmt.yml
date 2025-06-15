@@ -1,11 +1,13 @@
-name: "PR Labeler"
+# https://github.com/marketplace/actions/labeler
+
+name: "PR mgmt"
 
 on:
   pull_request:
     types: [ opened, synchronize, reopened, edited  ]
 
 jobs:
-  add-labels:
+  labeler:
     permissions:
       contents: read
       pull-requests: write
@@ -14,5 +16,5 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Insert labels
+      - name: Add PR labels
         uses: actions/labeler@v5

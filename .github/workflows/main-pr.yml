@@ -1,7 +1,7 @@
 # This workflow will build a golang project
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-go
 
-name: Go PR to main
+name: Main
 
 on:
   pull_request:
@@ -11,7 +11,7 @@ on:
 
 jobs:
   CI:
-    uses: ./.github/workflows/go-ci.yml
+    uses: ./.github/workflows/cicd/ci.yml
     permissions:
       pull-requests: write
     with:
