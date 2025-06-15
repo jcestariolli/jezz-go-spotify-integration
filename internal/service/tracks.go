@@ -17,12 +17,12 @@ type SpotifyTracksService struct {
 
 func NewSpotifyTracksService(
 	baseURL string,
-	httpClient client.HTTPClient,
+	httpAPIClient client.HTTPApiClient,
 	authService AuthService,
 ) TracksService {
 	return &SpotifyTracksService{
 		authService:    authService,
-		tracksResource: resource.NewSpotifyTracksResource(httpClient, baseURL),
+		tracksResource: resource.NewSpotifyTracksResource(httpAPIClient, baseURL),
 	}
 }
 

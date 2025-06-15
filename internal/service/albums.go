@@ -17,12 +17,12 @@ type SpotifyAlbumsService struct {
 
 func NewSpotifyAlbumsService(
 	baseURL string,
-	httpClient client.HTTPClient,
+	httpAPIClient client.HTTPApiClient,
 	authService AuthService,
 ) AlbumsService {
 	return &SpotifyAlbumsService{
 		authService:    authService,
-		albumsResource: resource.NewSpotifyAlbumsResource(httpClient, baseURL),
+		albumsResource: resource.NewSpotifyAlbumsResource(httpAPIClient, baseURL),
 	}
 }
 

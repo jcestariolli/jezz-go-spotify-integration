@@ -20,17 +20,17 @@ var (
 	reflectValueOf = reflect.ValueOf
 )
 
-type HTTPCustomClient struct {
+type CustomHTTPApiClient struct {
 	httpClient *http.Client
 }
 
-func NewHTTPCustomClient() HTTPCustomClient {
-	return HTTPCustomClient{
+func NewCustomHTTPApiClient() CustomHTTPApiClient {
+	return CustomHTTPApiClient{
 		httpClient: &http.Client{},
 	}
 }
 
-func (c HTTPCustomClient) DoRequest(
+func (c CustomHTTPApiClient) DoRequest(
 	method model.HTTPMethod,
 	url string,
 	queryParams *model.QueryParams,
@@ -58,7 +58,7 @@ func (c HTTPCustomClient) DoRequest(
 	return nil
 }
 
-func (c HTTPCustomClient) createRequest(
+func (c CustomHTTPApiClient) createRequest(
 	method model.HTTPMethod,
 	url string,
 	queryParams *model.QueryParams,
@@ -86,7 +86,7 @@ func (c HTTPCustomClient) createRequest(
 	return req, err
 }
 
-func (c HTTPCustomClient) validateResponseStatus(resp *http.Response) *commons.ResourceError {
+func (c CustomHTTPApiClient) validateResponseStatus(resp *http.Response) *commons.ResourceError {
 	if resp.StatusCode >= 300 {
 		apiErr := commons.ResourceError{
 			Status:  resp.StatusCode,
@@ -103,7 +103,7 @@ func (c HTTPCustomClient) validateResponseStatus(resp *http.Response) *commons.R
 	return nil
 }
 
-func (c HTTPCustomClient) parseResponse(resp *http.Response, output any) error {
+func (c CustomHTTPApiClient) parseResponse(resp *http.Response, output any) error {
 	defer func(body io.ReadCloser) {
 		_ = body.Close()
 	}(resp.Body)
@@ -126,7 +126,7 @@ func (c HTTPCustomClient) parseResponse(resp *http.Response, output any) error {
 	return nil
 }
 
-func (c HTTPCustomClient) parseQueryParams(queryParams *model.QueryParams) map[string]string {
+func (c CustomHTTPApiClient) parseQueryParams(queryParams *model.QueryParams) map[string]string {
 	queryParamsMap := map[string]string{}
 	if queryParams != nil {
 		for key, stringEvaluator := range *queryParams {

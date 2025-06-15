@@ -21,9 +21,9 @@ func main() {
 	if err != nil {
 		return
 	}
-	httpClient := loadHTTPClient()
+	httpAPIClient := loadHTTPClients()
 	authService := loadAuthService(appCfg, cliCredCfg)
-	artistsSvc, albumSvc, tracksSvc := loadServices(appCfg, httpClient, authService)
+	artistsSvc, albumSvc, tracksSvc := loadServices(appCfg, httpAPIClient, authService)
 
 	sample.RunAppSampleCalls(artistsSvc, albumSvc, tracksSvc)
 }
@@ -60,14 +60,14 @@ func NewCliCredentialsLoader() config.Loader[config.CliCredentials] {
 	return config.CliCredentialsConfigLoader{}
 }
 
-func NewCustomHTTPClient() client.HTTPClient {
-	return client.NewHTTPCustomClient()
+func NewHTTPApiClient() client.HTTPApiClient {
+	return client.NewCustomHTTPApiClient()
 }
 
-func loadHTTPClient() client.HTTPClient {
-	fmt.Println("Loading HTTP client...")
-	httpClient := NewCustomHTTPClient()
-	fmt.Printf("✔ HTTP client loaded! :)\n\n")
+func loadHTTPClients() client.HTTPApiClient {
+	fmt.Println("Loading HTTP API client...")
+	httpClient := NewHTTPApiClient()
+	fmt.Printf("✔ HTTP API client loaded! :)\n\n")
 	return httpClient
 }
 
@@ -84,41 +84,41 @@ func loadAuthService(appCfg config.AppConfig, cliCredCfg config.CliCredentials) 
 	return authService
 }
 
-func loadServices(cfg config.AppConfig, httpClient client.HTTPClient, authService *service.SpotifyAuthService) (service.ArtistsService, service.AlbumsService, service.TracksService) {
+func loadServices(cfg config.AppConfig, httpAPIClient client.HTTPApiClient, authService *service.SpotifyAuthService) (service.ArtistsService, service.AlbumsService, service.TracksService) {
 	cliConfig := cfg.Client
-	artistsSvc := loadArtistsService(cliConfig, httpClient, authService)
-	albumsSvc := loadAlbumsService(cliConfig, httpClient, authService)
-	tracksSvc := loadTracksService(cliConfig, httpClient, authService)
+	artistsSvc := loadArtistsService(cliConfig, httpAPIClient, authService)
+	albumsSvc := loadAlbumsService(cliConfig, httpAPIClient, authService)
+	tracksSvc := loadTracksService(cliConfig, httpAPIClient, authService)
 	return artistsSvc, albumsSvc, tracksSvc
 }
 
-func loadArtistsService(cliConfig config.CliConfig, httpClient client.HTTPClient, authService *service.SpotifyAuthService) service.ArtistsService {
+func loadArtistsService(cliConfig config.CliConfig, httpAPIClient client.HTTPApiClient, authService *service.SpotifyAuthService) service.ArtistsService {
 	fmt.Println("Loading artists service...")
 	artistsSvc := service.NewSpotifyArtistsService(
 		cliConfig.BaseURL,
-		httpClient,
+		httpAPIClient,
 		authService,
 	)
 	fmt.Printf("✔ Artist service loaded! :)\n\n")
 	return artistsSvc
 }
 
-func loadAlbumsService(cliConfig config.CliConfig, httpClient client.HTTPClient, authService *service.SpotifyAuthService) service.AlbumsService {
+func loadAlbumsService(cliConfig config.CliConfig, httpAPIClient client.HTTPApiClient, authService *service.SpotifyAuthService) service.AlbumsService {
 	fmt.Println("Loading albums service...")
 	albumsSvc := service.NewSpotifyAlbumsService(
 		cliConfig.BaseURL,
-		httpClient,
+		httpAPIClient,
 		authService,
 	)
 	fmt.Printf("✔ Album service loaded! :)\n\n")
 	return albumsSvc
 }
 
-func loadTracksService(cliConfig config.CliConfig, httpClient client.HTTPClient, authService *service.SpotifyAuthService) service.TracksService {
+func loadTracksService(cliConfig config.CliConfig, httpAPIClient client.HTTPApiClient, authService *service.SpotifyAuthService) service.TracksService {
 	fmt.Println("Loading tracks service...")
 	tracksSvc := service.NewSpotifyTracksService(
 		cliConfig.BaseURL,
-		httpClient,
+		httpAPIClient,
 		authService,
 	)
 	fmt.Printf("✔ Track service loaded! :)\n\n")

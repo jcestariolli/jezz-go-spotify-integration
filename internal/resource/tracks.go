@@ -7,12 +7,12 @@ import (
 )
 
 type SpotifyTracksResource struct {
-	httpClient client.HTTPClient
+	httpClient client.HTTPApiClient
 	baseURL    string
 }
 
 func NewSpotifyTracksResource(
-	httpClient client.HTTPClient,
+	httpClient client.HTTPApiClient,
 	baseURL string,
 ) TracksResource {
 	return SpotifyTracksResource{
