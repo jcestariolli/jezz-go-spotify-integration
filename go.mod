@@ -5,7 +5,7 @@ go 1.24
 require (
 	github.com/go-playground/validator/v10 v10.26.0
 	github.com/pariz/gountries v0.1.6
-	github.com/samber/lo v1.51.0 // test-comment
+	github.com/samber/lo v1.51.0
 	github.com/stretchr/testify v1.10.0
 	gopkg.in/yaml.v3 v3.0.1
 )
