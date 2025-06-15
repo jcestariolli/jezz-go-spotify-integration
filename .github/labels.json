@@ -1,0 +1,24 @@
+{
+  "labels": {
+    "automation": {
+      "name": "automation",
+      "colour": "#d608c3",
+      "description": "automation"
+    }
+  },
+  "pr": {
+    "automation-files": {
+      "requires": 1,
+      "conditions": [
+        {
+          "type": "filesMatch",
+          "glob": ".github/**/*"
+        },
+        {
+          "type": "filesMatch",
+          "glob": "Makefile"
+        }
+      ]
+    }
+  }
+}
