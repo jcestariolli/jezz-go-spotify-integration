@@ -103,7 +103,7 @@ runs:
           ${{ steps.extract_and_check_coverage.outputs.failure_message }}
           ---
           
-          _Total Coverage: **${{ steps.extract_and_check_coverage.outputs.total_coverage }}**_
+          📈 _Total Coverage:_ **${{ steps.extract_and_check_coverage.outputs.total_coverage }}**
           <details>
           <summary>Click to view detailed coverage report</summary>
           
