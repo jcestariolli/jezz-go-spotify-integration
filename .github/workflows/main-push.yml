@@ -9,7 +9,7 @@ on:
 
 jobs:
   CI:
-    uses: ./.github/workflows/cicd/ci.yml
+    uses: ./.github/workflows/ci.yml
     permissions:
       pull-requests: write
     with:
@@ -18,6 +18,6 @@ jobs:
   CD:
     needs: CI
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    uses: ./.github/workflows/cicd/cd.yml
+    uses: ./.github/workflows/cd.yml
     with:
       go_version: '1.24'
