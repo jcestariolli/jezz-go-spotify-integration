@@ -18,3 +18,6 @@ jobs:
 
       - name: Add PR labels
         uses: actions/labeler@v5
+        with:
+          sync-labels: 'true'
+          configuration-path: '.github/workflows/config/labeler.yml'
