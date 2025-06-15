@@ -12,10 +12,11 @@ type SpotifyArtistsResource struct {
 }
 
 func NewSpotifyArtistsResource(
+	httpClient client.HTTPClient,
 	baseURL string,
 ) ArtistsResource {
 	return SpotifyArtistsResource{
-		httpClient: client.HTTPCustomClient{},
+		httpClient: httpClient,
 		baseURL:    baseURL,
 	}
 }
