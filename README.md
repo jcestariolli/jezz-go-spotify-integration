@@ -155,35 +155,29 @@ Follow these steps to set up and start using the project:
     ```bash
     make install-deps
     ```
-
-
-2. **📝 Set up the configuration files** within the `cmd/spotify-cli/config` directory, ensuring all required fields are
-   filled.
-
-
+2. **📝 Set up the app client credentials** configuration file with your app credentials
+inside `cmd/spotify-cli/config/sçotify.client_credentials.yml`
+    ```plaintext
+    client_id: "YOUR_APP_CLIENT_ID"
+    client_secret: "YOUR_APP_CLIENT_SECRET"
+    ```
 3. **🏗️ Build the project**:
     ```bash
     make build
     ```
-
-
 4. **🧪 Run tests**:
     ```bash
     make test
     ```
-
-
 5. **📊 Run tests with coverage**:
     ```bash
     make test-coverage
     ```
 
-
 6. **✅ Run all pre-commit checks** after developing and before committing to ensure code quality:
     ```bash
     make pre-commit
     ```
-
 ---
 
 ## 📌 Notes

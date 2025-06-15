@@ -1,0 +1,28 @@
+#file: noinspection YAMLSchemaValidation
+CI/CD:
+- changed-files:
+  - any-glob-to-any-file:
+    - '.github/**/*'
+
+automation:
+- changed-files:
+  - any-glob-to-any-file:
+    - '.github/**/*'
+    - 'Makefile'
+
+test-coverage:
+- changed-files:
+  - any-glob-to-any-file:
+    - '**/*_test.go'
+
+documentation:
+- changed-files:
+  - any-glob-to-any-file:
+    - 'README.md'
+    - '**/*.md'
+
+dependency-version:
+- changed-files:
+  - any-glob-to-any-file:
+    - 'go.mod'
+    - 'go.sum'
