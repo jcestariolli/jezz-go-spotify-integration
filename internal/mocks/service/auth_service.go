@@ -14,7 +14,7 @@ type AuthService struct {
 }
 
 // ExecuteWithAuthentication provides a mock function with given fields: fn
-func (_m *AuthService) ExecuteWithAuthentication(fn service.FnWithAuthentication) (interface{}, error) {
+func (_m *AuthService) ExecuteWithAuthentication(fn service.ExecuteWithAuthenticationFn) (interface{}, error) {
 	ret := _m.Called(fn)
 
 	if len(ret) == 0 {
@@ -23,10 +23,10 @@ func (_m *AuthService) ExecuteWithAuthentication(fn service.FnWithAuthentication
 
 	var r0 interface{}
 	var r1 error
-	if rf, ok := ret.Get(0).(func(service.FnWithAuthentication) (interface{}, error)); ok {
+	if rf, ok := ret.Get(0).(func(service.ExecuteWithAuthenticationFn) (interface{}, error)); ok {
 		return rf(fn)
 	}
-	if rf, ok := ret.Get(0).(func(service.FnWithAuthentication) interface{}); ok {
+	if rf, ok := ret.Get(0).(func(service.ExecuteWithAuthenticationFn) interface{}); ok {
 		r0 = rf(fn)
 	} else {
 		if ret.Get(0) != nil {
@@ -34,7 +34,7 @@ func (_m *AuthService) ExecuteWithAuthentication(fn service.FnWithAuthentication
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(service.FnWithAuthentication) error); ok {
+	if rf, ok := ret.Get(1).(func(service.ExecuteWithAuthenticationFn) error); ok {
 		r1 = rf(fn)
 	} else {
 		r1 = ret.Error(1)
