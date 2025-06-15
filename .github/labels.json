@@ -3,7 +3,7 @@
     "automation": {
       "name": "automation",
       "colour": "#d608c3",
-      "description": "automation"
+      "description": "Automation configuration"
     }
   },
   "pr": {
@@ -12,7 +12,7 @@
       "conditions": [
         {
           "type": "filesMatch",
-          "glob": ".github/**/*"
+          "glob": "github/**/*"
         },
         {
           "type": "filesMatch",
