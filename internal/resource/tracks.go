@@ -32,7 +32,7 @@ func (r SpotifyTracksResource) GetTrack(
 	}
 	output := &model.Track{}
 
-	if err := r.httpClient.DoRequest(model.HTTPGet, url, queryParams, accessToken, output); err != nil {
+	if err := r.httpClient.DoRequest(model.HTTPGet, url, queryParams, client.ContentTypeJSON, &accessToken, output); err != nil {
 		return model.Track{}, fmt.Errorf("error executing track request for track ID - %s - %w", trackID.String(), err)
 	}
 	return *output, nil
@@ -54,7 +54,7 @@ func (r SpotifyTracksResource) GetTracks(
 	}
 	output := &model.MultipleTracks{}
 
-	if err := r.httpClient.DoRequest(model.HTTPGet, url, queryParams, accessToken, output); err != nil {
+	if err := r.httpClient.DoRequest(model.HTTPGet, url, queryParams, client.ContentTypeJSON, &accessToken, output); err != nil {
 		return []model.Track{}, fmt.Errorf("error executing track request for tracks IDs - %s - %w", tracksIDs.String(), err)
 	}
 	return output.Tracks, nil

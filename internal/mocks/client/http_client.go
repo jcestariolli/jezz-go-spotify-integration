@@ -13,17 +13,17 @@ type HTTPClient struct {
 	mock.Mock
 }
 
-// DoRequest provides a mock function with given fields: method, url, queryParams, accessToken, responseTypedOutput
-func (_m *HTTPClient) DoRequest(method model.HTTPMethod, url string, queryParams *model.QueryParams, accessToken model.AccessToken, responseTypedOutput interface{}) error {
-	ret := _m.Called(method, url, queryParams, accessToken, responseTypedOutput)
+// DoRequest provides a mock function with given fields: method, url, queryParams, contentType, accessToken, responseTypedOutput
+func (_m *HTTPClient) DoRequest(method model.HTTPMethod, url string, queryParams *model.QueryParams, contentType string, accessToken *model.AccessToken, responseTypedOutput interface{}) error {
+	ret := _m.Called(method, url, queryParams, contentType, accessToken, responseTypedOutput)
 
 	if len(ret) == 0 {
 		panic("no return value specified for DoRequest")
 	}
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(model.HTTPMethod, string, *model.QueryParams, model.AccessToken, interface{}) error); ok {
-		r0 = rf(method, url, queryParams, accessToken, responseTypedOutput)
+	if rf, ok := ret.Get(0).(func(model.HTTPMethod, string, *model.QueryParams, string, *model.AccessToken, interface{}) error); ok {
+		r0 = rf(method, url, queryParams, contentType, accessToken, responseTypedOutput)
 	} else {
 		r0 = ret.Error(0)
 	}

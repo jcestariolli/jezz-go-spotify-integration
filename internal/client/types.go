@@ -7,7 +7,8 @@ type HTTPClient interface {
 		method model.HTTPMethod,
 		url string,
 		queryParams *model.QueryParams,
-		accessToken model.AccessToken,
+		contentType string,
+		accessToken *model.AccessToken,
 		responseTypedOutput any,
 	) error
 }

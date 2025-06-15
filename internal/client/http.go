@@ -34,10 +34,11 @@ func (c HTTPCustomClient) DoRequest(
 	method model.HTTPMethod,
 	url string,
 	queryParams *model.QueryParams,
-	accessToken model.AccessToken,
+	contentType string,
+	accessToken *model.AccessToken,
 	responseTypedOutput any,
 ) error {
-	req, cErr := c.createRequest(method, url, queryParams, accessToken)
+	req, cErr := c.createRequest(method, url, queryParams, contentType, accessToken)
 	if cErr != nil {
 		return fmt.Errorf("error creating request - %s", cErr)
 	}
@@ -61,7 +62,8 @@ func (c HTTPCustomClient) createRequest(
 	method model.HTTPMethod,
 	url string,
 	queryParams *model.QueryParams,
-	accessToken model.AccessToken,
+	contentType string,
+	accessToken *model.AccessToken,
 ) (*http.Request, error) {
 	queryParamsMap := c.parseQueryParams(queryParams)
 	if len(queryParamsMap) > 0 {
@@ -76,8 +78,11 @@ func (c HTTPCustomClient) createRequest(
 	if err != nil {
 		return nil, err
 	}
-	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Authorization", "Bearer "+accessToken.String())
+	req.Header.Set("Content-Type", contentType)
+	if accessToken != nil {
+		req.Header.Set("Authorization", "Bearer "+accessToken.String())
+	}
+
 	return req, err
 }
 
