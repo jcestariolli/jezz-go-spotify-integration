@@ -12,6 +12,7 @@ jobs:
     name: Label PR
     permissions:
       pull-requests: write
+      contents: read
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
