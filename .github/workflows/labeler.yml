@@ -1,11 +1,11 @@
-name: "Pull Request Labeler"
+name: "PR Labeler"
 
 on:
   pull_request:
     types: [ opened, synchronize, reopened, edited  ]
 
 jobs:
-  labeler:
+  add-labels:
     permissions:
       contents: read
       pull-requests: write
@@ -14,5 +14,5 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: PR Labeler
+      - name: Insert labels
         uses: actions/labeler@v5
