@@ -101,9 +101,7 @@ runs:
         message: |
           ${{ steps.extract_and_check_coverage.outputs.coverage_comment_header }}
           ${{ steps.extract_and_check_coverage.outputs.failure_message }}
-          ---
-          
-          📈 _Total Coverage:_ **${{ steps.extract_and_check_coverage.outputs.total_coverage }}**
+          #### 🧪 _Total Coverage:_ **${{ steps.extract_and_check_coverage.outputs.total_coverage }}**
           <details>
           <summary>Click to view detailed coverage report</summary>
           
@@ -112,9 +110,10 @@ runs:
           ```
           
           </details>
+          
           ---
           
-          [View tests coverage artifacts here](${{ inputs.server_url }}/${{ inputs.repository }}/actions/runs/${{ inputs.run_id }})
+          🔗[View tests coverage artifacts here](${{ inputs.server_url }}/${{ inputs.repository }}/actions/runs/${{ inputs.run_id }})
 
     - name: Fail if Test Coverage is Below Threshold
       if: ${{ inputs.event_name == 'pull_request' && steps.extract_and_check_coverage.outputs.coverage_passed == 'false' }}
