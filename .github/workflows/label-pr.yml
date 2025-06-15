@@ -1,5 +1,7 @@
 # https://github.com/marketplace/actions/super-labeler
 
+name: PR labeler
+
 on:
   pull_request:
     types: [opened, edited, closed, reopened, ready_for_review, synchronize]
@@ -9,7 +11,10 @@ jobs:
     runs-on: ubuntu-latest
     name: Label PR
     steps:
-      - uses: actions/checkout@v2
-      - uses: IvanFon/super-labeler-action@v1
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Label PR
+        uses: IvanFon/super-labeler-action@v1
         with:
           github-token: '${{ secrets.GITHUB_TOKEN }}'
