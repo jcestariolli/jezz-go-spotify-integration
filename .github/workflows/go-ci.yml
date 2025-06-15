@@ -12,86 +12,80 @@ on:
         type: string
 
 jobs:
-  build:
+
+  lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
-      - uses: ./.github/actions/setup-go-project
+      - name: Setup Go Project
+        uses: ./.github/actions/setup-go-project
         with:
           go-version: ${{ inputs.go_version }}
 
       - name: Lint
         run: make lint
 
+      - name: Clean up
+        run: make clean
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Go Project
+        uses: ./.github/actions/setup-go-project
+        with:
+          go-version: ${{ inputs.go_version }}
+
       - name: Build
         run: make build
+
+      - name: Clean up
+        run: make clean
 
   test:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
-      - uses: ./.github/actions/setup-go-project
+      - name: Setup Go Project
+        uses: ./.github/actions/setup-go-project
         with:
           go-version: ${{ inputs.go_version }}
 
       - name: Run Tests
         run: make test
 
-      - name: Validate Test Coverage
-        run: make test-coverage-detailed
+      - name: Clean up
+        run: make clean
 
-      - name: Upload Test Coverage Results
-        uses: actions/upload-artifact@v4
+  test-coverage:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Go Project
+        uses: ./.github/actions/setup-go-project
         with:
-          name: code-coverage-report
-          path: ./coverage_detailed.txt
+          go-version: ${{ inputs.go-version }}
 
-      - name: Generate HTML Test Coverage
-        run: make test-coverage-html
-
-      - name: Upload HTML Test Coverage Results
-        uses: actions/upload-artifact@v4
+      - name: Runs Test Coverage
+        uses: ./.github/actions/test-coverage
         with:
-          name: html-code-coverage-report
-          path: ./coverage.html
-
-      - name: Download Test Coverage Report
-        uses: actions/download-artifact@v4
-        with:
-          name: code-coverage-report
-          path: ./
-
-      - name: Read Test Coverage Details
-        id: read_coverage
-        if: github.event_name == 'pull_request'
-        run: |
-          COVERAGE_CONTENT=$(cat coverage_detailed.txt)
-          echo "coverage_details<<EOF" >> $GITHUB_OUTPUT
-          echo "$COVERAGE_CONTENT" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
-
-      - name: Post Test Coverage as PR Comment
-        if: github.event_name == 'pull_request'
-        uses: marocchino/sticky-pull-request-comment@v2
-        with:
-          recreate: 'true'
-          header: "go-test-coverage"
-          message: |
-            ### 📊 Go Test Coverage Details
-            <details>
-            <summary>Click to view detailed coverage report</summary>
-            
-            ```
-            ${{ steps.read_coverage.outputs.coverage_details }}
-            ```
-            
-            </details>
-            ---
-            
-            [View coverage artifacts here](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+          go_version: ${{ inputs.go_version }}
+          run_id: ${{ github.run_id }}
+          repository: ${{ github.repository }}
+          server_url: ${{ github.server_url }}
+          event_name: ${{ github.event_name }}
+          min_coverage_percentage: '70'
 
       - name: Clean up
         run: make clean
