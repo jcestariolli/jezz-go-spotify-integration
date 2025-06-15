@@ -7,7 +7,7 @@
     }
   },
   "pr": {
-    "automation-files": {
+    "automation": {
       "requires": 1,
       "conditions": [
         {
