@@ -56,8 +56,8 @@ func TestNewCliCredentialsFlow(t *testing.T) {
 
 func TestCliCredentialsFlow_Authenticate(t *testing.T) {
 	accountURL := "http://dummy.url"
-	clientID := "dummy-client-id"
-	clientSecret := "dummy-client-secret"
+	clientID := "client-id-mock"
+	clientSecret := "client-secret-mock"
 	type want struct {
 		auth *model.Authentication
 		err  bool
