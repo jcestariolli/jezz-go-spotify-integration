@@ -66,13 +66,13 @@ runs:
         echo "Minimum required coverage: $MIN_COVERAGE_PERCENTAGE"
 
         # Determine comment header and status
-        COMMENT_HEADER="### 📊 Go Test Coverage Details"
+        COMMENT_HEADER="### ✅ Go Tests Coverage Succeeded"
         FAILURE_MESSAGE=""
         COVERAGE_PASSED="true"
 
         if (( $(echo "$TOTAL_COVERAGE_PERCENT < $MIN_COVERAGE_PERCENTAGE" | bc -l) )); then
-          COMMENT_HEADER="### ❌ Go Test Coverage FAILED! Below ${MIN_COVERAGE_PERCENTAGE}%"
-          FAILURE_MESSAGE="#### 🚨 Coverage Alert: Your code coverage of **${TOTAL_COVERAGE_RAW}** is below the required **${MIN_COVERAGE_PERCENTAGE}%**. Please increase test coverage before merging."
+          COMMENT_HEADER="### ❌ Go Tests Coverage FAILED!"
+          FAILURE_MESSAGE="#### 🚨 Coverage Alert: Your code coverage is below the required **${MIN_COVERAGE_PERCENTAGE}%**. Please increase test coverage before merging."
           COVERAGE_PASSED="false"
           echo "::error title=Test Coverage Below Threshold::Test coverage (${TOTAL_COVERAGE_RAW}) is below the required minimum (${MIN_COVERAGE_PERCENTAGE}%)."
         fi
@@ -101,7 +101,9 @@ runs:
         message: |
           ${{ steps.extract_and_check_coverage.outputs.coverage_comment_header }}
           ${{ steps.extract_and_check_coverage.outputs.failure_message }}
-          **Total Coverage: ${{ steps.extract_and_check_coverage.outputs.total_coverage }}**
+          ---
+          
+          _Total Coverage: **${{ steps.extract_and_check_coverage.outputs.total_coverage }}**_
           <details>
           <summary>Click to view detailed coverage report</summary>
           
@@ -112,7 +114,7 @@ runs:
           </details>
           ---
           
-          [View coverage artifacts here](${{ inputs.server_url }}/${{ inputs.repository }}/actions/runs/${{ inputs.run_id }})
+          [View tests coverage artifacts here](${{ inputs.server_url }}/${{ inputs.repository }}/actions/runs/${{ inputs.run_id }})
 
     - name: Fail if Test Coverage is Below Threshold
       if: ${{ inputs.event_name == 'pull_request' && steps.extract_and_check_coverage.outputs.coverage_passed == 'false' }}
