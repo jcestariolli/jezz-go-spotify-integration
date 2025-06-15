@@ -1,4 +1,4 @@
-source:
+automation:
 - any:
   - changed-files:
     - any-glob-to-any-file:
