@@ -156,7 +156,7 @@ Follow these steps to set up and start using the project:
     make install-deps
     ```
 2. **📝 Set up the app client credentials** configuration file with your app credentials
-inside `cmd/spotify-cli/config/sçotify.client_credentials.yml`
+inside `cmd/spotify-cli/config/spotify.client_credentials.yml`
     ```plaintext
     client_id: "YOUR_APP_CLIENT_ID"
     client_secret: "YOUR_APP_CLIENT_SECRET"
