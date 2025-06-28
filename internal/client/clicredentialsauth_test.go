@@ -1,4 +1,4 @@
-package auth
+package client
 
 import (
 	"bytes"
@@ -38,19 +38,19 @@ func (er *errorReader) Close() error {
 }
 
 func TestNewCliCredentialsFlow(t *testing.T) {
-	got := NewCliCredentialsFlow(
+	got := NewCliCredentials(
 		"http://dummy.url",
 		"client-id-mock",
 		"client-secret-mock",
 	)
-	want := CliCredentialsFlow{
+	want := CliCredentialsAuth{
 		accountURL:   "http://dummy.url",
 		clientID:     "client-id-mock",
 		clientSecret: "client-secret-mock",
-		httpClient:   http.Client{},
+		httpClient:   &http.Client{},
 	}
 	if !reflect.DeepEqual(got, want) {
-		t.Errorf("NewCliCredentialsFlow() = %v, want %v", got, want)
+		t.Errorf("NewCliCredentials() = %v, want %v", got, want)
 	}
 }
 
@@ -174,11 +174,11 @@ func TestCliCredentialsFlow_Authenticate(t *testing.T) {
 				}()
 				httpNewRequest = tt.mockHTTPNewRequest
 			}
-			c := CliCredentialsFlow{
+			c := CliCredentialsAuth{
 				accountURL:   accountURL,
 				clientID:     clientID,
 				clientSecret: clientSecret,
-				httpClient:   *newMockClient(tt.mockRoundTripper), // Inject the mock client here!
+				httpClient:   newMockClient(tt.mockRoundTripper), // Inject the mock client here!
 			}
 			authResp, err := c.Authenticate()
 
@@ -211,13 +211,13 @@ func TestCliCredentialsFlow_createRequest(t *testing.T) {
 	}
 	tests := []struct {
 		name           string
-		cliCredentials CliCredentialsFlow
+		cliCredentials CliCredentialsAuth
 		config         config
 		want           want
 	}{
 		{
 			name: "Successful Request Creation",
-			cliCredentials: CliCredentialsFlow{
+			cliCredentials: CliCredentialsAuth{
 				clientID:     "client-id-mock",
 				clientSecret: "client-secret-mock",
 				accountURL:   "http://dummy.url",
@@ -233,7 +233,7 @@ func TestCliCredentialsFlow_createRequest(t *testing.T) {
 		},
 		{
 			name: "Empty Client ID and Secret",
-			cliCredentials: CliCredentialsFlow{
+			cliCredentials: CliCredentialsAuth{
 				clientID:     "",
 				clientSecret: "",
 				accountURL:   "http://dummy.url",
@@ -249,7 +249,7 @@ func TestCliCredentialsFlow_createRequest(t *testing.T) {
 		},
 		{
 			name: "HTTP New Request causes error",
-			cliCredentials: CliCredentialsFlow{
+			cliCredentials: CliCredentialsAuth{
 				clientID:     "client-id-mock",
 				clientSecret: "client-secret-mock",
 				accountURL:   "http://dummy.url",
@@ -318,7 +318,7 @@ func TestCliCredentialsFlow_createRequest(t *testing.T) {
 }
 
 func TestCliCredentialsFlow_parseResponse(t *testing.T) {
-	c := CliCredentialsFlow{}
+	c := CliCredentialsAuth{}
 	tests := []struct {
 		name       string
 		resp       *http.Response
@@ -433,7 +433,7 @@ func TestCliCredentialsFlow_parseResponse(t *testing.T) {
 }
 
 func TestCliCredentialsFlow_validateRespStatus(t *testing.T) {
-	c := CliCredentialsFlow{}
+	c := CliCredentialsAuth{}
 	tests := []struct {
 		name         string
 		resp         *http.Response

@@ -4,7 +4,6 @@ import (
 	_ "embed"
 	"fmt"
 	"jezz-go-spotify-integration/cmd/spotify-cli/sample"
-	"jezz-go-spotify-integration/internal/auth"
 	"jezz-go-spotify-integration/internal/client"
 	"jezz-go-spotify-integration/internal/config"
 	"jezz-go-spotify-integration/internal/service"
@@ -61,7 +60,7 @@ func NewCliCredentialsLoader() config.Loader[config.CliCredentials] {
 }
 
 func NewHTTPApiClient() client.HTTPApiClient {
-	return client.NewCustomHTTPApiClient()
+	return client.NewCustomAPIClient()
 }
 
 func loadHTTPClients() client.HTTPApiClient {
@@ -73,7 +72,7 @@ func loadHTTPClients() client.HTTPApiClient {
 
 func loadAuthService(appCfg config.AppConfig, cliCredCfg config.CliCredentials) *service.SpotifyAuthService {
 	fmt.Println("Loading auth service...")
-	credentialsFlow := auth.NewCliCredentialsFlow(appCfg.Client.AccountsURL, cliCredCfg.ID, cliCredCfg.Secret)
+	credentialsFlow := client.NewCliCredentials(appCfg.Client.AccountsURL, cliCredCfg.ID, cliCredCfg.Secret)
 	authService, err := service.NewSpotifyAuthService(credentialsFlow)
 	if err != nil {
 		fmt.Println("✖ Auth service loading failed :(")

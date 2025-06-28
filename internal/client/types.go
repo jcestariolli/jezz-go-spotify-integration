@@ -12,3 +12,7 @@ type HTTPApiClient interface {
 		responseTypedOutput any,
 	) error
 }
+
+type AuthClient interface {
+	Authenticate() (*model.Authentication, error)
+}
