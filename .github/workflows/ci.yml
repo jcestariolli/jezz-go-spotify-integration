@@ -77,7 +77,7 @@ jobs:
         with:
           go-version: ${{ inputs.go-version }}
 
-      - name: Runs Test Coverage
+      - name: Run Test Coverage
         uses: ./.github/actions/test-coverage
         with:
           go_version: ${{ inputs.go_version }}

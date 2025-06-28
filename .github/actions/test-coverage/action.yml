@@ -26,7 +26,7 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Validate Test Coverage
+    - name: Run Test Coverage Detailed
       shell: bash
       run: make test-coverage-detailed
 
