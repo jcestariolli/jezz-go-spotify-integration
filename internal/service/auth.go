@@ -2,18 +2,18 @@ package service
 
 import (
 	"errors"
-	"jezz-go-spotify-integration/internal/auth"
+	"jezz-go-spotify-integration/internal/client"
 	"jezz-go-spotify-integration/internal/commons"
 	"jezz-go-spotify-integration/internal/model"
 )
 
 type SpotifyAuthService struct {
 	appAuth  *model.Authentication
-	authFlow auth.AuthenticationFlow
+	authFlow client.AuthClient
 }
 
 func NewSpotifyAuthService(
-	authFlow auth.AuthenticationFlow,
+	authFlow client.AuthClient,
 ) (*SpotifyAuthService, error) {
 	authentication, err := authFlow.Authenticate()
 	if err != nil {

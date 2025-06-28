@@ -1,7 +1,6 @@
 package client
 
 import (
-	"encoding/json"
 	"fmt"
 	"io"
 	"jezz-go-spotify-integration/internal/commons"
@@ -13,24 +12,17 @@ import (
 	"github.com/samber/lo"
 )
 
-var (
-	httpNewRequest = http.NewRequest
-	ioReadAll      = io.ReadAll
-	jsonUnmarshal  = json.Unmarshal
-	reflectValueOf = reflect.ValueOf
-)
-
-type CustomHTTPApiClient struct {
+type CustomAPIClient struct {
 	httpClient *http.Client
 }
 
-func NewCustomHTTPApiClient() CustomHTTPApiClient {
-	return CustomHTTPApiClient{
+func NewCustomAPIClient() CustomAPIClient {
+	return CustomAPIClient{
 		httpClient: &http.Client{},
 	}
 }
 
-func (c CustomHTTPApiClient) DoRequest(
+func (c CustomAPIClient) DoRequest(
 	method model.HTTPMethod,
 	url string,
 	queryParams *model.QueryParams,
@@ -58,7 +50,7 @@ func (c CustomHTTPApiClient) DoRequest(
 	return nil
 }
 
-func (c CustomHTTPApiClient) createRequest(
+func (c CustomAPIClient) createRequest(
 	method model.HTTPMethod,
 	url string,
 	queryParams *model.QueryParams,
@@ -86,7 +78,7 @@ func (c CustomHTTPApiClient) createRequest(
 	return req, err
 }
 
-func (c CustomHTTPApiClient) validateResponseStatus(resp *http.Response) *commons.ResourceError {
+func (c CustomAPIClient) validateResponseStatus(resp *http.Response) *commons.ResourceError {
 	if resp.StatusCode >= 300 {
 		apiErr := commons.ResourceError{
 			Status:  resp.StatusCode,
@@ -103,7 +95,7 @@ func (c CustomHTTPApiClient) validateResponseStatus(resp *http.Response) *common
 	return nil
 }
 
-func (c CustomHTTPApiClient) parseResponse(resp *http.Response, output any) error {
+func (c CustomAPIClient) parseResponse(resp *http.Response, output any) error {
 	defer func(body io.ReadCloser) {
 		_ = body.Close()
 	}(resp.Body)
@@ -126,7 +118,7 @@ func (c CustomHTTPApiClient) parseResponse(resp *http.Response, output any) erro
 	return nil
 }
 
-func (c CustomHTTPApiClient) parseQueryParams(queryParams *model.QueryParams) map[string]string {
+func (c CustomAPIClient) parseQueryParams(queryParams *model.QueryParams) map[string]string {
 	queryParamsMap := map[string]string{}
 	if queryParams != nil {
 		for key, stringEvaluator := range *queryParams {
